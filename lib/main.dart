@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
 
 import 'Presentation Layer/Screens/HomePage/ProjectProposals.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: const Scaffold(body: OwnerSignUp()),
+      home: const Scaffold(body:OwnerProfile()),
     );
   }
 }

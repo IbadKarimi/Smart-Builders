@@ -43,10 +43,14 @@ dependencies:
   lite_rolling_switch: ^1.0.0
   hovering: ^1.0.4
   html: ^0.15.1
+  file_picker: ^5.2.6
+  image_picker: ^0.8.7
   
   mongo_dart: ^0.8.2
   http: ^0.13.5
   email_validator: ^2.1.17
+  dotted_border: ^2.0.0+3
+  form_builder_image_picker: ^3.1.0
 
 dev_dependencies:
   flutter_test:

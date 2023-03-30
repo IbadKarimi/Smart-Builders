@@ -1,16 +1,34 @@
-import 'package:flutter/material.dart';
-import 'package:hovering/hovering.dart';
+import 'dart:html';
+import 'dart:typed_data';
 
+import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hovering/hovering.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
-import 'Owner_Desire_Building.dart';
-import 'Owner_Preview_Profile.dart';
 import 'Owner_SignUp.dart';
 
 
+ApiService apiService = new ApiService();
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
+
+PlatformFile? cnicFile;
+PlatformFile? coverFile;
+bool _checkbox=false;
+bool cnicError=false;
+final RegExp RegExpFirstName = RegExp(r'^[a-zA-Z]+$');
+final RegExp RegExpLastName = RegExp(r'^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$');
+final RegExp RegExpCity = RegExp(r'^[a-zA-Z ]+$');
+final RegExp RegExpAddress = RegExp(r'^[a-zA-Z0-9\s\-\#.,]+$');
+var responseApi;
+
 
 class OwnerProfile extends StatefulWidget {
   const OwnerProfile({super.key});
@@ -21,7 +39,12 @@ class OwnerProfile extends StatefulWidget {
 
 class _OwnerProfile extends State<OwnerProfile> {
   @override
+
+
+
   Widget build(BuildContext context) {
+
+
     return Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -45,16 +68,51 @@ class OwnerProfileInterface extends StatefulWidget {
 }
 
 class _OwnerProfileInterface extends State<OwnerProfileInterface> {
+
   var dropdownvalue;
   bool isOpenCountry = false;
   String selectedOptionCountry = "Pakistan";
   List<String> optionsCountry = ["Pakistan", 'China', 'Srilanka', 'India'];
+  //----------------form--------------------//
+  final _OwnerProfileFormKey = GlobalKey<FormState>();
+  final _firstNameController=TextEditingController();
+  final _lastNameController=TextEditingController();
+  final _countryController=TextEditingController();
+  final _cityController=TextEditingController();
+  final _zipPostalCodeController=TextEditingController();
+  final _streetAddressController=TextEditingController();
+  final _phoneNoController=TextEditingController();
+  final _cnicNoController=TextEditingController();
+  final _ntnNoController=TextEditingController();
+  @override
+
+
+  //------------------------------------------//
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _countryController.dispose();
+    _cityController.dispose();
+    _zipPostalCodeController.dispose();
+    _streetAddressController.dispose();
+    _phoneNoController.dispose();
+    _cnicNoController.dispose();
+    _ntnNoController.dispose();
+    super.dispose();
+  }
+  bool progressBarVisible=false;
+  bool _autoValidate=false;
   @override
   Widget build(BuildContext context) {
     // List of items in our dropdown menu
 
     const checkbox = false;
-    return Container(
+    return  Form(
+        autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+        key:_OwnerProfileFormKey,
+
+        child:Container(
         margin: const EdgeInsets.only(top: 60, bottom: 40),
         width: 900,
         decoration: BoxDecoration(
@@ -195,6 +253,11 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                               BorderRadius.circular(30.0),
                                         ),
                                         backgroundColor: Color(0xFFFFA62B))))),
+
+                                       Padding(
+                                         padding:const EdgeInsets.only(top:10),
+                                         child:cnicError==true?  Text("CNIC image is Required",style:TextStyle(fontSize: 12,color:Colors.red)):Text(""),
+                                       ),
                       ],
                     )),
                 Container(
@@ -204,387 +267,537 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                   color: Colors.grey,
                 ),
                 //fields container firstname/lastname
-                Container(
-                    margin: EdgeInsets.only(left: 20, bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Padding(
-                            padding: EdgeInsets.only(
-                              top: 0,
+                //-----------------------------------------------Create form------------------------------//
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,top:40
+                      ),
+                      child: Text(
+                        "First Name",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10, left: 20),
+                      child: SizedBox(
+                          width: 250,
+
+                          child:TextFormField(
+                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                            keyboardType: TextInputType.name,
+                            controller: _firstNameController,
+
+                            decoration: InputDecoration(
+
+
+                                helperText: "",
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            validator: (value){
+
+                              if(value!.trim().isEmpty){
+                                return "First Name is Required";
+
+                              }
+                              if (!RegExpFirstName.hasMatch(value)) {
+                                return 'Please enter a valid first name';
+                              }
+
+
+                              return null;
+                            },
+                          ))),
+                  //last name
+                  const Padding(
+                      padding:
+                          EdgeInsets.only(left:20),
+                      child: Text(
+                        "Last Name",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, left:20),
+                      child: SizedBox(
+                          width: 250,
+
+                          child: TextFormField(
+                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                            controller: _lastNameController,
+                            decoration: InputDecoration(
+
+                                //not moving the content
+
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            validator: (value){
+                              if(value!.trim().isEmpty){
+                                return "Last Name is Required";
+                              }
+                              if (!RegExpLastName.hasMatch(value)) {
+                                return 'Please enter a valid last name';
+                              }
+                              return null;
+                            },
+                          ))),
+                  const Padding(
+                      padding:
+                          EdgeInsets.only(left:20,top:10),
+                      child: Text(
+                        "Country",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  Stack(
+                    alignment: AlignmentDirectional.topStart,
+                    children: [
+                      Container(
+                          width: 450,
+                          margin: EdgeInsets.only(right: 0),
+                          child: Row(
+                            mainAxisAlignment:MainAxisAlignment.start,
+
+                            children: <Widget>[
+                              Column(
+                                mainAxisAlignment:MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 60,  left:20),
+                                      child: Text(
+                                        "City",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      )),
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 10,left:20),
+                                      child: SizedBox(
+                                          width: 180,
+
+                                          child:  TextFormField(
+                                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                            controller: _cityController,
+                                            decoration: InputDecoration(
+
+                                                helperText: ' ',//not moving the content
+
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+
+
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                )),
+                                            validator: (value){
+                                              if(value!.trim().isEmpty){
+                                                return "City is Required";
+                                              }
+                                              if (!RegExpCity.hasMatch(value)) {
+                                                return 'Please enter a valid city name';
+                                              }
+                                              return null;
+                                            },
+                                          ))),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 30,
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 0, left: 0, bottom: 0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 60,
+                                              right: 80,
+                                             ),
+                                          child: Text(
+                                            "ZIP/Postal Code",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          )),
+                                      Container(
+
+                                          width: 180,
+                                            margin:EdgeInsets.only(top:10),
+                                          child:  TextFormField(
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter.digitsOnly //I have set this so the input is only numbers/digits
+                                            ],
+                                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                            controller: _zipPostalCodeController,
+                                            decoration: InputDecoration(
+                                                helperText: ' ',//not moving the content
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                )),
+                                            validator: (value){
+                                              if(value!.trim().isEmpty){
+                                                return "Zip Postal Code is Required";
+                                              }
+                                              if(value.length<5||value.length>5){
+                                                return "Zip code must be 5 digit";
+                                              }
+                                              return null;
+                                            },
+                                          )),
+                                    ],
+                                  )),
+                            ],
+                          )),
+                      const Padding(
+                          padding: EdgeInsets.only(
+                              top: 143,left:20,),
+                          child: Text(
+                            "Street Address",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
                             ),
-                            child: Text(
-                              "First Name",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(top: 10, right: 0),
-                            child: SizedBox(
-                                width: 250,
-                                height: 32,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                                ))),
-                        //last name
-                        const Padding(
-                            padding:
-                                EdgeInsets.only(top: 10, right: 0, bottom: 0),
-                            child: Text(
-                              "Last Name",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: 10, right: 260, bottom: 10),
-                            child: SizedBox(
-                                width: 250,
-                                height: 32,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                                ))),
-                        const Padding(
-                            padding:
-                                EdgeInsets.only(top: 0, right: 0, bottom: 10),
-                            child: Text(
-                              "Country",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )),
-                        Stack(
-                          alignment: AlignmentDirectional.topStart,
-                          children: [
-                            Container(
-                                width: 450,
-                                margin: EdgeInsets.only(right: 60),
-                                child: Row(
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        const Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 40, right: 150, bottom: 0),
-                                            child: Text(
-                                              "City",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            )),
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: SizedBox(
-                                                width: 180,
-                                                height: 32,
-                                                child: TextField(
-                                                  decoration: InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                  )),
-                                                ))),
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(top: 165, left:20),
+                          child: SizedBox(
+                              width: 400,
+
+                              child: TextFormField(
+                                // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                controller: _streetAddressController,
+                                decoration: InputDecoration(
+
+                                   //not moving the content
+                                    helperText: "",
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    )),
+                                validator: (value){
+                                  if(value!.trim().isEmpty){
+                                    return "Street Address is Required";
+                                  }
+                                  if (!RegExpAddress.hasMatch(value)) {
+                                    return 'Please enter a valid street address';
+                                  }
+                                  return null;
+                                },
+                              ))),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                isOpenCountry = !isOpenCountry;
+                                setState(() {});
+                              },
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: Container(
+                                  width: 250,
+                                  height: 37,
+                                  margin: const EdgeInsets.only(
+                                      left: 20, top: 10, ),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.black38,
+                                          width: 1),
+                                      borderRadius:
+                                          BorderRadius.circular(10)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(selectedOptionCountry),
+                                        Icon(
+                                            isOpenCountry
+                                                ? Icons.arrow_drop_up
+                                                : Icons.arrow_drop_down,
+                                            color: Colors.black),
                                       ],
                                     ),
-                                    SizedBox(
-                                      width: 30,
-                                    ),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0, left: 0, bottom: 0),
-                                        child: Column(
-                                          children: <Widget>[
-                                            const Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 40,
-                                                    right: 80,
-                                                    bottom: 10),
-                                                child: Text(
-                                                  "ZIP/Postal Code",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                )),
-                                            Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 0),
-                                                width: 180,
-                                                height: 32,
-                                                child: TextField(
-                                                  decoration: InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                  )),
-                                                )),
-                                          ],
-                                        )),
-                                  ],
-                                )),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    top: 110, right: 420, bottom: 10),
-                                child: Text(
-                                  "Street Address",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
                                   ),
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(top: 135, right: 110),
-                                child: SizedBox(
-                                    width: 400,
-                                    height: 32,
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      )),
-                                    ))),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      isOpenCountry = !isOpenCountry;
-                                      setState(() {});
-                                    },
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.vertical,
-                                      child: Container(
-                                        width: 250,
-                                        height: 32,
-                                        margin: const EdgeInsets.only(
-                                            left: 0, top: 0, right: 10),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.black38,
-                                                width: 1),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(selectedOptionCountry),
-                                              Icon(
-                                                  isOpenCountry
-                                                      ? Icons.arrow_drop_up
-                                                      : Icons.arrow_drop_down,
-                                                  color: Colors.black),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )),
-                                if (isOpenCountry)
-                                  Container(
-                                    width: 250,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: Colors.black38, width: 1),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    margin: const EdgeInsets.only(left: 0),
-                                    child: ListView(
-                                        scrollDirection: Axis.vertical,
-                                        primary: true,
-                                        shrinkWrap: true,
-                                        children:
-                                            optionsCountry //--------------------list
-                                                .map((e) => Container(
-                                                      decoration: BoxDecoration(
+                                ),
+                              )),
+                          if (isOpenCountry)
+                            Container(
+                              width: 250,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: Colors.black38, width: 1),
+                                  borderRadius: BorderRadius.circular(5)),
+                              margin: const EdgeInsets.only(left: 20),
+                              child: ListView(
+                                  scrollDirection: Axis.vertical,
+                                  primary: true,
+                                  shrinkWrap: true,
+                                  children:
+                                      optionsCountry //--------------------list
+                                          .map((e) => Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius
+                                                            .circular(5)),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets
+                                                          .all(8.0),
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      isOpenCountry =
+                                                          false;
+                                                      selectedOptionCountry =
+                                                          e;
+                                                      setState(() {});
+                                                    },
+                                                    child: HoverContainer(
+                                                        height: 35,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .white,
+                                                        ),
+                                                        hoverDecoration:
+                                                            BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(5)),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            isOpenCountry =
-                                                                false;
-                                                            selectedOptionCountry =
-                                                                e;
-                                                            setState(() {});
-                                                          },
-                                                          child: HoverContainer(
-                                                              height: 35,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              hoverDecoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                border: Border.all(
-                                                                    color: const Color(
-                                                                        0xFFFFA62B),
-                                                                    width: 1),
-                                                              ),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        8.0),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Text(e),
-                                                                  ],
-                                                                ),
-                                                              )),
+                                                                  .circular(
+                                                                      5),
+                                                          border: Border.all(
+                                                              color: const Color(
+                                                                  0xFFFFA62B),
+                                                              width: 1),
                                                         ),
-                                                      ),
-                                                    ))
-                                                .toList()),
-                                  ),
-                              ],
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .all(
+                                                                  8.0),
+                                                          child: Row(
+                                                            children: [
+                                                              Text(e),
+                                                            ],
+                                                          ),
+                                                        )),
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList()),
                             ),
-                            //city and Zip cpde
-                          ],
+                        ],
+                      ),
+                      //city and Zip cpde
+                    ],
+                  ),
+
+                  //----------------------------------------------------------------------//ends
+
+                  //Street Address
+
+                  //Phone no
+                  const Padding(
+                      padding: EdgeInsets.only(
+                          top: 0, left:20, ),
+                      child: Text(
+                        "Phone No",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
                         ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10,left:20),
+                      child: SizedBox(
+                          width: 250,
 
-                        //----------------------------------------------------------------------//ends
+                          child: TextFormField(
+                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                            controller: _phoneNoController,
+                            decoration: InputDecoration(
 
-                        //Street Address
+                                helperText: ' ',//not moving the content
+                                hintText: "03425949630",
+                                hintStyle: TextStyle(fontSize: 12),
 
-                        //Phone no
-                        const Padding(
-                            padding: EdgeInsets.only(
-                                top: 10, right: 440, bottom: 10),
-                            child: Text(
-                              "Phone No",
-                              style: TextStyle(
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            validator: (value){
+                              if(value!.trim().isEmpty){
+                                return "Phone No is Required";
+                              }
+                              if(value.length<11 ||value.length>11){
+                                return "Phone no must be 11 digit";
+                              }
+                              return null;
+                            },
+                          ))),
+                  //Cnic
+                  const Padding(
+                      padding: EdgeInsets.only(
+                          top: 0, left:20),
+                      child: Text(
+                        "Enter CNIC NO",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10,left:20),
+                      child: SizedBox(
+                          width: 250,
+
+                          child: TextFormField(
+                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                            controller: _cnicNoController,
+                            decoration: InputDecoration(
+                               hintText: "Enter cnic without dashes",
+                               hintStyle: TextStyle(fontSize: 12),
+                               helperText: ' ',//not moving the content
+
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            validator: (value){
+                              if(value!.trim().isEmpty){
+                                return "CNIC No is Required";
+                              }
+                              if(value.length<13){
+                                return "Cnic no must be 13 digit";
+                              }
+                              if(value.length>13){
+                                return "Cnic no must be 13 digit";
+                              }
+                              return null;
+                            },
+                          ))),
+                  //ntn no
+                  const Padding(
+                      padding: EdgeInsets.only(
+                         left:20),
+                      child: Text(
+                        "Enter NTN NO",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10, left: 20),
+                      child: SizedBox(
+                          width: 250,
+
+                          child: TextFormField(
+                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                            controller: _ntnNoController,
+                            decoration: InputDecoration(
+
+                                //helperText: ' ',//not moving the content
+
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            validator: (value){
+                              if(value!.trim().isEmpty){
+                                return "It is Optional click the check box and move forward";
+                              }
+                              if(value.length<7 ||value.length>7){
+                                return "Ntn no must be 7 digit";
+                              }
+                              return null;
+                            },
+                          ))),
+                  //checkBox
+                  Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10,left:20,),
+                      child: Row(
+                        children: <Widget>[
+                          Checkbox(
+                            value: checkbox,
+                            onChanged: (value) {
+                              setState(() {
+                                _checkbox = true;
+                              });
+                            },
+                          ),
+                          const Text(
+                            'if you’re a tax payer enter your NTN number,if not click the check box  ',
+                            style: TextStyle(
+                                fontSize: 10,
                                 color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(top: 0, right: 260),
-                            child: SizedBox(
-                                width: 250,
-                                height: 32,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                                ))),
-                        //Cnic
-                        const Padding(
-                            padding: EdgeInsets.only(
-                                top: 10, right: 410, bottom: 10),
-                            child: Text(
-                              "Enter CNIC NO",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(top: 0, right: 260),
-                            child: SizedBox(
-                                width: 250,
-                                height: 32,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                                ))),
-                        //ntn no
-                        const Padding(
-                            padding: EdgeInsets.only(
-                                top: 10, right: 410, bottom: 10),
-                            child: Text(
-                              "Enter NTN NO",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(top: 0, right: 260),
-                            child: SizedBox(
-                                width: 250,
-                                height: 32,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                                ))),
-                        //checkBox
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, right: 160, bottom: 20),
-                            child: Row(
-                              children: <Widget>[
-                                Checkbox(
-                                  value: checkbox,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      // _checkbox = false;
-                                    });
-                                  },
-                                ),
-                                const Text(
-                                  'if you’re a tax payer enter your NTN number,if not click the check box  ',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            )),
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      )),
 
-                        //checkbox
+                  //checkbox
 
-                        //Enter permit no
+                  //Enter permit no
 
-                        //checkbox
-                      ],
-                    )), //end of the fields
+                  //checkbox
+                ],
+              ) //end of the fields//
               ],
             ),
-            //-------------------------Button------------------------//
+            //----------------------Form End----------------------------------//
+            //------------------------- Starts Button------------------------//
             Row(
               children: <Widget>[
                 Padding(
@@ -609,17 +822,46 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
                             )))),
+
                 Padding(
+                  padding:
+                  const EdgeInsets.only(left:200),
+                  child:progressBarVisible==false?Container():CircularProgressIndicator()),
+              Padding(
                     padding:
-                        const EdgeInsets.only(bottom: 50, left: 390, top: 60),
+                        const EdgeInsets.only(bottom: 50, left: 190, top: 60),
                     child: Container(
                         width: 220,
                         height: 40,
                         child: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const OwnerPreviewProfile()));
+                              setState(() {
+                              //  progressBarVisible=true;
+                              });
+                              if( _OwnerProfileFormKey.currentState!.validate()&&cnicFile!=null){
+                                setState(() {
+                                  cnicError=false;
+                                });
+                                if(coverFile==null){
+                                coverFile =PlatformFile(
+                                  path: 'Logo/Avatar.png',
+                                  name: 'Avtar.png',
+                                  size: 1024,
+                                );};
+                              apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text, _cnicNoController.text, _ntnNoController.text, coverFile!, cnicFile!);
+                                 /*if(responseApi!=null){
+                                 setState(() {
+                                    progressBarVisible=false;
+                                    });
+                                     }*/
+                               }
+                              else{
+                                setState(() {
+                                  cnicError=true;
+                                  _autoValidate=true;
+                                });
+                                apiService.loadAsset();
+                              }
                             },
                             // ignore: sort_child_properties_last
                             child: Row(children: const <Widget>[
@@ -646,7 +888,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
               ],
             ),
           ],
-        ));
+        )));
   }
 }
 
@@ -658,7 +900,25 @@ class uploadPhotoAlertDialog extends StatefulWidget {
 }
 
 class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
-  @override
+
+
+var picked;
+@override
+  Future getImage()async{
+    final _picker = ImagePicker();
+     picked = await FilePicker.platform.pickFiles(
+       type: FileType.image,
+       allowMultiple: false,
+     );
+     File   _imageFile;
+
+    if (picked != null) {
+      setState(() {
+        coverFile = picked.files.first;
+      });
+    }
+
+}
   Widget build(BuildContext context) {
     return AlertDialog(
         shape: RoundedRectangleBorder(
@@ -666,27 +926,45 @@ class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
         content: Container(
             width: 650,
             height: 800,
-            child: Column(children: <Widget>[
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+
               const Padding(
                   padding: EdgeInsets.only(top: 20, right: 440, bottom: 0),
                   child: Text(
                     "Edit Photo Cover",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 22,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   )),
               //place image edit
-              Container(
+              Padding(
+                padding: const EdgeInsets.only(top:40),
+                child: DottedBorder(
+                  color: Colors.black,
+                  dashPattern: [8, 4],
+                  strokeWidth: 0.5,
+                  child:Container(
+                      width:500,height: 250,
+                      child: picked!=null?Image.memory(picked.files.first.bytes,width: 500,height: 250,): IconButton(icon:Icon(Icons.add_photo_alternate_outlined,size: 50,),onPressed: () async {getImage();},),),
+
+                ),
+              ),
+
+             /* Container(
                   width: 500,
                   height: 250,
                   margin: const EdgeInsets.only(top: 60, left: 20),
                   decoration: BoxDecoration(
+                // image: DecorationImage(image:picked!=null? AssetImage(file.toString()):AssetImage("HiringWorkersImages/HiringContractors.jpeg"),),
                     color: Colors.white,
                     border: Border.all(
                       color: strokeColor,
                       width: 1,
+
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
@@ -696,7 +974,9 @@ class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
                         //blurStyle: BlurStyle.outer
                       ),
                     ],
-                  )),
+                  ),
+              child:picked!=null?Image.memory(picked.files.first.bytes):Image.asset("HiringWorkersImages/HiringContractors.jpeg"),
+              ),*/
               //column
               Padding(
                   padding: const EdgeInsets.only(top: 20, right: 460),
@@ -704,9 +984,8 @@ class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
                       width: 140,
                       height: 38,
                       child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const DesireBuilding()));
+                          onPressed: () async {
+                            getImage();
                           },
                           // ignore: sort_child_properties_last
                           child: Row(children: const <Widget>[
@@ -860,10 +1139,19 @@ class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
                               height: 40,
                               child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesireBuilding()));
+                                   if(coverFile!=null){
+                                     setState(() {
+                                       coverFile = picked.files.first;
+
+                                     });
+                                     debugPrint( coverFile!.name);
+                                     Navigator.of(context).pop();
+                                   }
+                                   else{
+                                     print("Image is No Picked");
+                                     }
+
+
                                   },
                                   // ignore: sort_child_properties_last
                                   child: Row(children: const <Widget>[
@@ -898,7 +1186,23 @@ class uploadCnicAlertDialog extends StatefulWidget {
 }
 
 class _uploadCnicAlertDialog extends State<uploadCnicAlertDialog> {
+  //get file and insert in api
+  var pickedCnicPhoto;
   @override
+  Future getImage()async{
+    final _picker = ImagePicker();
+    pickedCnicPhoto = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    File   _imageFile;
+
+    if (pickedCnicPhoto != null) {
+      setState(() {
+        cnicFile = pickedCnicPhoto.files.first;
+
+      });
+    }}
   Widget build(BuildContext context) {
     return AlertDialog(
         shape: RoundedRectangleBorder(
@@ -913,12 +1217,24 @@ class _uploadCnicAlertDialog extends State<uploadCnicAlertDialog> {
                     "Edit Your CNIC Picture",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   )),
               //place image edit
-              Container(
+              Padding(
+                padding: const EdgeInsets.only(top:40),
+                child: DottedBorder(
+                  color: Colors.black,
+                  dashPattern: [8, 4],
+                  strokeWidth: 0.5,
+                  child:Container(
+                    width:500,height: 250,
+                    child: pickedCnicPhoto!=null?Image.memory(pickedCnicPhoto.files.first.bytes,width: 500,height: 250,): IconButton(icon:Icon(Icons.add_photo_alternate_outlined,size: 50,),onPressed: () async {getImage();},),),
+
+                ),
+              ),
+             /* Container(
                   width: 500,
                   height: 250,
                   margin: const EdgeInsets.only(top: 60, left: 20),
@@ -936,7 +1252,7 @@ class _uploadCnicAlertDialog extends State<uploadCnicAlertDialog> {
                         //blurStyle: BlurStyle.outer
                       ),
                     ],
-                  )),
+                  )),*/
               //column
               Padding(
                   padding: const EdgeInsets.only(top: 20, right: 460),
@@ -945,8 +1261,7 @@ class _uploadCnicAlertDialog extends State<uploadCnicAlertDialog> {
                       height: 38,
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const DesireBuilding()));
+                          getImage();
                           },
                           // ignore: sort_child_properties_last
                           child: Row(children: const <Widget>[
@@ -1056,10 +1371,17 @@ class _uploadCnicAlertDialog extends State<uploadCnicAlertDialog> {
                               height: 40,
                               child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesireBuilding()));
+                                    if(cnicFile!=null){
+                                      setState(() {
+                                        cnicFile =  pickedCnicPhoto.files.first;
+                                      });
+                                      debugPrint( cnicFile!.name);
+                                      Navigator.of(context).pop();
+
+                                    }
+                                    else{
+                                      print("Image is No Picked");
+                                    }
                                   },
                                   // ignore: sort_child_properties_last
                                   child: Row(children: const <Widget>[

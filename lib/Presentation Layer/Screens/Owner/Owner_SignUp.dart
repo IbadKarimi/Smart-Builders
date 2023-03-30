@@ -2,43 +2,22 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/home_page.dart';
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
-
-import '../../../BuisnessLogic Layer/Apis.dart';
+import 'package:http/http.dart'as http;
+import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Desire_Building.dart';
 import 'Owner_Profile.dart';
-import 'package:http/http.dart'as http;
+
 import 'package:email_validator/email_validator.dart';
 
 //https://stackoverflow.com/questions/63861757/how-to-change-the-position-of-validation-error-in-flutter-forms
 
 
-Future<OwnerSignUpModel> PostApiUserSignUp(String firstName,String lastName,String email,String password,String country) async {
-  final response = await http.post(
-    Uri.parse('http://localhost:3000/smart-builders/UserSignUp'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      "firstName": firstName.toString(),
-      "lastName": lastName.toString(),
-      "email": email.toString(),
-      "password": password.toString(),
-      "country": country.toString(),
-    }),
-  );
 
-  if (response.statusCode ==200) {
-    debugPrint("APi is Working");
-    return OwnerSignUpModel.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Failed to USer Sign-Up. Api');
-  }
-}
 
 
 
@@ -106,12 +85,26 @@ class SignUpInterface extends StatefulWidget {
 }
 
 class _SignUpInterface extends State<SignUpInterface> {
+  ApiService apiService = new ApiService();
+  List<OwnerSignUpModel> _userList=[];
+  void initState() {
+   apiService.getUserList().then((value){
+      setState(() {
+        _userList.addAll(value); //set data we get
+      });
+    });
+    super.initState();
+  }
+
+
+
   final _formKey = GlobalKey<FormState>();
   final _firstNameController=TextEditingController();
   final _lastNameController=TextEditingController();
   final _emailController=TextEditingController();
   final _passwordController=TextEditingController();
   Future<OwnerSignUpModel>? _createUser;
+
   bool _autoValidate=false;
   bool isPasswordVisibility=false;
 
@@ -122,8 +115,15 @@ class _SignUpInterface extends State<SignUpInterface> {
   List<String> optionsCountry = ["Pakistan", 'China', 'Srilanka', 'India'];
 
   //------------------------------------------------//
+
+
   @override
+
   Widget build(BuildContext context) {
+    for(int i=0;i<_userList.length;i++) {
+
+      print(_userList[i].email);
+    }
     bool isFirstName=false;
     String country = "Pakistan";
     const checkbox = false;
@@ -207,7 +207,10 @@ class _SignUpInterface extends State<SignUpInterface> {
 
       autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
 
-    child:Column(children:<Widget> [
+    child:Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children:<Widget> [
+
      Row(
        mainAxisAlignment: MainAxisAlignment.center,
        children: [
@@ -222,7 +225,7 @@ class _SignUpInterface extends State<SignUpInterface> {
                decoration: InputDecoration(
                    helperText: ' ',
                    isDense: true,
-                   contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+                   contentPadding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 11),
                    label: const Text("First Name",
                        style: TextStyle(fontSize: 14)),
 
@@ -254,7 +257,7 @@ class _SignUpInterface extends State<SignUpInterface> {
                    helperText: ' ',//not moving the content
 
                    isDense: true,
-                   contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+                   contentPadding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 11),
                    label: const Text("Last Name",
                        style: TextStyle(fontSize: 14)),
 
@@ -284,71 +287,84 @@ class _SignUpInterface extends State<SignUpInterface> {
                decoration: InputDecoration(
                    helperText: ' ',
                    isDense: true,
-                   contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
-                   label: Text("Work Email Address",
-                       style: TextStyle(fontSize: 14)),
+                   contentPadding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 11),
+                   hintStyle:TextStyle(fontSize: 14) ,
+                   hintText:'Work Email Address' ,
                    border: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(10.0),
                    )),
-               validator: (value){
-                 if(value!.trim().isNotEmpty){
-                   final bool isValid = EmailValidator.validate(value);
+               validator: (_emailController){
+                /* if(_emailController!.trim().isNotEmpty){
+                   final bool isValid = EmailValidator.validate(_emailController);
                     var s = isValid ? null :"Email is not Valid" ;
                     return s;
 
 
+                 }*/
+                 if(_emailController!.trim().isEmpty){
+                   return  "Email is Required";
+
                  }
-                 if(value!.trim().isEmpty){
-                   return "Email is Required";
+                 for(int i=0;i<_userList.length;i++){
+                   if(_emailController.toString()==_userList[i].email){
+                     return "Email is Already Exist";
+                   }
                  }
+
+
+                 //if(){}
+
                  return null;
                },
              ))),
      //Password
-     Padding(
-         padding: EdgeInsets.only(top: 0, left: 10),
-         child: Container(
-             width: 510,
-             margin: EdgeInsets.only(top:0),
+     Container(
+         width: 510,
+         margin: EdgeInsets.only(left:10),
 
-             child: TextFormField(
-               controller: _passwordController,
-              obscureText: isPasswordVisibility==true? false:true,
-              // autovalidateMode:AutovalidateMode.onUserInteraction,
-               decoration: InputDecoration(
-                   helperText: ' ',
-                   isDense: true,
-                       suffixIcon:isPasswordVisibility==true? IconButton(
+         child: TextFormField(
+           controller: _passwordController,
+          obscureText: isPasswordVisibility==true? false:true,
+
+          // autovalidateMode:AutovalidateMode.onUserInteraction,
+           decoration: InputDecoration(
+               helperText: ' ',
+               isDense:true,
+               contentPadding: EdgeInsets.symmetric(vertical: 11,horizontal: 11),
+               label:
+               Text("Password", style: TextStyle(fontSize: 14)),
+
+
+                   suffixIcon:isPasswordVisibility==true? IconButton(
     icon: Icon(Icons.visibility_off),
     onPressed: (){
     setState(() {
     isPasswordVisibility=false;
     });
     }) :IconButton(
-                           icon: Icon(Icons.visibility),
-                        onPressed: (){
-                             setState(() {
-                               isPasswordVisibility=true;
-                             });
-                        }),
+                       icon: Icon(Icons.visibility),
+                    onPressed: (){
+                         setState(() {
+                           isPasswordVisibility=true;
+                         });
+                    }),
 
 
-                   contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
-                   label:
-                   Text("Password", style: TextStyle(fontSize: 14)),
-                   border: OutlineInputBorder(
-                     borderRadius: BorderRadius.circular(10.0),
-                   )),
-               validator: (value){
-                 if(value!.trim().isEmpty){
-                   return "Password is Required";
-                 }
-                 if(value.length<8){
-                   return "Password should be at least 8 digit";
-                 }
-                 return null;
-               },
-             ))),
+
+
+               border: OutlineInputBorder(
+                 borderRadius: BorderRadius.circular(10.0),
+               )),
+           validator: (value){
+             if(value!.trim().isEmpty){
+               return "Password is Required";
+             }
+             if(value.length<8){
+               return "Password should be at least 8 digit";
+             }
+             return null;
+           },
+         )),
      Stack(
        children: [
          Padding(
@@ -395,42 +411,49 @@ the User Agreement and Privacy Policy
                      )),
                ],
              )),
-         Padding(
-             padding: const EdgeInsets.only(top: 160, left: 70),
-             child: Container(
-                 width: 570,
-                 height: 35,
-                 decoration: BoxDecoration(
-                   borderRadius: BorderRadius.circular(30.0),
-                 ),
-                 child: ElevatedButton(
-                     onPressed: () {
-                       if(_formKey.currentState!.validate()){
-                         debugPrint("Form is Valid");
-                       setState(() {_createUser = PostApiUserSignUp(_firstNameController.text,_lastNameController.text,_emailController.text,_passwordController.text,selectedOptionCountry);
-                       });
-                     }
-                       else {
-                         setState(() {
-                           _autoValidate=true;
-                         });
-                       }},
+         Container(
+           margin:  const EdgeInsets.only(top: 160, left: 70),
+             width: 570,
+             height: 35,
+             decoration: BoxDecoration(
+               borderRadius: BorderRadius.circular(30.0),
+             ),
+             child: ElevatedButton(
+                 onPressed: () {
+                   if(_formKey.currentState!.validate()){
+                     debugPrint("Form is Valid");
 
-                     // ignore: sort_child_properties_last
-                     child: Row(children: <Widget>[
-                       const Padding(
-                           padding: EdgeInsets.only(left: 190),
-                           child: Text(
-                             "Create my Account",
-                             style: TextStyle(
-                                 color: Colors.white, fontSize: 16),
-                           )),
-                     ]),
-                     style: ElevatedButton.styleFrom(
-                         shape: RoundedRectangleBorder(
-                           borderRadius: BorderRadius.circular(30.0),
-                         ),
-                         backgroundColor: Color(0xFFFF9900))))),
+                   setState(()  {
+                     _createUser =
+                      apiService.PostApiUserSignUp(_firstNameController.text,_lastNameController.text,_emailController.text,_passwordController.text,selectedOptionCountry);
+
+                   });
+                     Navigator.of(context).push(MaterialPageRoute(
+                         builder: (context) =>
+                         const ContractorsMain()));
+
+                 }
+                   else {
+                     setState(() {
+                       _autoValidate=true;
+                     });
+                   }},
+
+                 // ignore: sort_child_properties_last
+                 child: Row(children: <Widget>[
+                   const Padding(
+                       padding: EdgeInsets.only(left: 190),
+                       child: Text(
+                         "Create my Account",
+                         style: TextStyle(
+                             color: Colors.white, fontSize: 16),
+                       )),
+                 ]),
+                 style: ElevatedButton.styleFrom(
+                     shape: RoundedRectangleBorder(
+                       borderRadius: BorderRadius.circular(30.0),
+                     ),
+                     backgroundColor: Color(0xFFFF9900)))),
          Column(
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
@@ -443,7 +466,7 @@ the User Agreement and Privacy Policy
                    scrollDirection: Axis.vertical,
                    child: Container(
                      width: 510,
-                     height: 35,
+                     height: 40,
                      margin: const EdgeInsets.only(
                          left: 100, top: 0, right: 10),
                      decoration: BoxDecoration(
