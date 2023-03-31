@@ -1,13 +1,11 @@
 import 'dart:html';
 import 'dart:typed_data';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hovering/hovering.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
@@ -21,8 +19,13 @@ const TextlightGrey = Color(0xFF888787);
 
 PlatformFile? cnicFile;
 PlatformFile? coverFile;
-bool _checkbox=false;
+bool isVisibleNtnNoField=false;
+
+String _textValue = '';
+var _textFormFieldValue="";
 bool cnicError=false;
+Uint8List defaultImageBytes=Uint8List(8);
+late final String deFalultImageName;
 final RegExp RegExpFirstName = RegExp(r'^[a-zA-Z]+$');
 final RegExp RegExpLastName = RegExp(r'^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$');
 final RegExp RegExpCity = RegExp(r'^[a-zA-Z ]+$');
@@ -68,6 +71,7 @@ class OwnerProfileInterface extends StatefulWidget {
 }
 
 class _OwnerProfileInterface extends State<OwnerProfileInterface> {
+  bool _checkbox=false;
 
   var dropdownvalue;
   bool isOpenCountry = false;
@@ -103,11 +107,12 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   }
   bool progressBarVisible=false;
   bool _autoValidate=false;
+  bool checkbox = false;
   @override
   Widget build(BuildContext context) {
     // List of items in our dropdown menu
 
-    const checkbox = false;
+
     return  Form(
         autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
         key:_OwnerProfileFormKey,
@@ -741,6 +746,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                           width: 250,
 
                           child: TextFormField(
+
                             // autovalidateMode:AutovalidateMode.onUserInteraction,
                             controller: _ntnNoController,
                             decoration: InputDecoration(
@@ -753,28 +759,43 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                 )),
-                            validator: (value){
-                              if(value!.trim().isEmpty){
-                                return "It is Optional click the check box and move forward";
-                              }
-                              if(value.length<7 ||value.length>7){
-                                return "Ntn no must be 7 digit";
-                              }
-                              return null;
+                            onChanged: (String newValue) {
+                              setState(() {
+                                _textFormFieldValue  = newValue;
+                              });
                             },
+                          /*  validator: (value){
+                               /*if(value!.trim()!=null){
+                                 return "wrong";
+                               }*/
+                           /*    if(value!.trim()>0) {
+                                 if(value!.trim().length<7 ||value!.trim().length>7){
+                                return "Ntn no must be 7 digit";
+                              }*/
+                               }
+                             // return null;
+                            },*/
                           ))),
                   //checkBox
                   Padding(
-                      padding: const EdgeInsets.only(
+                      padding: EdgeInsets.only(
                           top: 10,left:20,),
                       child: Row(
                         children: <Widget>[
                           Checkbox(
-                            value: checkbox,
+                            activeColor: Colors.amber,
+                            value: this._checkbox,
                             onChanged: (value) {
                               setState(() {
-                                _checkbox = true;
+                                this._checkbox = value!;
+                                if (value) {
+                                  isVisibleNtnNoField=true;
+                                  _ntnNoController.text  ="null" ;
+                                } else {
+                                  _ntnNoController.text="";
+                                }
                               });
+
                             },
                           ),
                           const Text(
@@ -786,6 +807,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                           ),
                         ],
                       )),
+
 
                   //checkbox
 
@@ -834,7 +856,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                         width: 220,
                         height: 40,
                         child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               setState(() {
                               //  progressBarVisible=true;
                               });
@@ -842,25 +864,27 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 setState(() {
                                   cnicError=false;
                                 });
-                                if(coverFile==null){
-                                coverFile =PlatformFile(
-                                  path: 'Logo/Avatar.png',
-                                  name: 'Avtar.png',
-                                  size: 1024,
-                                );};
+                              if(coverFile!=null){
                               apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text, _cnicNoController.text, _ntnNoController.text, coverFile!, cnicFile!);
                                  /*if(responseApi!=null){
                                  setState(() {
                                     progressBarVisible=false;
                                     });
                                      }*/
-                               }
+                               }else{
+                                final ByteData data = await rootBundle.load('Logo/Avatar.png');
+
+                                apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
+                                    _cnicNoController.text, _ntnNoController.text,data!, cnicFile!);
+
+                              }
+                              }
                               else{
                                 setState(() {
                                   cnicError=true;
                                   _autoValidate=true;
                                 });
-                                apiService.loadAsset();
+
                               }
                             },
                             // ignore: sort_child_properties_last

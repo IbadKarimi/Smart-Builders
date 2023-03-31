@@ -10,7 +10,7 @@ import 'package:http/http.dart'as http;
 
 class ApiService {
    Uint8List defaultImageBytes=Uint8List(8);
-  late final String deFalultImageName;
+   String ?deFalultImageName;
   Future<List<OwnerSignUpModel>> getUserList ()async{ //create function in list type becoze we get data and set in _product array
     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/UserSignUp'));
     List<OwnerSignUpModel> userlist=[]; //the scope of the array is Inside the function
@@ -102,12 +102,63 @@ class ApiService {
       print('Error uploading image: ${response.reasonPhrase}');
     }
   }
-  Future<void> loadAsset() async {
+   Future<dynamic> createOwnerProfileDefaultImage( String firstName,String lastName,String country,String city,String zipPostalCode,
+       String streetAddress,String phoneNo,String cnincNo,String ntnNo,final ByteData data,PlatformFile cnicFile) async {
+     var request = http.MultipartRequest(
+       'POST',
+       Uri.parse('http://localhost:3000/smart-builders/createOwnerProfile'),
+     );
+   //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
+     defaultImageBytes = data.buffer.asUint8List();
+     deFalultImageName = 'avatar.png';
+     print('Default Image name : $deFalultImageName');
+     print('Default Image bytes: $defaultImageBytes');
+
+     // Add image file to request
+
+     var coverImage = http.MultipartFile.fromBytes(
+       'uploadPhoto',
+       defaultImageBytes !,
+       filename: deFalultImageName,
+     );
+     request.files.add(coverImage);
+
+     print("Api cover cnic name : "+cnicFile.name);
+     var cnicImageFileName=cnicFile!.name;
+     var cnicImageBytes = cnicFile!.bytes;
+     var cnicImage = http.MultipartFile.fromBytes(
+       'uploadCnicPhoto',
+       cnicImageBytes!,
+       filename: cnicImageFileName,
+     );
+     request.files.add(cnicImage);
+
+     // Add other form data (if any)
+     request.fields['firstName'] = firstName;
+     request.fields['lastName'] = lastName;
+     request.fields['country']=country;
+     request.fields['city']=city;
+     request.fields['zipPostalCode']=zipPostalCode;
+     request.fields['streetAddress']=streetAddress;
+     request.fields['phoneNo']=phoneNo;
+     request.fields['cnicNo']=cnincNo;
+     request.fields['ntnNo']=ntnNo;
+
+     var response = await request.send();
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+
+       return response;
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+     }
+   }
+  /*Future<void> loadAsset() async {
     final ByteData data = await rootBundle.load('Logo/Avatar.png');
     defaultImageBytes = data.buffer.asUint8List();
     deFalultImageName = 'avatar.png';
     print('Default Image name : $deFalultImageName');
     print('Default Image bytes: $defaultImageBytes');
-  }
+  }*/
 
 }
