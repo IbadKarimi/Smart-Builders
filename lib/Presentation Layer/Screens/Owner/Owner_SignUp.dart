@@ -1,24 +1,29 @@
-import 'dart:convert';
+
 import 'dart:async';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/home_page.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Preview_Profile.dart';
+
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
-import 'package:http/http.dart'as http;
+
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Desire_Building.dart';
-import 'Owner_Profile.dart';
 
-import 'package:email_validator/email_validator.dart';
+
+
 
 //https://stackoverflow.com/questions/63861757/how-to-change-the-position-of-validation-error-in-flutter-forms
 
 
 
-
+final RegExp RegExpFirstName = RegExp(r'^[a-zA-Z]+$');
+final RegExp RegExpLastName = RegExp(r'^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$');
+final  emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
 
 class OwnerSignUp extends StatefulWidget {
@@ -30,34 +35,6 @@ class OwnerSignUp extends StatefulWidget {
 
 class _OwnerSignUp extends State<OwnerSignUp> {
   @override
- /* void initState(){
-    PostApiUserSignUp("abdullah", "gul","ibadkarimi.10@gmail.com", "new insert","Paskistan");
-    super.initState();
-  }
-  Future<OwnerSignUpModel> PostApiUserSignUp(String firstName,String lastName,String email,String password,String country) async {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/UserSignUp'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        "firstName": firstName.toString(),
-        "lastName": lastName.toString(),
-        "email": email.toString(),
-        "password": password.toString(),
-        "country": country.toString(),
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      debugPrint("APi is Working");
-      return OwnerSignUpModel.fromJson(jsonDecode(response.body));
-    } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      throw Exception('Failed to USer Sign-Up. Api');
-    }
-  }*/
 
   Widget build(BuildContext context) {
 
@@ -238,6 +215,9 @@ class _SignUpInterface extends State<SignUpInterface> {
                    return "First Name is Required";
 
                  }
+                 if (!RegExpFirstName.hasMatch(value)) {
+                   return 'Please enter a valid first name';
+                 }
 
                  return null;
                },
@@ -268,6 +248,10 @@ class _SignUpInterface extends State<SignUpInterface> {
                  if(value!.trim().isEmpty){
                    return "Last Name is Required";
                  }
+
+                 if (!RegExpLastName.hasMatch(value)) {
+                   return 'Please enter a valid last name';
+                 }
                  return null;
                },
              )),
@@ -293,26 +277,26 @@ class _SignUpInterface extends State<SignUpInterface> {
                    border: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(10.0),
                    )),
-               validator: (_emailController){
-                /* if(_emailController!.trim().isNotEmpty){
-                   final bool isValid = EmailValidator.validate(_emailController);
-                    var s = isValid ? null :"Email is not Valid" ;
-                    return s;
+               validator: (value){
 
-
-                 }*/
-                 if(_emailController!.trim().isEmpty){
+                 if(value!.trim().isEmpty){
                    return  "Email is Required";
 
                  }
+
                  for(int i=0;i<_userList.length;i++){
-                   if(_emailController.toString()==_userList[i].email){
+                   if(value.toString()==_userList[i].email&&value!.trim().isNotEmpty){
                      return "Email is Already Exist";
+                   }
+
+
+                   if (!emailRegex.hasMatch(value)) {
+                     return 'Please enter a valid email address';
                    }
                  }
 
 
-                 //if(){}
+
 
                  return null;
                },
@@ -336,12 +320,12 @@ class _SignUpInterface extends State<SignUpInterface> {
 
 
                    suffixIcon:isPasswordVisibility==true? IconButton(
-    icon: Icon(Icons.visibility_off),
-    onPressed: (){
-    setState(() {
-    isPasswordVisibility=false;
-    });
-    }) :IconButton(
+                       icon: Icon(Icons.visibility_off),
+                       onPressed: (){
+                       setState(() {
+                         isPasswordVisibility=false;
+                       });
+                      }) :IconButton(
                        icon: Icon(Icons.visibility),
                     onPressed: (){
                          setState(() {
@@ -361,6 +345,15 @@ class _SignUpInterface extends State<SignUpInterface> {
              }
              if(value.length<8){
                return "Password should be at least 8 digit";
+             }
+             if (!RegExp(r'(?=.*[A-Z])').hasMatch(value)) {
+               return 'Password must contain at least one uppercase letter.';
+             }
+             if (!RegExp(r'(?=.*[a-z])').hasMatch(value)) {
+               return 'Password must contain at least one lowercase letter.';
+             }
+             if (!RegExp(r'(?=.*[0-9])').hasMatch(value)) {
+               return 'Password must contain at least one number.';
              }
              return null;
            },
@@ -419,20 +412,23 @@ the User Agreement and Privacy Policy
                borderRadius: BorderRadius.circular(30.0),
              ),
              child: ElevatedButton(
-                 onPressed: () {
+                 onPressed: ()async {
                    if(_formKey.currentState!.validate()){
                      debugPrint("Form is Valid");
 
-                   setState(()  {
-                     _createUser =
-                      apiService.PostApiUserSignUp(_firstNameController.text,_lastNameController.text,_emailController.text,_passwordController.text,selectedOptionCountry);
 
-                   });
-                     Navigator.of(context).push(MaterialPageRoute(
+                    var response= await apiService.PostApiUserSignUp(_firstNameController.text,_lastNameController.text,_emailController.text,_passwordController.text,selectedOptionCountry);
+
+                     if(response=="200")
+                    {
+                      String userEmail=_emailController.text;
+                      debugPrint("Email is"+_emailController.text);
+                      debugPrint(_emailController.toString());
+                      Navigator.of(context).push(MaterialPageRoute(
                          builder: (context) =>
-                         const ContractorsMain()));
+                         OwnerProfile(userEmail)));}
+                   }
 
-                 }
                    else {
                      setState(() {
                        _autoValidate=true;

@@ -28,7 +28,7 @@ class ApiService {
 
 
 
-  Future<OwnerSignUpModel> PostApiUserSignUp(String firstName,String lastName,String email,String password,String country) async {
+  Future<String> PostApiUserSignUp(String firstName,String lastName,String email,String password,String country) async {
     final response = await http.post(
       Uri.parse('http://localhost:3000/smart-builders/UserSignUp'),
       headers: <String, String>{
@@ -45,7 +45,7 @@ class ApiService {
 
     if (response.statusCode ==200) {
       debugPrint("APi is Working");
-      return OwnerSignUpModel.fromJson(jsonDecode(response.body));
+      return '200';
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -53,7 +53,7 @@ class ApiService {
     }
   }
 
-  Future<dynamic> createOwnerProfile( String firstName,String lastName,String country,String city,String zipPostalCode,
+  Future<String> createOwnerProfile( String firstName,String lastName,String country,String city,String zipPostalCode,
       String streetAddress,String phoneNo,String cnincNo,String ntnNo,PlatformFile coverFile,PlatformFile cnicFile) async {
     var request = http.MultipartRequest(
       'POST',
@@ -61,8 +61,8 @@ class ApiService {
     );
 
     // Add image file to request
-    print("Api cover file name : "+coverFile.name);
-    debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+  //  print("Api cover file name : "+coverFile.name);
+  //  debugPrint("Api cover bytes : "+coverFile.bytes.toString());
     var coverImageFileName=coverFile!.name;
     var coverImageBytes = coverFile!.bytes;
     var coverImage = http.MultipartFile.fromBytes(
@@ -97,12 +97,13 @@ class ApiService {
     if (response.statusCode == 200) {
       print('Data inserted Sucessfully !');
 
-      return response;
+      return '200';
     } else {
       print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
     }
   }
-   Future<dynamic> createOwnerProfileDefaultImage( String firstName,String lastName,String country,String city,String zipPostalCode,
+   Future<String> createOwnerProfileDefaultImage( String firstName,String lastName,String country,String city,String zipPostalCode,
        String streetAddress,String phoneNo,String cnincNo,String ntnNo,final ByteData data,PlatformFile cnicFile) async {
      var request = http.MultipartRequest(
        'POST',
@@ -111,8 +112,8 @@ class ApiService {
    //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
      defaultImageBytes = data.buffer.asUint8List();
      deFalultImageName = 'avatar.png';
-     print('Default Image name : $deFalultImageName');
-     print('Default Image bytes: $defaultImageBytes');
+  //   print('Default Image name : $deFalultImageName');
+   //  print('Default Image bytes: $defaultImageBytes');
 
      // Add image file to request
 
@@ -148,9 +149,10 @@ class ApiService {
      if (response.statusCode == 200) {
        print('Data inserted Sucessfully !');
 
-       return response;
+       return '200';
      } else {
        print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
      }
    }
   /*Future<void> loadAsset() async {

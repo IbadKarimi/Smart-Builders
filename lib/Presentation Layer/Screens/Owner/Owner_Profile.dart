@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
+import 'Owner_Preview_Profile.dart';
 import 'Owner_SignUp.dart';
 
 
@@ -21,7 +22,7 @@ PlatformFile? cnicFile;
 PlatformFile? coverFile;
 bool isVisibleNtnNoField=false;
 
-String _textValue = '';
+
 var _textFormFieldValue="";
 bool cnicError=false;
 Uint8List defaultImageBytes=Uint8List(8);
@@ -34,7 +35,8 @@ var responseApi;
 
 
 class OwnerProfile extends StatefulWidget {
-  const OwnerProfile({super.key});
+  final String email;
+  const OwnerProfile(this.email);
 
   @override
   State<OwnerProfile> createState() => _OwnerProfile();
@@ -46,6 +48,7 @@ class _OwnerProfile extends State<OwnerProfile> {
 
 
   Widget build(BuildContext context) {
+    var _email = widget.email;
 
 
     return Scaffold(
@@ -56,7 +59,7 @@ class _OwnerProfile extends State<OwnerProfile> {
                 child: Column(
                   children: <Widget>[
                     Boxes(),
-                    OwnerProfileInterface(),
+                    OwnerProfileInterface(_email),
                     Footer(),
                   ],
                 ))));
@@ -64,7 +67,8 @@ class _OwnerProfile extends State<OwnerProfile> {
 }
 
 class OwnerProfileInterface extends StatefulWidget {
-  const OwnerProfileInterface({super.key});
+  final String email;
+  const OwnerProfileInterface(this.email);
 
   @override
   State<OwnerProfileInterface> createState() => _OwnerProfileInterface();
@@ -88,6 +92,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   final _phoneNoController=TextEditingController();
   final _cnicNoController=TextEditingController();
   final _ntnNoController=TextEditingController();
+
   @override
 
 
@@ -111,6 +116,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   @override
   Widget build(BuildContext context) {
     // List of items in our dropdown menu
+    var email=widget.email;
 
 
     return  Form(
@@ -848,7 +854,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                 Padding(
                   padding:
                   const EdgeInsets.only(left:200),
-                  child:progressBarVisible==false?Container():CircularProgressIndicator()),
+                  child:progressBarVisible!=true?Container():CircularProgressIndicator()),
               Padding(
                     padding:
                         const EdgeInsets.only(bottom: 50, left: 190, top: 60),
@@ -865,17 +871,45 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                   cnicError=false;
                                 });
                               if(coverFile!=null){
-                              apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text, _cnicNoController.text, _ntnNoController.text, coverFile!, cnicFile!);
-                                 /*if(responseApi!=null){
+                              var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text, selectedOptionCountry , _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text, _cnicNoController.text, _ntnNoController.text, coverFile!, cnicFile!);
+                               if(response=='200'){
                                  setState(() {
-                                    progressBarVisible=false;
-                                    });
-                                     }*/
-                               }else{
+                                   progressBarVisible=false;
+                                   debugPrint("Workoing Perfectly");
+                                 });
+                                 Navigator.push(
+                                   context,
+                                   MaterialPageRoute(builder: (context) => OwnerPreviewProfile()),
+                                 );
+                               }
+                               else{
+                                 setState(() {
+                                   progressBarVisible=true;
+                                 });
+                               }
+
+
+                               }
+                              else{
                                 final ByteData data = await rootBundle.load('Logo/Avatar.png');
 
-                                apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
+                                var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
                                     _cnicNoController.text, _ntnNoController.text,data!, cnicFile!);
+                                if(response=='200'){
+                                  setState(() {
+                                    progressBarVisible=false;
+                                  });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => OwnerPreviewProfile()),
+                                  );
+
+                                }
+                                else{
+                                  setState(() {
+                                   progressBarVisible=true;
+                                  });
+                                }
 
                               }
                               }

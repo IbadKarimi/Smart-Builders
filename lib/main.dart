@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: const Scaffold(body:OwnerProfile()),
+      home: const Scaffold(body:OwnerSignUp()),
     );
   }
 }
