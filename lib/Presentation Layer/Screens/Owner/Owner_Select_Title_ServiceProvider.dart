@@ -188,7 +188,7 @@ class _AddTitleServiceProviderInterface
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      const OwnerViewProfile()));
+                                      OwnerViewProfile("")));
                             },
                             // ignore: sort_child_properties_last
                             child: const Text(

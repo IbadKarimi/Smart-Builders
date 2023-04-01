@@ -36,7 +36,7 @@ var responseApi;
 
 class OwnerProfile extends StatefulWidget {
   final String email;
-  const OwnerProfile(this.email);
+  OwnerProfile(this.email);
 
   @override
   State<OwnerProfile> createState() => _OwnerProfile();
@@ -48,6 +48,7 @@ class _OwnerProfile extends State<OwnerProfile> {
 
 
   Widget build(BuildContext context) {
+
     var _email = widget.email;
 
 
@@ -85,6 +86,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   final _OwnerProfileFormKey = GlobalKey<FormState>();
   final _firstNameController=TextEditingController();
   final _lastNameController=TextEditingController();
+  final _occupationController=TextEditingController();
   final _countryController=TextEditingController();
   final _cityController=TextEditingController();
   final _zipPostalCodeController=TextEditingController();
@@ -93,7 +95,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   final _cnicNoController=TextEditingController();
   final _ntnNoController=TextEditingController();
 
-  @override
+
 
 
   //------------------------------------------//
@@ -115,14 +117,21 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   bool checkbox = false;
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    int hour = now.hour;
+    int minute = now.minute;
+    TimeOfDay time = TimeOfDay(hour: hour, minute:minute);
+    String timeNow=time.format(context);
+    print(timeNow);
+
     // List of items in our dropdown menu
-    var email=widget.email;
+    String currentUserEmail=widget.email;
+    debugPrint("current user email :"+currentUserEmail);
 
 
     return  Form(
         autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
         key:_OwnerProfileFormKey,
-
         child:Container(
         margin: const EdgeInsets.only(top: 60, bottom: 40),
         width: 900,
@@ -373,7 +382,47 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                           ))),
                   const Padding(
                       padding:
-                          EdgeInsets.only(left:20,top:10),
+                      EdgeInsets.only(left:20,top:20),
+                      child: Text(
+                        "Occupation",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, left:20),
+                      child: SizedBox(
+                          width: 250,
+
+                          child: TextFormField(
+                            // autovalidateMode:AutovalidateMode.onUserInteraction,
+                            controller: _occupationController,
+                            decoration: InputDecoration(
+
+                              //not moving the content
+
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            validator: (value){
+                              if(value!.trim().isEmpty){
+                                return "Occupation is Required";
+                              }
+                              if (!RegExpLastName.hasMatch(value)) {
+                                return 'Please enter a valid occupation';
+                              }
+                              return null;
+                            },
+                          ))),
+                  const Padding(
+                      padding:
+                          EdgeInsets.only(left:20,top:20),
                       child: Text(
                         "Country",
                         style: TextStyle(
@@ -398,7 +447,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 children: <Widget>[
                                   const Padding(
                                       padding: EdgeInsets.only(
-                                          top: 60,  left:20),
+                                          top: 70,  left:20),
                                       child: Text(
                                         "City",
                                         style: TextStyle(
@@ -441,59 +490,56 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                               SizedBox(
                                 width: 30,
                               ),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 0, left: 0, bottom: 0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      const Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 60,
-                                              right: 80,
-                                             ),
-                                          child: Text(
-                                            "ZIP/Postal Code",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          )),
-                                      Container(
+                              Column(
+                                children: <Widget>[
+                                  const Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 70,
+                                          right: 80,
+                                         ),
+                                      child: Text(
+                                        "ZIP/Postal Code",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      )),
+                                  Container(
 
-                                          width: 180,
-                                            margin:EdgeInsets.only(top:10),
-                                          child:  TextFormField(
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.digitsOnly //I have set this so the input is only numbers/digits
-                                            ],
-                                            // autovalidateMode:AutovalidateMode.onUserInteraction,
-                                            controller: _zipPostalCodeController,
-                                            decoration: InputDecoration(
-                                                helperText: ' ',//not moving the content
-                                                isDense: true,
-                                                contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
+                                      width: 180,
+                                        margin:EdgeInsets.only(top:10),
+                                      child:  TextFormField(
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.digitsOnly //I have set this so the input is only numbers/digits
+                                        ],
+                                        // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                        controller: _zipPostalCodeController,
+                                        decoration: InputDecoration(
+                                            helperText: ' ',//not moving the content
+                                            isDense: true,
+                                            contentPadding: EdgeInsets.symmetric(vertical: 11.0,horizontal: 11),
 
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10.0),
-                                                )),
-                                            validator: (value){
-                                              if(value!.trim().isEmpty){
-                                                return "Zip Postal Code is Required";
-                                              }
-                                              if(value.length<5||value.length>5){
-                                                return "Zip code must be 5 digit";
-                                              }
-                                              return null;
-                                            },
-                                          )),
-                                    ],
-                                  )),
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                            )),
+                                        validator: (value){
+                                          if(value!.trim().isEmpty){
+                                            return "Zip Postal Code is Required";
+                                          }
+                                          if(value.length<5||value.length>5){
+                                            return "Zip code must be 5 digit";
+                                          }
+                                          return null;
+                                        },
+                                      )),
+                                ],
+                              ),
                             ],
                           )),
                       const Padding(
                           padding: EdgeInsets.only(
-                              top: 143,left:20,),
+                              top: 150,left:20,),
                           child: Text(
                             "Street Address",
                             style: TextStyle(
@@ -503,7 +549,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                             ),
                           )),
                       Padding(
-                          padding: EdgeInsets.only(top: 165, left:20),
+                          padding: EdgeInsets.only(top: 175, left:20),
                           child: SizedBox(
                               width: 400,
 
@@ -871,7 +917,10 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                   cnicError=false;
                                 });
                               if(coverFile!=null){
-                              var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text, selectedOptionCountry , _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text, _cnicNoController.text, _ntnNoController.text, coverFile!, cnicFile!);
+                              var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text,currentUserEmail, _occupationController.text,
+                                  selectedOptionCountry , _cityController.text, _zipPostalCodeController.text,
+                                  _streetAddressController.text, _phoneNoController.text, _cnicNoController.text,
+                                  _ntnNoController.text, coverFile!, cnicFile!,timeNow);
                                if(response=='200'){
                                  setState(() {
                                    progressBarVisible=false;
@@ -879,7 +928,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                  });
                                  Navigator.push(
                                    context,
-                                   MaterialPageRoute(builder: (context) => OwnerPreviewProfile()),
+                                   MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail)),
                                  );
                                }
                                else{
@@ -893,15 +942,15 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                               else{
                                 final ByteData data = await rootBundle.load('Logo/Avatar.png');
 
-                                var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text, _countryController.text, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
-                                    _cnicNoController.text, _ntnNoController.text,data!, cnicFile!);
+                                var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text,currentUserEmail,_occupationController.text, selectedOptionCountry, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
+                                    _cnicNoController.text, _ntnNoController.text,data!, cnicFile!,timeNow);
                                 if(response=='200'){
                                   setState(() {
                                     progressBarVisible=false;
                                   });
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => OwnerPreviewProfile()),
+                                    MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail)),
                                   );
 
                                 }

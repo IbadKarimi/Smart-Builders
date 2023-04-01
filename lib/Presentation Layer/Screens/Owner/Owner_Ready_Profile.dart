@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Preview_Profile.dart';
 
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
@@ -9,7 +10,8 @@ const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
 
 class OwnerNiceWork extends StatefulWidget {
-  const OwnerNiceWork({super.key});
+  String firstName,lastName,currentUserEmail;
+   OwnerNiceWork(this.firstName,this.lastName,this.currentUserEmail);
 
   @override
   State<OwnerNiceWork> createState() => _OwnerNiceWork();
@@ -18,6 +20,9 @@ class OwnerNiceWork extends StatefulWidget {
 class _OwnerNiceWork extends State<OwnerNiceWork> {
   @override
   Widget build(BuildContext context) {
+    String currentUserEmail=widget.currentUserEmail;
+    String firstName=widget.firstName;
+    String lastName=widget.lastName;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -26,9 +31,9 @@ class _OwnerNiceWork extends State<OwnerNiceWork> {
                 color: Colors.white,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
+                  children:  <Widget>[
                     Boxes(),
-                    OwnerNiceWorkInterface(),
+                    OwnerNiceWorkInterface(firstName,lastName,currentUserEmail),
                     Footer()
                   ],
                 ))));
@@ -36,8 +41,8 @@ class _OwnerNiceWork extends State<OwnerNiceWork> {
 }
 
 class OwnerNiceWorkInterface extends StatefulWidget {
-  const OwnerNiceWorkInterface({super.key});
-
+  String firstName,lastName,currentUserEmail;
+  OwnerNiceWorkInterface(this.firstName,this.lastName,this.currentUserEmail);
   @override
   State<OwnerNiceWorkInterface> createState() => _OwnerNiceWorkInterface();
 }
@@ -45,10 +50,13 @@ class OwnerNiceWorkInterface extends StatefulWidget {
 class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
   @override
   Widget build(BuildContext context) {
+    String currentUserEmail=widget.currentUserEmail;
     final screenWidth = MediaQuery.of(context).size.width;
+    String firstName=widget.firstName;
+    String lastName=widget.lastName;
     return Container(
-      width: 900,
-      height: 800,
+      width: 700,
+      height: 600,
       margin: const EdgeInsets.only(top: 80, bottom: 80),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -65,7 +73,7 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
               )),
           //text
           Wrap(
-            children: const [
+            children:  [
               Padding(
                   padding: EdgeInsets.only(left: 10, top: 30),
                   child: Text("Nice Work,",
@@ -77,7 +85,7 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
               Padding(
                   padding: EdgeInsets.only(left: 10, top: 30),
                   child: Text(
-                    "Muhammad",
+                    firstName.toString(),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -86,10 +94,10 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
                   )),
             ],
           ),
-          const Padding(
+          Padding(
               padding: EdgeInsets.only(left: 10),
               child: Text(
-                "Abdullah Gul!",
+                lastName.toString()+"!",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 18,
@@ -137,7 +145,7 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const OwnerViewProfile()));
+                            builder: (context) => OwnerViewProfile(currentUserEmail.toString())));
                       },
                       // ignore: sort_child_properties_last
                       child: Row(children: const <Widget>[

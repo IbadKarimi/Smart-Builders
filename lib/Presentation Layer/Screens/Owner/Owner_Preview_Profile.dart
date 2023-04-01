@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../BuisnessLogic Layer/Api.dart';
+import '../../../models/OwnerProfileModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Ready_Profile.dart';
@@ -8,20 +10,22 @@ import 'Owner_Ready_Profile.dart';
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
-Widget EditButton() {
-  return GestureDetector(
-      onTap: () {},
-      child: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("PreviewProfilePic/edit.png")))));
-}
+
+String? profession;
+String? firstName;
+String? lastName;
+String? city;
+String? email;
+String? phoneNo;
+String? timeNowCreated;
+String? country;
+String? profilePhoto;
+String? _currentUser;
+
 
 class OwnerPreviewProfile extends StatefulWidget {
-  const OwnerPreviewProfile({super.key});
-
+  OwnerPreviewProfile(this.currentUserEmail);
+  String currentUserEmail;
   @override
   State<OwnerPreviewProfile> createState() => _OwnerPreviewProfile();
 }
@@ -29,35 +33,78 @@ class OwnerPreviewProfile extends StatefulWidget {
 class _OwnerPreviewProfile extends State<OwnerPreviewProfile> {
   @override
   Widget build(BuildContext context) {
+    String _currentUserEmail=widget.currentUserEmail;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Boxes(),
-                    OwnerPreviewProfileInterface(),
-                    Footer()
-                  ],
-                ))));
+              color: Colors.white,
+                child:Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:  <Widget>[
+                Boxes(),
+                OwnerPreviewProfileInterface(_currentUserEmail),
+                Footer()
+              ],
+            ))));
   }
 }
 
 class OwnerPreviewProfileInterface extends StatefulWidget {
-  const OwnerPreviewProfileInterface({super.key});
+  String currentUserEmail;
+  OwnerPreviewProfileInterface(this.currentUserEmail);
 
   @override
   State<OwnerPreviewProfileInterface> createState() =>
       _OwnerPreviewProfileInterface();
 }
 
-class _OwnerPreviewProfileInterface
-    extends State<OwnerPreviewProfileInterface> {
+class _OwnerPreviewProfileInterface extends State<OwnerPreviewProfileInterface> {
+  ApiService apiService = new ApiService();
+  List<OwnerProfileModel> _getOwnerProfileData=[];
+
+  void initState() {
+    apiService.getOwnerProfile().then((value){
+      setState(() {
+        _getOwnerProfileData.addAll(value); //set data we get
+      });
+    });
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+
+    String _currentUserEmail=widget.currentUserEmail;
+    for(int index=0;index<_getOwnerProfileData.length;index++) {
+      if (_getOwnerProfileData[index].email==_currentUser
+      ) {
+        profession=_getOwnerProfileData[index].occupation.toString();
+        firstName=_getOwnerProfileData[index].firstName.toString();
+        lastName=_getOwnerProfileData[index].lastName.toString();
+        city=_getOwnerProfileData[index].city.toString();
+        email=_getOwnerProfileData[index].email.toString();
+        phoneNo=_getOwnerProfileData[index].phoneNo.toString();
+        timeNowCreated=_getOwnerProfileData[index].timeNow.toString();
+        country=_getOwnerProfileData[index].country.toString();
+        profilePhoto=_getOwnerProfileData[index].uploadPhoto.toString();
+        print("--------------------------------------------------------------");
+        print("First Name is :" + _getOwnerProfileData[index].firstName.toString());
+        print("Last Name is  :" + _getOwnerProfileData[index].lastName.toString());
+        print("Email is      :" + _getOwnerProfileData[index].email.toString());
+        print("Profession    :" + _getOwnerProfileData[index].occupation.toString());
+        print("Country       :" + _getOwnerProfileData[index].country.toString());
+        print("City          :" + _getOwnerProfileData[index].city.toString());
+        print("Street Address:" + _getOwnerProfileData[index].streetAddress.toString());
+        print("Phone no is   :" + _getOwnerProfileData[index].phoneNo.toString());
+        print("CNIC no is    :" + _getOwnerProfileData[index].cnicNo.toString());
+        print("Ntn  no is    :" + _getOwnerProfileData[index].ntnNo.toString());
+        print("Time Now      :" + _getOwnerProfileData[index].timeNow.toString());
+        print("--------------------------------------------------------------");
+
+      }
+    }
     //final screenWidth = MediaQuery.of(context).size.width;
     return Container(
         width: 900,
@@ -78,7 +125,7 @@ class _OwnerPreviewProfileInterface
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const OwnerNiceWork()));
+                            builder: (context) =>  OwnerNiceWork(firstName.toString(),lastName.toString(),_currentUserEmail.toString())));
                       },
                       // ignore: sort_child_properties_last
                       child: Row(children: const <Widget>[
@@ -87,7 +134,7 @@ class _OwnerPreviewProfileInterface
                             child: Text(
                               "Submit",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 12),
+                              TextStyle(color: Colors.white, fontSize: 12),
                             )),
                         Padding(
                             padding: EdgeInsets.only(left: 5),
@@ -122,7 +169,7 @@ class _SubmitProfileState extends State<SubmitProfile> {
           width: 800,
           height: 270,
           decoration:
-              BoxDecoration(border: Border.all(color: const Color(0xFF999999))),
+          BoxDecoration(border: Border.all(color: const Color(0xFF999999))),
           child: Column(
             children: <Widget>[
               Container(
@@ -154,63 +201,65 @@ class _SubmitProfileState extends State<SubmitProfile> {
   }
 
   Widget getWelcome() {
+
     return Container(
         child: Column(
-      children: <Widget>[
-        const Padding(
-            padding: EdgeInsets.only(top: 20, right: 270, bottom: 0),
-            child: Text(
-              "Looking good, Muhammad!",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            )),
-        const Padding(
-            padding: EdgeInsets.only(top: 40, left: 40, bottom: 0),
-            child: Text(
-              "Make any edits you want, then submit your profile. You can make more changes when its live",
-              style: TextStyle(
-                color: TextlightGrey,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            )),
-        //button
-        Padding(
-            padding: const EdgeInsets.only(top: 40, right: 350),
-            child: Container(
-                width: 130,
-                height: 40,
-                child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const OwnerNiceWork()));
-                    },
-                    // ignore: sort_child_properties_last
-                    child: Row(children: const <Widget>[
-                      Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Text(
-                            "Profile",
-                            style: TextStyle(
-                                color: Color(0xFFFF9900), fontSize: 12),
-                          )),
-                    ]),
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        backgroundColor: const Color(0xFF363B42))))),
-      ],
-    ));
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+             Padding(
+                padding: EdgeInsets.only(top: 20,  left: 40),
+                child: Text(
+                  "Looking Good !"+" " +firstName.toString(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )),
+            const Padding(
+                padding: EdgeInsets.only(top: 40, left: 40, bottom: 0),
+                child: Text(
+                  "Make any edits you want, then submit your profile. You can make more changes when its live",
+                  style: TextStyle(
+                    color: TextlightGrey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )),
+            //button
+            Padding(
+                padding: const EdgeInsets.only(top: 40, left: 40),
+                child: Container(
+                    width: 130,
+                    height: 40,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>  OwnerNiceWork(firstName.toString(),lastName.toString(),_currentUser.toString())));
+                        },
+                        // ignore: sort_child_properties_last
+                        child: Row(children: const <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(color: Colors.white, fontSize: 12),
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(left: 5),
+                              child: Text(
+                                "Profile",
+                                style: TextStyle(
+                                    color: Color(0xFFFF9900), fontSize: 12),
+                              )),
+                        ]),
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            backgroundColor: const Color(0xFF363B42))))),
+          ],
+        ));
   }
 
   Widget getWelcomeImage() {
@@ -235,10 +284,13 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    return Row(children: <Widget>[
-      getProfileData(),
-      getLocationLanguage(),
-    ]);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          getProfileData(),
+          getLocationLanguage(),
+        ]);
   }
 
   Widget getProfileData() {
@@ -246,44 +298,48 @@ class _ProfileState extends State<Profile> {
         width: 550,
         height: 300,
         margin: const EdgeInsets.only(top: 30, left: 50),
-        decoration: BoxDecoration(border: Border.all(color: strokeColor)),
-        child: Expanded(
-            child: Column(
+        decoration: BoxDecoration(
+            border: Border.all(color: strokeColor)),
+        child: Column(
           children: <Widget>[
             Row(children: <Widget>[
-              Container(
-                  width: 80,
-                  height: 80,
-                  margin: const EdgeInsets.only(top: 0, left: 50),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage(
-                              "TestomonialClientsImages/T-Clients.jpg")))),
+              Padding(
+                padding: const EdgeInsets.only(left:30),
+                child: CircleAvatar(
+                  radius: 40.0,
+                  backgroundImage:
+                  NetworkImage(profilePhoto.toString()),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
               Container(
                   height: 120,
                   margin: EdgeInsets.only(left: 20),
+
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     // ignore: prefer_const_literals_to_create_immutables
                     children: <Widget>[
-                      const Padding(
+                      Padding(
                           padding:
-                              EdgeInsets.only(top: 20, right: 90, bottom: 0),
+                          EdgeInsets.only(top: 35, left: 5),
                           child: Text(
-                            "Muhammad Abdullah Gul",
+                            firstName.toString()+" "+lastName.toString(),
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           )),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
                               width: 18,
                               height: 18,
-                              margin: const EdgeInsets.only(top: 5, right: 0),
+                              margin: const EdgeInsets.only(top: 8, right: 0),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(100),
                                   image: const DecorationImage(
@@ -291,22 +347,22 @@ class _ProfileState extends State<Profile> {
                                       fit: BoxFit.contain,
                                       image: AssetImage(
                                           "PreviewProfilePic/placeholder.png")))),
-                          const Padding(
-                              padding: EdgeInsets.only(right: 205, top: 5),
-                              child: Text("Lahore, PB",
+                          Padding(
+                              padding: EdgeInsets.only( top: 12,left:4),
+                              child: Text(city.toString()+", PB",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600))),
                         ],
                       ),
-                      const Padding(
-                          padding: EdgeInsets.only(right: 170, top: 5),
-                          child: Text("9:17 Pm Local Time",
+                     Padding(
+                          padding: EdgeInsets.only(left:10, top: 10),
+                          child: Text(timeNowCreated.toString()+" "+"Local Time",
                               style: TextStyle(
                                   color: TextlightGrey,
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w600))),
+                                  fontWeight: FontWeight.w500))),
 
                       //about
                     ],
@@ -349,13 +405,13 @@ class _ProfileState extends State<Profile> {
                   ],
                 )),
             Row(children: [
-              const Padding(
+               Padding(
                   padding: EdgeInsets.only(left: 50, top: 20, right: 80),
-                  child: Text("Contractor",
+                  child: Text(profession.toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 14,
-                          fontWeight: FontWeight.w600))),
+                          fontWeight: FontWeight.w500))),
               GestureDetector(
                   onTap: () {},
                   child: Container(
@@ -375,13 +431,38 @@ class _ProfileState extends State<Profile> {
             ]),
             //about
             Row(children: [
-              const Padding(
+               Padding(
                   padding: EdgeInsets.only(right: 20, top: 5, left: 50),
-                  child: Text("About",
+                  child: Text(email.toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 14,
-                          fontWeight: FontWeight.w700))),
+                          fontWeight: FontWeight.w500))),
+              GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: strokeColor, width: 1),
+                      ),
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 3, left: 3, right: 3, top: 3),
+                          child: Image.asset(
+                            "PreviewProfilePic/edit.png",
+                            width: 15,
+                            height: 15,
+                          )))),
+            ]),
+            Row(children: [
+              Padding(
+                  padding: EdgeInsets.only(right: 20, top: 5, left: 50),
+                  child: Text(phoneNo.toString(),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500))),
               GestureDetector(
                   onTap: () {},
                   child: Container(
@@ -400,22 +481,24 @@ class _ProfileState extends State<Profile> {
                           )))),
             ]),
           ],
-        )));
+        ));
   }
 
   Widget getLocationLanguage() {
     return Container(
         margin: const EdgeInsets.only(left: 0, bottom: 70),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               width: 200,
               height: 0.5,
               color: strokeColor,
-              margin: const EdgeInsets.only(left: 30, bottom: 20),
+              margin: const EdgeInsets.only(left: 30, bottom: 20,top:30),
             ),
             const Padding(
-                padding: EdgeInsets.only(right: 100, bottom: 0),
+                padding: EdgeInsets.only(left:30, bottom: 0),
                 child: Text(
                   "Location",
                   style: TextStyle(
@@ -423,19 +506,19 @@ class _ProfileState extends State<Profile> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600),
                 )),
-            const Padding(
-                padding: EdgeInsets.only(right: 102, top: 10),
+            Padding(
+                padding: EdgeInsets.only(left:30, top: 10),
                 child: Text(
-                  "Lahore, PB",
+                  city.toString()+", PB",
                   style: TextStyle(
                       color: TextlightGrey,
                       fontSize: 12,
                       fontWeight: FontWeight.w500),
                 )),
-            const Padding(
-                padding: EdgeInsets.only(right: 115, bottom: 30),
+           Padding(
+                padding: EdgeInsets.only(left:30, bottom: 30),
                 child: Text(
-                  "Pakistan",
+                  country.toString(),
                   style: TextStyle(
                       color: TextlightGrey,
                       fontSize: 12,
@@ -448,7 +531,7 @@ class _ProfileState extends State<Profile> {
               margin: const EdgeInsets.only(left: 30),
             ),
             const Padding(
-                padding: EdgeInsets.only(right: 90, top: 20),
+                padding: EdgeInsets.only(left: 30, top: 20),
                 child: Text(
                   "Language",
                   style: TextStyle(
@@ -457,7 +540,7 @@ class _ProfileState extends State<Profile> {
                       fontWeight: FontWeight.w600),
                 )),
             const Padding(
-                padding: EdgeInsets.only(right: 130, top: 10),
+                padding: EdgeInsets.only(left: 30, top: 10),
                 child: Text(
                   "Urdu",
                   style: TextStyle(
@@ -466,7 +549,7 @@ class _ProfileState extends State<Profile> {
                       fontWeight: FontWeight.w500),
                 )),
             const Padding(
-                padding: EdgeInsets.only(right: 85),
+                padding: EdgeInsets.only(left:30),
                 child: Text(
                   "English Basic ",
                   style: TextStyle(

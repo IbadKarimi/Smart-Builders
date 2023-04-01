@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Pofile_Info.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_login.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Preview_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
 
 import 'Presentation Layer/Screens/HomePage/ProjectProposals.dart';
+import 'Presentation Layer/Screens/Owner/Owner_Preview_Profile.dart';
 import 'Presentation Layer/Screens/Owner/Owner_SignUp.dart';
 
 //import 'mongodb.dart';
@@ -20,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: const Scaffold(body:OwnerSignUp()),
+      home:  Scaffold(body:OwnerViewProfile("ibadkarimi.90@gmail.com")),
     );
   }
 }

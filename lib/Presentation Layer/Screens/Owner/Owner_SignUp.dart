@@ -1,14 +1,10 @@
 
 import 'dart:async';
-import 'package:email_validator/email_validator.dart';
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Preview_Profile.dart';
-
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
-
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
@@ -64,12 +60,15 @@ class SignUpInterface extends StatefulWidget {
 class _SignUpInterface extends State<SignUpInterface> {
   ApiService apiService = new ApiService();
   List<OwnerSignUpModel> _userList=[];
+
   void initState() {
    apiService.getUserList().then((value){
       setState(() {
         _userList.addAll(value); //set data we get
       });
     });
+   // Output: 2:30 PM
+   //print('$hour:$minute');
     super.initState();
   }
 
@@ -81,12 +80,9 @@ class _SignUpInterface extends State<SignUpInterface> {
   final _emailController=TextEditingController();
   final _passwordController=TextEditingController();
   Future<OwnerSignUpModel>? _createUser;
-
   bool _autoValidate=false;
   bool isPasswordVisibility=false;
-
   //------------------------------------------------//
-
   bool isOpenCountry = false;
   String selectedOptionCountry = "Pakistan";
   List<String> optionsCountry = ["Pakistan", 'China', 'Srilanka', 'India'];
@@ -97,6 +93,7 @@ class _SignUpInterface extends State<SignUpInterface> {
   @override
 
   Widget build(BuildContext context) {
+
     for(int i=0;i<_userList.length;i++) {
 
       print(_userList[i].email);
@@ -421,12 +418,12 @@ the User Agreement and Privacy Policy
 
                      if(response=="200")
                     {
-                      String userEmail=_emailController.text;
+                      String currentEmail=_emailController.text;
                       debugPrint("Email is"+_emailController.text);
                       debugPrint(_emailController.toString());
                       Navigator.of(context).push(MaterialPageRoute(
                          builder: (context) =>
-                         OwnerProfile(userEmail)));}
+                         OwnerProfile(currentEmail)));}
                    }
 
                    else {

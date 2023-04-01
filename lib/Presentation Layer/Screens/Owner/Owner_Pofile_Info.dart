@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../BuisnessLogic Layer/Api.dart';
+import '../../../models/OwnerProfileModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_Profile_Ready.dart';
@@ -14,19 +16,20 @@ import 'Owner_Submitted_Proposals.dart';
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
-Widget EditButton() {
-  return GestureDetector(
-      onTap: () {},
-      child: Container(
-          width: 50,
-          height: 50,
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("PreviewProfilePic/edit.png")))));
-}
+
+String? profession;
+String? firstName;
+String? lastName;
+String? city;
+String? email;
+String? phoneNo;
+String? timeNowCreated;
+String? country;
+String? profilePhoto;
 
 class OwnerViewProfile extends StatefulWidget {
-  const OwnerViewProfile({super.key});
+  String currentUserEmail;
+ OwnerViewProfile(this.currentUserEmail);
 
   @override
   State<OwnerViewProfile> createState() => _OwnerViewProfile();
@@ -35,6 +38,7 @@ class OwnerViewProfile extends StatefulWidget {
 class _OwnerViewProfile extends State<OwnerViewProfile> {
   @override
   Widget build(BuildContext context) {
+    String currentUserEmail=widget.currentUserEmail;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -43,9 +47,9 @@ class _OwnerViewProfile extends State<OwnerViewProfile> {
                 color: Colors.white,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
+                  children:  <Widget>[
                     Boxes(),
-                    OwnerCoverProfile(),
+                    OwnerCoverProfile(currentUserEmail),
                     OwnerAddProposal(),
                     OwnerOffers(),
                     OwnerTrackContract(),
@@ -115,18 +119,59 @@ class _OwnerViewProfileInterface extends State<OwnerViewProfileInterface> {
 }
 
 class OwnerCoverProfile extends StatefulWidget {
-  const OwnerCoverProfile({super.key});
-
+  String currentUserEmail;
+  OwnerCoverProfile(this.currentUserEmail);
   @override
   State<OwnerCoverProfile> createState() => _OwnerCoverProfile();
 }
 
 class _OwnerCoverProfile extends State<OwnerCoverProfile> {
+  ApiService apiService = new ApiService();
+  List<OwnerProfileModel> _getOwnerProfileData=[];
+  void initState() {
+    apiService.getOwnerProfile().then((value){
+      setState(() {
+        _getOwnerProfileData.addAll(value); //set data we get
+      });
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    String _currentUserEmail=widget.currentUserEmail;
+    for(int index=0;index<_getOwnerProfileData.length;index++) {
+      if (_getOwnerProfileData[index].email==_currentUserEmail
+      ) {
+        profession=_getOwnerProfileData[index].occupation.toString();
+        firstName=_getOwnerProfileData[index].firstName.toString();
+        lastName=_getOwnerProfileData[index].lastName.toString();
+        city=_getOwnerProfileData[index].city.toString();
+        email=_getOwnerProfileData[index].email.toString();
+        phoneNo=_getOwnerProfileData[index].phoneNo.toString();
+        timeNowCreated=_getOwnerProfileData[index].timeNow.toString();
+        country=_getOwnerProfileData[index].country.toString();
+        profilePhoto=_getOwnerProfileData[index].uploadPhoto.toString();
+        print("--------------------------------------------------------------");
+        print("First Name is :" + _getOwnerProfileData[index].firstName.toString());
+        print("Last Name is  :" + _getOwnerProfileData[index].lastName.toString());
+        print("Email is      :" + _getOwnerProfileData[index].email.toString());
+        print("Profession    :" + _getOwnerProfileData[index].occupation.toString());
+        print("Country       :" + _getOwnerProfileData[index].country.toString());
+        print("City          :" + _getOwnerProfileData[index].city.toString());
+        print("Street Address:" + _getOwnerProfileData[index].streetAddress.toString());
+        print("Phone no is   :" + _getOwnerProfileData[index].phoneNo.toString());
+        print("CNIC no is    :" + _getOwnerProfileData[index].cnicNo.toString());
+        print("Ntn  no is    :" + _getOwnerProfileData[index].ntnNo.toString());
+        print("Time Now      :" + _getOwnerProfileData[index].timeNow.toString());
+        print("--------------------------------------------------------------");
+
+      }
+    }
     return Container(
         width: 900,
-        height: 450,
+        height: 500,
         margin: const EdgeInsets.only(top: 50, bottom: 0),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -167,16 +212,15 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                         width: 15,
                         height: 15,
                       )))),
-          Container(
-              width: 100,
-              height: 100,
-              margin: const EdgeInsets.only(top: 140, left: 50),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  image: const DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                          "TestomonialClientsImages/T-Clients.jpg")))),
+          Padding(
+            padding: const EdgeInsets.only(left:50,top:120),
+            child: CircleAvatar(
+              radius: 70.0,
+              backgroundImage:
+              NetworkImage(profilePhoto.toString(),),
+              backgroundColor: Colors.transparent,
+            ),
+          ),
           GestureDetector(
               onTap: () {
                 showDialog(
@@ -186,9 +230,9 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                     });
               },
               child: Container(
-                  width: 15,
-                  height: 15,
-                  margin: const EdgeInsets.only(top: 200, left: 140),
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.only(top: 210, left: 173),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(100),
@@ -206,9 +250,9 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Padding(
-                      padding: EdgeInsets.only(left: 50, top: 20, right: 80),
-                      child: Text("Ibad Karimi",
+                  Padding(
+                      padding: EdgeInsets.only(left: 50, top: 50, right: 80),
+                      child: Text(firstName.toString()+" "+lastName.toString(),
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -230,9 +274,9 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w400))),
-                  const Padding(
+                  Padding(
                       padding: EdgeInsets.only(top: 0, left: 50),
-                      child: Text("Lahore ,Punjab ,Pakistan",
+                      child: Text(city.toString()+"Pakistan",
                           style: TextStyle(
                               color: TextlightGrey,
                               fontSize: 14,
@@ -273,7 +317,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                 ],
               )),
           const Padding(
-              padding: EdgeInsets.only(top: 385, left: 50, bottom: 0),
+              padding: EdgeInsets.only(top: 400, left: 50, bottom: 0),
               child: Text(
                 "To build something requires vision and the willingness to adapt to what is already there.",
                 style: TextStyle(
