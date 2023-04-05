@@ -15,6 +15,7 @@ class OwnerProfileModel {
   late String? ntnNo;
   late String? uploadPhoto;
   late String? uploadCnicPhoto;
+  late String ?uploadCoverPhoto;
   late String ? timeNow;
   OwnerProfileModel({
     this.id,
@@ -31,6 +32,7 @@ class OwnerProfileModel {
     this.ntnNo,
     this.uploadPhoto,
     this.uploadCnicPhoto,
+    this.uploadCoverPhoto,
     this.timeNow,
   });
   OwnerProfileModel.fromJson(Map<String, dynamic> json) {
@@ -48,6 +50,7 @@ class OwnerProfileModel {
     ntnNo=json['ntnNo'];
     uploadPhoto=json['uploadPhoto'];
     uploadCnicPhoto=json['uploadCnicPhoto'];
+    uploadCoverPhoto=json['uploadCoverPhoto'];
     timeNow= json['timeNow'];
 
   }
@@ -68,6 +71,7 @@ class OwnerProfileModel {
     _data['ntnNo'] = ntnNo;
     _data['uploadPhoto'] = uploadPhoto;
     _data['uploadCnicPhoto'] = uploadCnicPhoto;
+    _data['uploadCoverPhoto'] = uploadCoverPhoto;
     _data['timeNow'] =timeNow;
     return _data;
   }

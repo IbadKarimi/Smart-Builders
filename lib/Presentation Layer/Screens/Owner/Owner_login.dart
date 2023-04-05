@@ -3,8 +3,11 @@ import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Forget_Password.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Pofile_Info.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_SignUp.dart';
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
@@ -77,8 +80,11 @@ class _LoginInterface extends State<LoginInterface> {
   Future<OwnerSignUpModel>? _createUser;
   bool _autoValidate=false;
   bool isPasswordVisibility=false;
+  String? _email;
+  String? _password;
   @override
   Widget build(BuildContext context) {
+
     for(int i=0;i<_getUserList.length;i++) {
       print(_getUserList[i].email);
     }
@@ -188,6 +194,16 @@ class _LoginInterface extends State<LoginInterface> {
                                       if (!emailRegex.hasMatch(value)) {
                                         return 'Please enter a valid email address';
                                       }
+                                    for(int i=0;i<_getUserList.length;i++) {
+                                      if (value!.trim() == _getUserList[i].email) {
+
+                                        _email=_getUserList[i].email.toString();
+
+                                      }
+                                    }
+                                    if(value!.trim()!=_email){
+                                      return "User name is Invalid";
+                                    }
 
                                     return null;
                                   },
@@ -242,6 +258,17 @@ class _LoginInterface extends State<LoginInterface> {
                                 if (!RegExp(r'(?=.*[0-9])').hasMatch(value)) {
                                   return 'Password must contain at least one number.';
                                 }
+
+                                for(int i=0;i<_getUserList.length;i++) {
+                                  if (value!.trim() == _getUserList[i].password) {
+
+                                    _password=_getUserList[i].password.toString();
+
+                                  }
+                                }
+                                if(value!.trim()!=_password){
+                                  return "Password is Invalid";
+                                }
                                 return null;
                               },
                             )),
@@ -258,6 +285,8 @@ class _LoginInterface extends State<LoginInterface> {
                                    debugPrint("Form is Valid");
                                    for(int i=0;i<_getUserList.length;i++) {
                                      if(_emailController.text==_getUserList[i].email&&_passwordController.text==_getUserList[i].password){
+                                       CurrentUser currentUserEmail=CurrentUser();
+                                       currentUserEmail.SetCurrentUserEmail(_emailController.text);
                                        Navigator.of(context).push(MaterialPageRoute(
                                            builder: (context) => OwnerViewProfile(_emailController.text)));
                                      }
@@ -307,7 +336,10 @@ class _LoginInterface extends State<LoginInterface> {
                           width: 5,
                         ),
                         GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => OwnerSignUp()));
+                            },
                             child: const Text("Sign Up ",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
@@ -317,16 +349,22 @@ class _LoginInterface extends State<LoginInterface> {
                       ],
                     )),
                 Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 220),
+                    padding: const EdgeInsets.only(top: 20, left: 225),
                     child: Row(
                       children: <Widget>[
-                        const Text(
-                          "Forget Your Password ?",
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400),
-                        ),
+                        GestureDetector(
+                          onTap:(){
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => OwnerForgetPassword()));
+    },
+                          child:Text(
+                            "Forget Your Password ?",
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ) ,
                         const SizedBox(
                           width: 5,
                         ),

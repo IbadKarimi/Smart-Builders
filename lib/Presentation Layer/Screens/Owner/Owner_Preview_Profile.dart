@@ -1,9 +1,14 @@
+import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../../../models/OwnerProfileModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
+
+import 'Owner_Profile.dart';
 import 'Owner_Ready_Profile.dart';
 
 
@@ -22,10 +27,16 @@ String? country;
 String? profilePhoto;
 String? _currentUser;
 
+String? _currentUserEmailAddress;
+
+String? _ownerId;
+PlatformFile? editprofilePhotoObject;
+
 
 class OwnerPreviewProfile extends StatefulWidget {
-  OwnerPreviewProfile(this.currentUserEmail);
   String currentUserEmail;
+  OwnerPreviewProfile(this.currentUserEmail);
+
   @override
   State<OwnerPreviewProfile> createState() => _OwnerPreviewProfile();
 }
@@ -33,7 +44,7 @@ class OwnerPreviewProfile extends StatefulWidget {
 class _OwnerPreviewProfile extends State<OwnerPreviewProfile> {
   @override
   Widget build(BuildContext context) {
-    String _currentUserEmail=widget.currentUserEmail;
+    _currentUserEmailAddress=widget.currentUserEmail;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -44,7 +55,7 @@ class _OwnerPreviewProfile extends State<OwnerPreviewProfile> {
               mainAxisAlignment: MainAxisAlignment.center,
               children:  <Widget>[
                 Boxes(),
-                OwnerPreviewProfileInterface(_currentUserEmail),
+                OwnerPreviewProfileInterface(),
                 Footer()
               ],
             ))));
@@ -52,8 +63,8 @@ class _OwnerPreviewProfile extends State<OwnerPreviewProfile> {
 }
 
 class OwnerPreviewProfileInterface extends StatefulWidget {
-  String currentUserEmail;
-  OwnerPreviewProfileInterface(this.currentUserEmail);
+
+  OwnerPreviewProfileInterface({super.key});
 
   @override
   State<OwnerPreviewProfileInterface> createState() =>
@@ -67,7 +78,38 @@ class _OwnerPreviewProfileInterface extends State<OwnerPreviewProfileInterface> 
   void initState() {
     apiService.getOwnerProfile().then((value){
       setState(() {
-        _getOwnerProfileData.addAll(value); //set data we get
+        _getOwnerProfileData.addAll(value);
+        for(int index=0;index<_getOwnerProfileData.length;index++) {
+          if (_getOwnerProfileData[index].email==_currentUserEmailAddress
+          ) {
+            _ownerId=_getOwnerProfileData[index].id.toString();
+            profession=_getOwnerProfileData[index].occupation.toString();
+            firstName=_getOwnerProfileData[index].firstName.toString();
+            lastName=_getOwnerProfileData[index].lastName.toString();
+            city=_getOwnerProfileData[index].city.toString();
+            email=_getOwnerProfileData[index].email.toString();
+            phoneNo=_getOwnerProfileData[index].phoneNo.toString();
+            timeNowCreated=_getOwnerProfileData[index].timeNow.toString();
+            country=_getOwnerProfileData[index].country.toString();
+            profilePhoto=_getOwnerProfileData[index].uploadPhoto.toString();
+
+            print("--------------------------------------------------------------");
+            print("_Id is :" +_ownerId.toString());
+            print("First Name is :" + _getOwnerProfileData[index].firstName.toString());
+            print("Last Name is  :" + _getOwnerProfileData[index].lastName.toString());
+            print("Email is      :" + _getOwnerProfileData[index].email.toString());
+            print("Profession    :" + _getOwnerProfileData[index].occupation.toString());
+            print("Country       :" + _getOwnerProfileData[index].country.toString());
+            print("City          :" + _getOwnerProfileData[index].city.toString());
+            print("Street Address:" + _getOwnerProfileData[index].streetAddress.toString());
+            print("Phone no is   :" + _getOwnerProfileData[index].phoneNo.toString());
+            print("CNIC no is    :" + _getOwnerProfileData[index].cnicNo.toString());
+            print("Ntn  no is    :" + _getOwnerProfileData[index].ntnNo.toString());
+            print("Time Now      :" + _getOwnerProfileData[index].timeNow.toString());
+            print("--------------------------------------------------------------");
+
+          }
+        }//set data we get
       });
     });
 
@@ -76,35 +118,8 @@ class _OwnerPreviewProfileInterface extends State<OwnerPreviewProfileInterface> 
   @override
   Widget build(BuildContext context) {
 
-    String _currentUserEmail=widget.currentUserEmail;
-    for(int index=0;index<_getOwnerProfileData.length;index++) {
-      if (_getOwnerProfileData[index].email==_currentUser
-      ) {
-        profession=_getOwnerProfileData[index].occupation.toString();
-        firstName=_getOwnerProfileData[index].firstName.toString();
-        lastName=_getOwnerProfileData[index].lastName.toString();
-        city=_getOwnerProfileData[index].city.toString();
-        email=_getOwnerProfileData[index].email.toString();
-        phoneNo=_getOwnerProfileData[index].phoneNo.toString();
-        timeNowCreated=_getOwnerProfileData[index].timeNow.toString();
-        country=_getOwnerProfileData[index].country.toString();
-        profilePhoto=_getOwnerProfileData[index].uploadPhoto.toString();
-        print("--------------------------------------------------------------");
-        print("First Name is :" + _getOwnerProfileData[index].firstName.toString());
-        print("Last Name is  :" + _getOwnerProfileData[index].lastName.toString());
-        print("Email is      :" + _getOwnerProfileData[index].email.toString());
-        print("Profession    :" + _getOwnerProfileData[index].occupation.toString());
-        print("Country       :" + _getOwnerProfileData[index].country.toString());
-        print("City          :" + _getOwnerProfileData[index].city.toString());
-        print("Street Address:" + _getOwnerProfileData[index].streetAddress.toString());
-        print("Phone no is   :" + _getOwnerProfileData[index].phoneNo.toString());
-        print("CNIC no is    :" + _getOwnerProfileData[index].cnicNo.toString());
-        print("Ntn  no is    :" + _getOwnerProfileData[index].ntnNo.toString());
-        print("Time Now      :" + _getOwnerProfileData[index].timeNow.toString());
-        print("--------------------------------------------------------------");
 
-      }
-    }
+
     //final screenWidth = MediaQuery.of(context).size.width;
     return Container(
         width: 900,
@@ -125,7 +140,7 @@ class _OwnerPreviewProfileInterface extends State<OwnerPreviewProfileInterface> 
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>  OwnerNiceWork(firstName.toString(),lastName.toString(),_currentUserEmail.toString())));
+                            builder: (context) =>  OwnerNiceWork(firstName.toString(),lastName.toString(),_currentUserEmailAddress.toString())));
                       },
                       // ignore: sort_child_properties_last
                       child: Row(children: const <Widget>[
@@ -304,12 +319,18 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             Row(children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left:30),
-                child: CircleAvatar(
-                  radius: 40.0,
-                  backgroundImage:
-                  NetworkImage(profilePhoto.toString()),
-                  backgroundColor: Colors.transparent,
+                padding: const EdgeInsets.only(left:20),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child:profilePhoto!=null? Image.network(
+                      profilePhoto.toString(),
+                      height: 110.0,
+                      width: 110.0,
+                      scale: 1,
+                      fit: BoxFit.cover,
+                    ):Container(width:120,height: 120,decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular((100),)),)
                 ),
               ),
               Container(
@@ -369,7 +390,15 @@ class _ProfileState extends State<Profile> {
                   )),
             ]),
             //column
-            Container(
+    GestureDetector(
+    onTap: () {
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+    return const uploadProfilePhotoAlertDialog();
+    });
+    },
+    child: Container(
                 width: 120,
                 height: 30,
                 margin: EdgeInsets.only(right: 340, top: 5),
@@ -379,7 +408,13 @@ class _ProfileState extends State<Profile> {
                 child: Row(
                   children: <Widget>[
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const uploadProfilePhotoAlertDialog();
+                              });
+                        },
                         child: Container(
                             margin: EdgeInsets.only(top: 0, left: 10),
                             decoration: BoxDecoration(
@@ -403,7 +438,7 @@ class _ProfileState extends State<Profile> {
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600))),
                   ],
-                )),
+                ))),
             Row(children: [
                Padding(
                   padding: EdgeInsets.only(left: 50, top: 20, right: 80),
@@ -559,5 +594,230 @@ class _ProfileState extends State<Profile> {
                 )),
           ],
         ));
+  }
+}
+class uploadProfilePhotoAlertDialog extends StatefulWidget {
+  const uploadProfilePhotoAlertDialog({super.key});
+
+  @override
+  State<uploadProfilePhotoAlertDialog> createState() => _uploadProfilePhotoAlertDialog();
+}
+
+class _uploadProfilePhotoAlertDialog extends State<uploadProfilePhotoAlertDialog> {
+  //get file and insert in api
+  var pickedProfilePhoto;
+  @override
+  Future getProfileImage()async{
+    final _picker = ImagePicker();
+    pickedProfilePhoto = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+
+    if (pickedProfilePhoto != null) {
+      setState(() {
+        editprofilePhotoObject= pickedProfilePhoto.files.first;
+
+      });
+    }}
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        content: Container(
+            width: 650,
+            height: 800,
+            child: Column(children: <Widget>[
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, right: 440, bottom: 0),
+                  child: Text(
+                    "Edit Your Profile Picture",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+              //place image edit
+              Padding(
+                padding: const EdgeInsets.only(top:40),
+                child: DottedBorder(
+                  color: Colors.black,
+                  dashPattern: [8, 4],
+                  strokeWidth: 0.5,
+                  child:Container(
+                    width:500,height: 250,
+                    child: pickedProfilePhoto!=null?Image.memory(pickedProfilePhoto.files.first.bytes,width: 500,height: 250,): IconButton(icon:Icon(Icons.add_photo_alternate_outlined,size: 50,),onPressed: () async {getProfileImage();},),),
+
+                ),
+              ),
+
+              Padding(
+                  padding: const EdgeInsets.only(top: 20, right: 460),
+                  child: Container(
+                      width: 140,
+                      height: 38,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            getProfileImage();
+                          },
+                          // ignore: sort_child_properties_last
+                          child: Row(children: const <Widget>[
+                            Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Center(
+                                    child: Text(
+                                      "Select Image",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ))),
+                          ]),
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              backgroundColor: Color(0xFFFFA62B))))),
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, right: 460, bottom: 0),
+                  child: Text(
+                    "Your Photo Should",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+              Container(
+                  margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
+                  child: Column(children: [
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(100)),
+                        ),
+                        const Padding(
+                            padding:
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            child: Text(
+                              "Be a close-up of your CNIC picture",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(100)),
+                        ),
+                        const Padding(
+                            padding:
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            child: Text(
+                              "Be clear and crisp",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
+                  ])),
+              Padding(
+                  padding: const EdgeInsets.only(top: 60, left: 50),
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 300),
+                          child: SizedBox(
+                              width: 140,
+                              height: 35,
+                              child: ElevatedButton(
+                                  onPressed: () async{
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFD9D9D9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                  )))),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 0),
+                          child: Container(
+                              width: 140,
+                              height: 40,
+                              child: ElevatedButton(
+                                  onPressed: () async{
+
+                                    if(editprofilePhotoObject!=null){
+
+                                      editprofilePhotoObject =  pickedProfilePhoto.files.first;
+                                      String response;
+                                      //   if(isEditMode!=true){
+                                      response=await apiService.UpdateProfilePhoto(_ownerId.toString(),editprofilePhotoObject!,);
+                                      print(_ownerId.toString());
+
+                                      // response=await apiService.UpdateCoverPhotoData(id.toString(),coverPhotoObject!, );
+                                      //  print("Update as Image");
+
+
+
+                                      if(response=="200"){
+                                        print("Scess fully response");
+                                        // Navigator.of(context).pop();
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerPreviewProfile(_currentUserEmailAddress.toString())));
+
+                                      }
+
+
+
+
+                                    }
+                                    else{
+                                      print("Image is No Picked");
+                                    }
+                                  },
+                                  // ignore: sort_child_properties_last
+                                  child: Row(children: const <Widget>[
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 40),
+                                        child: Center(
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ))),
+                                  ]),
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(30.0),
+                                      ),
+                                      backgroundColor:
+                                      const Color(0xFF363B42))))),
+                    ],
+                  )),
+            ])));
   }
 }

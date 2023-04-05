@@ -945,6 +945,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text,currentUserEmail,_occupationController.text, selectedOptionCountry, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
                                     _cnicNoController.text, _ntnNoController.text,data!, cnicFile!,timeNow);
                                 if(response=='200'){
+
                                   setState(() {
                                     progressBarVisible=false;
                                   });

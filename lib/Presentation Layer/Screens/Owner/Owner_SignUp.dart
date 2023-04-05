@@ -4,6 +4,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_login.dart';
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
@@ -202,7 +203,7 @@ class _SignUpInterface extends State<SignUpInterface> {
                    contentPadding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 11),
                    label: const Text("First Name",
                        style: TextStyle(fontSize: 14)),
-
+                  prefixIcon: Icon(Icons.person),
                    border: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(10.0),
                    )),
@@ -232,7 +233,7 @@ class _SignUpInterface extends State<SignUpInterface> {
                decoration: InputDecoration(
 
                    helperText: ' ',//not moving the content
-
+                   prefixIcon: Icon(Icons.person),
                    isDense: true,
                    contentPadding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 11),
                    label: const Text("Last Name",
@@ -268,6 +269,7 @@ class _SignUpInterface extends State<SignUpInterface> {
                decoration: InputDecoration(
                    helperText: ' ',
                    isDense: true,
+                   prefixIcon: Icon(Icons.email),
                    contentPadding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 11),
                    hintStyle:TextStyle(fontSize: 14) ,
                    hintText:'Work Email Address' ,
@@ -311,6 +313,7 @@ class _SignUpInterface extends State<SignUpInterface> {
            decoration: InputDecoration(
                helperText: ' ',
                isDense:true,
+               prefixIcon: Icon(Icons.security_sharp),
                contentPadding: EdgeInsets.symmetric(vertical: 11,horizontal: 11),
                label:
                Text("Password", style: TextStyle(fontSize: 14)),
@@ -570,7 +573,10 @@ the User Agreement and Privacy Policy
                       width: 5,
                     ),
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const OwnerLogin()));
+                        },
                         child: const Text("Login ",
                             style: TextStyle(
                               fontWeight: FontWeight.w400,

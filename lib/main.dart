@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/home_page.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Forget_Password.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Pofile_Info.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_login.dart';
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:OwnerViewProfile("ibadkarimi.90@gmail.com")),
+      home:  Scaffold(body:OwnerPreviewProfile("haris@gmail.com")),
     );
   }
 }

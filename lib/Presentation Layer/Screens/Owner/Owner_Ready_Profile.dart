@@ -79,8 +79,8 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
                   child: Text("Nice Work,",
                       style: TextStyle(
                         color: strokeColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ))),
               Padding(
                   padding: EdgeInsets.only(left: 10, top: 30),
@@ -88,8 +88,8 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
                     firstName.toString(),
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   )),
             ],
@@ -100,8 +100,8 @@ class _OwnerNiceWorkInterface extends State<OwnerNiceWorkInterface> {
                 lastName.toString()+"!",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               )),
           const Padding(

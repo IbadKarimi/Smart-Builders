@@ -54,7 +54,27 @@ class ApiService {
       throw Exception('Failed to USer Sign-Up. Api');
     }
   }
+   Future<String> updateUser(String id,String password) async {
+     final response = await http.put(
+       Uri.parse('http://localhost:3000/smart-builders/UserSignUp/$id'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         'password': password,
+       }),
+     );
 
+     if (response.statusCode == 200) {
+       // If the server did return a 200 OK response,
+       // then parse the JSON.
+       return "200";
+     } else {
+       // If the server did not return a 200 OK response,
+       // then throw an exception.
+       throw Exception('Failed to update album.');
+     }
+   }
   Future<String> createOwnerProfile( String firstName,String lastName,String currentUserEmail,String occupation,String country,String city,String zipPostalCode,
       String streetAddress,String phoneNo,String cnincNo,String ntnNo,PlatformFile coverFile,PlatformFile cnicFile,String timeNow) async {
     var request = http.MultipartRequest(
@@ -178,6 +198,105 @@ class ApiService {
      return getOwnerProfileDataList;
    }
 
+   Future<String> InsertCoverPhoto(PlatformFile coverFile,String email) async {
+     final request = http.MultipartRequest(
+       'POST',
+       Uri.parse('http://localhost:3000/smart-builders/OwnerProfileCoverPhoto'),
+     );
+     print("Api cover cnic name : "+coverFile.name);
+     var coverImageFileName=coverFile!.name;
+     var coverImageBytes = coverFile!.bytes;
+     var coverImage = http.MultipartFile.fromBytes(
+       'uploadCoverPhoto',
+       coverImageBytes!,
+       filename: coverImageFileName,
+     );
+     request.files.add(coverImage);
+     request.fields['email'] = email;
 
+     var response = await request.send();
 
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
+   Future<List<OwnerProfileModel>> getCoverPhotoData ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/OwnerProfileCoverPhoto'), headers: {'Cache-Control': 'no-cache'},);
+
+     List<OwnerProfileModel> getOwnerProfileDataList=[];
+    //the scope of the array is Inside the function
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+
+       var prJson=json.decode(response.body);
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         getOwnerProfileDataList.add(OwnerProfileModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Api is not Working !");}
+     return getOwnerProfileDataList;
+   }
+   //---------------------------Edit Cover Photo Data----------------------//
+
+   //------------------------------------------------------------------------//
+   Future<String> UpdateCoverPhotoData(String id,PlatformFile coverFile,) async {
+     var request = http.MultipartRequest(
+       'PUT',
+       Uri.parse('http://localhost:3000/smart-builders/CoverEmail/$id'),
+     );
+
+     // Add image file to request
+     print("Api cover file name : "+coverFile.name);
+    // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+     var coverImageFileName=coverFile!.name;
+     var coverImageBytes = coverFile!.bytes;
+     var coverImage = http.MultipartFile.fromBytes(
+       'uploadCoverPhoto',
+       coverImageBytes!,
+       filename: coverImageFileName,
+     );
+     request.files.add(coverImage);
+     var response = await request.send();
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
+
+   Future<String> UpdateProfilePhoto(String id,PlatformFile profileFile) async {
+     var request = http.MultipartRequest(
+       'PUT',
+       Uri.parse('http://localhost:3000/smart-builders/OwnerProfile/$id'),
+     );
+
+     // Add image file to request
+     print("Api cover profile name : "+profileFile.name);
+     // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+     var profileImageFileName=profileFile!.name;
+     var profileImageBytes = profileFile!.bytes;
+     var profileImage = http.MultipartFile.fromBytes(
+       'uploadPhoto',
+       profileImageBytes!,
+       filename: profileImageFileName,
+     );
+     request.files.add(profileImage);
+     var response = await request.send();
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
 }
