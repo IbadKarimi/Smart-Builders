@@ -9,6 +9,7 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/Pro
 
 import 'Presentation Layer/Screens/HomePage/ProjectProposals.dart';
 import 'Presentation Layer/Screens/Owner/Owner_Preview_Profile.dart';
+import 'Presentation Layer/Screens/Owner/Owner_Proposala_Service_Providers.dart';
 import 'Presentation Layer/Screens/Owner/Owner_SignUp.dart';
 
 //import 'mongodb.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:OwnerPreviewProfile("haris@gmail.com")),
+      home:  Scaffold(body:OwnerViewProfile("fawadkhalid@gmail.com")),
     );
   }
 }

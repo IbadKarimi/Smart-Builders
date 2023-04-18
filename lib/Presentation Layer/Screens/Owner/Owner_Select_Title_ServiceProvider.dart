@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 
 import '../HomePage/HiringProfessionals/Architect.dart';
 import '../HomePage/HiringProfessionals/CivilEngineer.dart';
@@ -8,17 +9,22 @@ import '../HomePage/HiringProfessionals/SubContractors.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Pofile_Info.dart';
-
-class AddTitleServiceProvider extends StatefulWidget {
-  const AddTitleServiceProvider({super.key});
+import 'Owner_Proposala_Service_Providers.dart';
+String? currentUserEmail;
+class SelectServiceProviderTitle extends StatefulWidget {
+  String email;
+  SelectServiceProviderTitle(this.email);
 
   @override
-  State<AddTitleServiceProvider> createState() => _AddTitleServiceProvider();
+  State<SelectServiceProviderTitle> createState() => _SelectServiceProviderTitle();
 }
 
-class _AddTitleServiceProvider extends State<AddTitleServiceProvider> {
+class _SelectServiceProviderTitle extends State<SelectServiceProviderTitle> {
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      currentUserEmail=widget.email;
+    });
     return Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -27,7 +33,7 @@ class _AddTitleServiceProvider extends State<AddTitleServiceProvider> {
               child: Column(
                 children: <Widget>[
                   Boxes(),
-                  AddTitleServiceProviderInterface(),
+                  SelectServiceProviderTitleInterface(),
                   Footer(),
                 ],
               ),
@@ -35,16 +41,15 @@ class _AddTitleServiceProvider extends State<AddTitleServiceProvider> {
   }
 }
 
-class AddTitleServiceProviderInterface extends StatefulWidget {
-  const AddTitleServiceProviderInterface({super.key});
+class SelectServiceProviderTitleInterface extends StatefulWidget {
+  const SelectServiceProviderTitleInterface({super.key});
 
   @override
-  State<AddTitleServiceProviderInterface> createState() =>
-      _AddTitleServiceProviderInterface();
+  State<SelectServiceProviderTitleInterface> createState() =>
+      _SelectServiceProviderTitleInterface();
 }
 
-class _AddTitleServiceProviderInterface
-    extends State<AddTitleServiceProviderInterface> {
+class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTitleInterface> {
   @override
   bool isOpen = false;
   String selectedOption = "Select Option";
@@ -71,7 +76,7 @@ class _AddTitleServiceProviderInterface
             const Padding(
                 padding: EdgeInsets.only(top: 40, right: 0),
                 child: Text(
-                  "Add a title to tell the people what you do",
+                  "Select a service provider which you want ",
                   style: TextStyle(
                     color: Color(0xFF3D424A),
                     fontSize: 20,
@@ -81,7 +86,7 @@ class _AddTitleServiceProviderInterface
             const Padding(
                 padding: EdgeInsets.only(top: 40, right: 0),
                 child: Text(
-                  "It is the very  first thing client see, so describe your experties",
+                  "It is your choice where you send the proposal",
                   style: TextStyle(
                     color: Color(0xFF3D424A),
                     fontSize: 16,
@@ -211,22 +216,22 @@ class _AddTitleServiceProviderInterface
                               if (selectedOption == "Contractor") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        const ContractorsMain()));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
                               }
                               if (selectedOption == "Subcontractor") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        const SubContractorsMain()));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
                               }
                               if (selectedOption == "Civil Engineer") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        const CivilEngineersMain()));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
                               }
                               if (selectedOption == "Architect") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        const ArchitectMain()));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
                               }
                             },
                             // ignore: sort_child_properties_last

@@ -17,6 +17,7 @@ class OwnerProfileModel {
   late String? uploadCnicPhoto;
   late String ?uploadCoverPhoto;
   late String ? timeNow;
+  late String ?about;
   OwnerProfileModel({
     this.id,
     this.firstName,
@@ -34,6 +35,7 @@ class OwnerProfileModel {
     this.uploadCnicPhoto,
     this.uploadCoverPhoto,
     this.timeNow,
+    this.about,
   });
   OwnerProfileModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
@@ -52,6 +54,7 @@ class OwnerProfileModel {
     uploadCnicPhoto=json['uploadCnicPhoto'];
     uploadCoverPhoto=json['uploadCoverPhoto'];
     timeNow= json['timeNow'];
+    about= json['ownerAbout'];
 
   }
 
@@ -73,6 +76,7 @@ class OwnerProfileModel {
     _data['uploadCnicPhoto'] = uploadCnicPhoto;
     _data['uploadCoverPhoto'] = uploadCoverPhoto;
     _data['timeNow'] =timeNow;
+    _data['ownerAbout'] =about;
     return _data;
   }
 }

@@ -11,6 +11,7 @@ import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Preview_Profile.dart';
 import 'Owner_SignUp.dart';
+import 'package:intl/intl.dart';
 
 
 ApiService apiService = new ApiService();
@@ -118,11 +119,13 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
+    DateTime currentDate = DateTime.now();
+    String _currentDateNow = DateFormat('dd-MM-yyy').format(currentDate);
     int hour = now.hour;
     int minute = now.minute;
     TimeOfDay time = TimeOfDay(hour: hour, minute:minute);
-    String timeNow=time.format(context);
-    print(timeNow);
+    String currentTimeNow=time.format(context);
+    print(currentTimeNow);
 
     // List of items in our dropdown menu
     String currentUserEmail=widget.email;
@@ -920,7 +923,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                               var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text,currentUserEmail, _occupationController.text,
                                   selectedOptionCountry , _cityController.text, _zipPostalCodeController.text,
                                   _streetAddressController.text, _phoneNoController.text, _cnicNoController.text,
-                                  _ntnNoController.text, coverFile!, cnicFile!,timeNow);
+                                  _ntnNoController.text, coverFile!, cnicFile!,currentTimeNow);
                                if(response=='200'){
                                  setState(() {
                                    progressBarVisible=false;
@@ -943,7 +946,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 final ByteData data = await rootBundle.load('Logo/Avatar.png');
 
                                 var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text,currentUserEmail,_occupationController.text, selectedOptionCountry, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
-                                    _cnicNoController.text, _ntnNoController.text,data!, cnicFile!,timeNow);
+                                    _cnicNoController.text, _ntnNoController.text,data!, cnicFile!,currentTimeNow);
                                 if(response=='200'){
 
                                   setState(() {

@@ -45,13 +45,14 @@ class _ProposalsArchitect extends State<ProposalsArchitect> {
                                   height: 35,
                                   child: ElevatedButton(
                                       onPressed: () {
-                                        Navigator.of(context).push(
+                                        /*  Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const AddTitleServiceProvider()));
-                                      },
-                                      // ignore: sort_child_properties_last
-                                      child: const Text(
+                                                   const AddTitleServiceProvider()));
+                                              //  const SelectServiceProviderTitle()));
+                                      },*/
+                                        // ignore: sort_child_properties_last
+                                      }, child: const Text(
                                         "Back",
                                         style: TextStyle(color: Colors.black),
                                       ),

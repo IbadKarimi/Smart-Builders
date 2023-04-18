@@ -7,6 +7,7 @@ import '../footer.dart';
 import '../header.dart';
 
 class ContractorsMain extends StatefulWidget {
+
   const ContractorsMain({super.key});
 
   @override
@@ -996,9 +997,9 @@ class _getAllContractorState extends State<getAllContractor> {
                                 height: 40,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      Navigator.of(context).push(MaterialPageRoute(
+                                    /*  Navigator.of(context).push(MaterialPageRoute(
                                           builder: (context) =>
-                                              const ProposalServiceProvider()));
+                                              const ProposalServiceProvider()));*/
                                     },
                                     // ignore: sort_child_properties_last
                                     child: Row(children: const <Widget>[

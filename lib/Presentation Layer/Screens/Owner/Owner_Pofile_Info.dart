@@ -6,6 +6,7 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Preview_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
+import '../../../models/OwnerAboutModel.dart';
 import '../../../models/OwnerProfileModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
@@ -33,6 +34,7 @@ String? profilePhoto;
 String ?currentUserEmail;
 String ?coverPhotoUrl;
 String ?id;
+String ?about;
 bool isEditMode=false;
 
 
@@ -79,18 +81,26 @@ class OwnerCoverProfile extends StatefulWidget {
 }
 
 class _OwnerCoverProfile extends State<OwnerCoverProfile> {
+
   ApiService apiService = new ApiService();
   CurrentUser currentUserEmailObject=CurrentUser();
   List<OwnerProfileModel> _getOwnerProfileData=[];
   List<OwnerProfileModel> _getOwnerCoverPhotoData=[];
+  List<OwnerAboutModel> _getOwnerAboutData=[];
+  Future<String> getOwnerAbout(String email)async{
+    var ownerAbout=await apiService.OwnerAboutFindByEmail(currentUserEmail.toString());
+    return ownerAbout;
+  }
 
   void initState() {
+   // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
     apiService.getOwnerProfile().then((value){
       setState(() {
         _getOwnerProfileData.addAll(value);
         for(int index=0;index<_getOwnerProfileData.length;index++) {
           if (_getOwnerProfileData[index].email==currentUserEmail
           ) {
+
             ownerId=_getOwnerProfileData[index].id.toString();
             profession=_getOwnerProfileData[index].occupation.toString();
             firstName=_getOwnerProfileData[index].firstName.toString();
@@ -104,6 +114,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
 
             print("--------------------------------------------------------------");
             print("Id is :" + _getOwnerProfileData[index].id.toString());
+          // print("About is :" + ownerAbout.toString());
             print("First Name is :" + _getOwnerProfileData[index].firstName.toString());
             print("Last Name is  :" + _getOwnerProfileData[index].lastName.toString());
             print("Email is      :" + _getOwnerProfileData[index].email.toString());
@@ -122,10 +133,22 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
         //set data we get
       });
     });
-    apiService.getCoverPhotoData().then((value){
+
+   apiService.getOwnerAbout().then((value){
+     _getOwnerAboutData.addAll(value);
+     for(int i=0;i<_getOwnerAboutData.length;i++){
+       if(currentUserEmail.toString()==_getOwnerAboutData[i].email){
+         setState(() {
+           about=   _getOwnerAboutData[i].about.toString();
+           print("About :"+about.toString());
+         });
+
+       }}
+   });
+     apiService.getCoverPhotoData().then((value){
       setState(() {
         _getOwnerCoverPhotoData.addAll(value);
-        Future.delayed(Duration(seconds: 2));
+
         for(int i=0;i<_getOwnerCoverPhotoData.length;i++){
           if( _getOwnerCoverPhotoData[i].email.toString()==currentUserEmail){
             id= _getOwnerCoverPhotoData[i].id.toString();
@@ -141,20 +164,15 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
 
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-
-  //  currentUserEmailObject.SetCurrentUserEmail("hadiFAzool");
-  //  String getEmail= currentUserEmailObject.getCurrentUserEmail();
-
-
-
-
     return Container(
         width: 900,
-        height: 600,
+
         margin: const EdgeInsets.only(top: 50, bottom: 0),
         decoration: BoxDecoration(
+
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
                 color: strokeColor)), // all the boxes are here like skill
@@ -166,7 +184,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
              coverPhotoUrl.toString(),
               height: 300.0,
               width: 900.0,
-              scale: 1,
+              scale: 2,
               fit: BoxFit.cover,
             ):Container(width:900,height: 300,decoration: BoxDecoration(
               color: Colors.grey,
@@ -196,12 +214,18 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                         height: 15,
                       )))),
           Padding(
-            padding: const EdgeInsets.only(left:50,top:220),
-            child: CircleAvatar(
-              radius: 70.0,
-              backgroundImage:
-              NetworkImage(profilePhoto.toString(),),
-              backgroundColor: Colors.transparent,
+            padding:  EdgeInsets.only(left:50,top:220),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child:coverPhotoUrl!=null? Image.network(
+                  profilePhoto.toString(),
+                  height: 140.0,
+                  width: 140.0,
+                  scale: 2,
+                  fit: BoxFit.cover,
+                ):Container(width:900,height: 300,decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular((10),)),)
             ),
           ),
           GestureDetector(
@@ -227,8 +251,8 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                           fit: BoxFit.cover,
                           image: AssetImage("Logo/plus.png"))))),
           Container(
-              height: 200,
-              width: 350,
+
+
               margin: EdgeInsets.only(left: 0, top: 340, right: 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +265,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                               fontSize: 16,
                               fontWeight: FontWeight.w700))),
                   const Padding(
-                      padding: EdgeInsets.only(left: 50),
+                      padding: EdgeInsets.only(left: 50,top:5),
                       child: Text("Owner",
                           style: TextStyle(
                               color: TextlightGrey,
@@ -256,17 +280,52 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
-                              fontWeight: FontWeight.w400))),
+                              fontWeight: FontWeight.w700))),
                   Padding(
-                      padding: EdgeInsets.only(top: 0, left: 50),
-                      child: Text(city.toString()+"Pakistan",
+                      padding: EdgeInsets.only(top: 5, left: 50),
+                      child: Text(city.toString()+" "+"Pakistan",
                           style: TextStyle(
                               color: TextlightGrey,
                               fontSize: 14,
                               fontWeight: FontWeight.w400))),
+                  const Padding(
+                      padding: EdgeInsets.only(
+                        left: 50,
+                        top: 10,
+                      ),
+                      child: Text("Contact",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700))),
+                  Padding(
+                      padding: EdgeInsets.only(left: 50,top:5),
+                      child: Text(phoneNo.toString(),
+                          style: TextStyle(
+                              color: TextlightGrey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400))),
+                  const Padding(
+                      padding: EdgeInsets.only(
+                        left: 50,
+                        top: 10,
+                      ),
+                      child: Text("Email Address",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700))),
+                   Padding(
+                      padding: EdgeInsets.only(left: 50,top:5),
+                      child: Text(email.toString(),
+                          style: TextStyle(
+                              color: TextlightGrey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400))),
+
                   Row(children: <Widget>[
                     const Padding(
-                        padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                        padding: EdgeInsets.only(top: 10, left: 50, bottom: 0),
                         child: Text(
                           "About",
                           style: TextStyle(
@@ -284,7 +343,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                               });
                         },
                         child: Container(
-                            margin: const EdgeInsets.only(top: 20, left: 20),
+                            margin: const EdgeInsets.only(top: 10, left: 20),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
                               border: Border.all(color: strokeColor, width: 1),
@@ -299,16 +358,14 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
                   ])
                 ],
               )),
-          const Padding(
-              padding: EdgeInsets.only(top: 510, left: 50, bottom: 0),
-              child: Text(
-                "To build something requires vision and the willingness to adapt to what is already there.",
-                style: TextStyle(
-                  color: TextlightGrey,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              )),
+          Padding(
+
+              padding: EdgeInsets.only(top: 614, left: 50, bottom: 30),
+              child:  Text(about.toString(),  style: TextStyle(
+                color: TextlightGrey,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),)),
         ]));
   }
 }
@@ -351,7 +408,7 @@ class _OwnerAddProposal extends State<OwnerAddProposal> {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AddTitleServiceProvider()));
+                        builder: (context) =>  SelectServiceProviderTitle(currentUserEmail.toString())));
                   },
                   // ignore: sort_child_properties_last
                   child: Row(
@@ -895,6 +952,8 @@ class OverViewDialog extends StatefulWidget {
 
 class _OverViewDialog extends State<OverViewDialog> {
   @override
+  final _OwnerAboutFormKey = GlobalKey<FormState>();
+  final _aboutController=TextEditingController();
   Widget build(BuildContext context) {
     return AlertDialog(
         shape: RoundedRectangleBorder(
@@ -902,198 +961,218 @@ class _OverViewDialog extends State<OverViewDialog> {
         content: Container(
             width: 650,
             height: 600,
-            child: Column(children: <Widget>[
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, right: 540, bottom: 0),
-                  child: Text(
-                    "Overview",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              //place image edit
+            child: Form(
+              key:_OwnerAboutFormKey,
+              child: Column(children: <Widget>[
+                const Padding(
+                    padding: EdgeInsets.only(top: 20, right: 540, bottom: 0),
+                    child: Text(
+                      "Overview",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                //place image edit
 
-              //column
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 0, bottom: 0),
-                  child: Text(
-                    "Use this space to show clients you have the skills and experience they're looking for.",
-                    style: TextStyle(
-                      color: TextlightGrey,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  )),
+                //column
+                const Padding(
+                    padding: EdgeInsets.only(top: 20, left: 0, bottom: 0),
+                    child: Text(
+                      "Use this space to show clients you have the skills and experience they're looking for.",
+                      style: TextStyle(
+                        color: TextlightGrey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    )),
 
-              Container(
-                  margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
-                  child: Column(children: [
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: Color(0xFFD9D9D9),
-                              borderRadius: BorderRadius.circular(100)),
-                        ),
-                        const Padding(
-                            padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
-                            child: Text(
-                              "Describe your strengths and skills",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                      ],
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFD9D9D9),
-                                  borderRadius: BorderRadius.circular(100)),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 0, bottom: 0),
-                                child: Text(
-                                  "Highlight projects, accomplishments and education",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFD9D9D9),
-                                  borderRadius: BorderRadius.circular(100)),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 0, bottom: 0),
-                                child: Text(
-                                  "Keep it short and make sure it's error-free",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                          ],
-                        )),
-                    const Padding(
-                        padding:
-                            EdgeInsets.only(top: 20, right: 550, bottom: 0),
-                        child: Text(
-                          "About",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                Container(
+                    margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
+                    child: Column(children: [
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                                color: Color(0xFFD9D9D9),
+                                borderRadius: BorderRadius.circular(100)),
                           ),
-                        )),
-                    //place image edit
-                    Container(
-                        height: 200,
-                        width: 600,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: strokeColor, width: 1)),
-                        margin:
-                            EdgeInsets.only(top: 20, right: 100, bottom: 10),
-                        child: ListView(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              new TextField(
-                                cursorColor: Colors.black,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
+                          const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                              child: Text(
+                                "Describe your strengths and skills",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              ),
-                            ])),
-                  ])),
-              Padding(
-                  padding: const EdgeInsets.only(top: 60, left: 10),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 320),
-                          child: SizedBox(
-                              width: 140,
-                              height: 35,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  // ignore: sort_child_properties_last
-                                  child: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFD9D9D9),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                  )))),
-                      SizedBox(
-                        width: 20,
+                              )),
+                        ],
                       ),
                       Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 0),
-                          child: Container(
-                              width: 140,
-                              height: 40,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesireBuilding()));
+                          padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                    color: Color(0xFFD9D9D9),
+                                    borderRadius: BorderRadius.circular(100)),
+                              ),
+                              const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, right: 0, bottom: 0),
+                                  child: Text(
+                                    "Highlight projects, accomplishments and education",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )),
+                            ],
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                    color: Color(0xFFD9D9D9),
+                                    borderRadius: BorderRadius.circular(100)),
+                              ),
+                              const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, right: 0, bottom: 0),
+                                  child: Text(
+                                    "Keep it short and make sure it's error-free",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )),
+                            ],
+                          )),
+                      const Padding(
+                          padding:
+                              EdgeInsets.only(top: 20, right: 550, bottom: 0),
+                          child: Text(
+                            "About",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )),
+                      //place image edit
+                      Container(
+                          height: 200,
+                          width: 600,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: strokeColor, width: 1)),
+                          margin:
+                              EdgeInsets.only(top: 20, right: 100, bottom: 10),
+                          child: ListView(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              children: <Widget>[
+                                new TextFormField(
+                                  controller:_aboutController,
+                                  cursorColor: Colors.black,
+                                  keyboardType: TextInputType.multiline,
+                                  maxLength: 200,
+                                  maxLines: 10,
+                                  decoration: InputDecoration(
+                                    helperText: "",
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+                                    border: InputBorder.none,
+                                  ),
+                                  validator: (value){
+                                    if(value!.trim().length>200){
+                                      return "Length should be at least 200 lines ";
+                                    }
+
                                   },
-                                  // ignore: sort_child_properties_last
-                                  child: Row(children: const <Widget>[
-                                    Padding(
-                                        padding: EdgeInsets.only(left: 40),
-                                        child: Center(
-                                            child: Text(
-                                          "Save",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ))),
-                                  ]),
-                                  style: ElevatedButton.styleFrom(
+                                ),
+                              ])),
+                    ])),
+                Padding(
+                    padding: const EdgeInsets.only(top: 60, left: 10),
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.only(top: 20, left: 320),
+                            child: SizedBox(
+                                width: 140,
+                                height: 35,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    // ignore: sort_child_properties_last
+                                    child: const Text(
+                                      "Cancel",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFD9D9D9),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
+                                        borderRadius: BorderRadius.circular(30.0),
                                       ),
-                                      backgroundColor:
-                                          const Color(0xFF363B42))))),
-                    ],
-                  )),
-            ])));
+                                    )))),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 20, left: 0),
+                            child: Container(
+                                width: 140,
+                                height: 40,
+                                child: ElevatedButton(
+                                    onPressed: () async{
+                                      if(_OwnerAboutFormKey.currentState!.validate()){
+                                   var response=await apiService.InsertOwnerAbout(currentUserEmail.toString(),_aboutController.text);
+                                       if(response=="200"){
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      OwnerViewProfile(currentUserEmail.toString())));
+                                        }
+                                      }
+                                     },
+                                    // ignore: sort_child_properties_last
+                                    child: Row(children: const <Widget>[
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 40),
+                                          child: Center(
+                                              child: Text(
+                                            "Save",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ))),
+                                    ]),
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        backgroundColor:
+                                            const Color(0xFF363B42))))),
+                      ],
+                    )),
+              ]),
+            )
+        ));
   }
 }
 
@@ -1549,7 +1628,7 @@ class _uploadCoverPhotoAlertDialog extends State<uploadCoverPhotoAlertDialog> {
 
                                       });
 
-                                      
+
 
                                     }
                                     else{
@@ -1771,7 +1850,7 @@ class _uploadProfilePhotoAlertDialog extends State<uploadProfilePhotoAlertDialog
                                         if(response=="200"){
                                           print("Scess fully response");
                                           // Navigator.of(context).pop();
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail.toString())));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerViewProfile(currentUserEmail.toString())));
 
                                         }
 
