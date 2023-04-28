@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Forget_Password.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Pofile_Info.dart';
@@ -25,14 +26,14 @@ final RegExp RegExpLastName = RegExp(r'^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$');
 final  emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
 
-class OwnerLogin extends StatefulWidget {
-  const OwnerLogin({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<OwnerLogin> createState() => _OwnerLogin();
+  State<Login> createState() => _Login();
 }
 
-class _OwnerLogin extends State<OwnerLogin> {
+class _Login extends State<Login> {
   @override
 
   Widget build(BuildContext context) {
@@ -338,7 +339,7 @@ class _LoginInterface extends State<LoginInterface> {
                         GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => OwnerSignUp()));
+                                  builder: (context) => JoinOwnerPro()));
                             },
                             child: const Text("Sign Up ",
                                 style: TextStyle(

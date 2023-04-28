@@ -22,9 +22,10 @@ final RegExp RegExpFirstName = RegExp(r'^[a-zA-Z]+$');
 final RegExp RegExpLastName = RegExp(r'^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$');
 final  emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-
+String? _role;
 class OwnerSignUp extends StatefulWidget {
-  const OwnerSignUp({super.key});
+  String role;
+  OwnerSignUp(this.role);
 
   @override
   State<OwnerSignUp> createState() => _OwnerSignUp();
@@ -34,6 +35,8 @@ class _OwnerSignUp extends State<OwnerSignUp> {
   @override
 
   Widget build(BuildContext context) {
+
+    _role=widget.role;
 
     final double ScreenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -417,7 +420,7 @@ the User Agreement and Privacy Policy
                      debugPrint("Form is Valid");
 
 
-                    var response= await apiService.PostApiUserSignUp(_firstNameController.text,_lastNameController.text,_emailController.text,_passwordController.text,selectedOptionCountry);
+                    var response= await apiService.PostApiUserSignUp(_firstNameController.text,_lastNameController.text,_emailController.text,_passwordController.text,_role.toString());
 
                      if(response=="200")
                     {
@@ -575,7 +578,7 @@ the User Agreement and Privacy Policy
                     GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const OwnerLogin()));
+                              builder: (context) => const Login()));
                         },
                         child: const Text("Login ",
                             style: TextStyle(
@@ -600,8 +603,9 @@ the User Agreement and Privacy Policy
                       width: 5,
                     ),
                     GestureDetector(
-                        onTap: () {},
-                        child: const Text("join as owner ",
+                        onTap: () {   Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>  OwnerSignUp("owner")));},
+                        child: const Text("join as professional ",
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: const Color(0xFFffa62b),

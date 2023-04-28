@@ -141,7 +141,7 @@ you can adjust your rate  every time you submit a proposal.
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      const ContractorProfile()));
+                                    ProfessionalsProfile("","")));
                             },
                             // ignore: sort_child_properties_last
                             child: Row(children: const <Widget>[

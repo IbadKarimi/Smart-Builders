@@ -6,7 +6,7 @@ class OwnerSignUpModel {
   late String? lastName;
   late String? email;
   late String? password;
-  late String? country;
+  late String? role;
 
 
   OwnerSignUpModel({
@@ -15,7 +15,7 @@ class OwnerSignUpModel {
     this.lastName,
     this.email,
     this.password,
-    this.country,
+    this.role,
   });
 
   OwnerSignUpModel.fromJson(Map<String, dynamic> json) {
@@ -24,7 +24,7 @@ class OwnerSignUpModel {
     lastName = json['lastName'];
     email = json['email'];
     password = json['password'];
-    country=json['country'];
+    role=json['role'];
   }
 
   Map<String, dynamic> toJson() {
@@ -34,7 +34,7 @@ class OwnerSignUpModel {
     _data['lastName'] =lastName;
     _data['email'] = email;
     _data['password'] = password;
-    _data['country'] = password;
+    _data['role'] = role;
     return _data;
   }
 }

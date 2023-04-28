@@ -31,7 +31,7 @@ class ApiService {
 
 
 
-  Future<String> PostApiUserSignUp(String firstName,String lastName,String email,String password,String country) async {
+  Future<String> PostApiUserSignUp(String firstName,String lastName,String email,String password,String role) async {
     final response = await http.post(
       Uri.parse('http://localhost:3000/smart-builders/UserSignUp'),
       headers: <String, String>{
@@ -42,7 +42,7 @@ class ApiService {
         "lastName": lastName.toString(),
         "email": email.toString(),
         "password": password.toString(),
-        "country": country.toString(),
+        "role":role.toString(),
       }),
     );
 

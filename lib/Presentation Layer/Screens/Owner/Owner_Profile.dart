@@ -24,7 +24,7 @@ PlatformFile? coverFile;
 bool isVisibleNtnNoField=false;
 
 
-var _textFormFieldValue="";
+
 bool cnicError=false;
 Uint8List defaultImageBytes=Uint8List(8);
 late final String deFalultImageName;
@@ -51,8 +51,6 @@ class _OwnerProfile extends State<OwnerProfile> {
   Widget build(BuildContext context) {
 
     var _email = widget.email;
-
-
     return Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -95,6 +93,8 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   final _phoneNoController=TextEditingController();
   final _cnicNoController=TextEditingController();
   final _ntnNoController=TextEditingController();
+
+  String _textFormFieldValue="";
 
 
 
@@ -816,6 +816,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                 )),
                             onChanged: (String newValue) {
                               setState(() {
+
                                 _textFormFieldValue  = newValue;
                               });
                             },
@@ -886,7 +887,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                         child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const OwnerSignUp()));
+                                  builder: (context) => OwnerSignUp("")));
                             },
                             // ignore: sort_child_properties_last
                             child: const Text(
@@ -927,7 +928,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                if(response=='200'){
                                  setState(() {
                                    progressBarVisible=false;
-                                   debugPrint("Workoing Perfectly");
+                                   debugPrint("Working Perfectly");
                                  });
                                  Navigator.push(
                                    context,

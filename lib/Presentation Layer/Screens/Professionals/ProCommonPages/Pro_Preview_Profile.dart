@@ -22,14 +22,14 @@ Widget EditButton() {
                   image: AssetImage("PreviewProfilePic/edit.png")))));
 }
 
-class PreviewProfile extends StatefulWidget {
-  const PreviewProfile({super.key});
+class ProfessionalsPreviewProfile extends StatefulWidget {
+  const ProfessionalsPreviewProfile({super.key});
 
   @override
-  State<PreviewProfile> createState() => _PreviewProfile();
+  State<ProfessionalsPreviewProfile> createState() => _ProfessionalsPreviewProfile();
 }
 
-class _PreviewProfile extends State<PreviewProfile> {
+class _ProfessionalsPreviewProfile extends State<ProfessionalsPreviewProfile> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -42,21 +42,21 @@ class _PreviewProfile extends State<PreviewProfile> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const <Widget>[
                     Boxes(),
-                    PreviewProfileInterface(),
+                    ProfessionalsPreviewProfileInterface(),
                     Footer()
                   ],
                 ))));
   }
 }
 
-class PreviewProfileInterface extends StatefulWidget {
-  const PreviewProfileInterface({super.key});
+class ProfessionalsPreviewProfileInterface extends StatefulWidget {
+  const ProfessionalsPreviewProfileInterface({super.key});
 
   @override
-  State<PreviewProfileInterface> createState() => _PreviewProfileInterface();
+  State<ProfessionalsPreviewProfileInterface> createState() => _ProfessionalsPreviewProfileInterface();
 }
 
-class _PreviewProfileInterface extends State<PreviewProfileInterface> {
+class _ProfessionalsPreviewProfileInterface extends State<ProfessionalsPreviewProfileInterface> {
   @override
   Widget build(BuildContext context) {
     //final screenWidth = MediaQuery.of(context).size.width;

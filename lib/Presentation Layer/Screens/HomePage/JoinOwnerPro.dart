@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
 
 import '../Owner/Owner_SignUp.dart';
+import '../Owner/Owner_login.dart';
 import '../Professionals/ProCommonPages/Pro_Add_Title.dart';
 import '../Professionals/ProCommonPages/Pro_Sign_Up.dart';
 import 'footer.dart';
 import 'header.dart';
 
-
+String? role;
 class JoinOwnerPro extends StatefulWidget {
   const JoinOwnerPro({super.key});
 
@@ -67,8 +68,9 @@ class _JoinOwnerProInterface extends State<JoinOwnerProInterface> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const OwnerSignUp()));
+                    setState(() {
+                      role="owner";
+                    });
                   },
                   child: HoverContainer(
                       margin: const EdgeInsets.only(top: 100, left: 140),
@@ -152,8 +154,10 @@ class _JoinOwnerProInterface extends State<JoinOwnerProInterface> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AddTitle()));
+
+                    setState(() {
+                      role="professionals";
+                    });
                   },
                   child: HoverContainer(
                       margin: const EdgeInsets.only(top: 100, left: 40),
@@ -236,8 +240,15 @@ class _JoinOwnerProInterface extends State<JoinOwnerProInterface> {
                     height: 35,
                     child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const SignUp()));
+                          if(role=="owner"){
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>  OwnerSignUp("owner")));
+                          }
+                          if(role=="professionals"){
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>  ProSignUp("professionals")));
+                          }
+
                         },
                         // ignore: sort_child_properties_last
                         child: const Text(
@@ -262,7 +273,10 @@ class _JoinOwnerProInterface extends State<JoinOwnerProInterface> {
                       width: 5,
                     ),
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>  Login()));
+                        },
                         child: const Text("Login ",
                             style: TextStyle(
                               fontWeight: FontWeight.w400,

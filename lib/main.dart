@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/home_page.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Forget_Password.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Pofile_Info.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_login.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Preview_Profile.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
+import 'dart:html';
+import 'dart:typed_data';
 
-import 'Presentation Layer/Screens/HomePage/ProjectProposals.dart';
-import 'Presentation Layer/Screens/Owner/Owner_Preview_Profile.dart';
-import 'Presentation Layer/Screens/Owner/Owner_Proposala_Service_Providers.dart';
-import 'Presentation Layer/Screens/Owner/Owner_SignUp.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Personal_Info.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
 //import 'mongodb.dart';
 
@@ -27,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:OwnerViewProfile("fawadkhalid@gmail.com")),
+      home:  Scaffold(body:ProSignUp("")),
     );
   }
 }
