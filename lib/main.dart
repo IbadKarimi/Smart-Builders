@@ -5,7 +5,10 @@ import 'dart:typed_data';
 
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Personal_Info.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
+
+import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
 
 //import 'mongodb.dart';
 
@@ -22,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:ProSignUp("")),
+      home:  Scaffold(body:ProViewProfile("ibadkarimi.10@gmail.com")),
     );
   }
 }

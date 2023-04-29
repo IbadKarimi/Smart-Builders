@@ -10,6 +10,8 @@ import '../models/OwnerAboutModel.dart';
 import '../models/OwnerSignUpModel.dart';
 import 'package:http/http.dart'as http;
 
+import '../models/ProfessionalsProfileModel.dart';
+
 class ApiService {
    Uint8List defaultImageBytes=Uint8List(8);
    String ?deFalultImageName;
@@ -300,15 +302,16 @@ class ApiService {
        return '100';
      }
    }
-   Future<String> InsertOwnerAbout(String email,String about) async {
+   Future<String> InsertAbout(String email,String about) async {
      final response = await http.post(
+
        Uri.parse('http://localhost:3000/smart-builders/OwnerProfileAbout'),
        headers: <String, String>{
          'Content-Type': 'application/json; charset=UTF-8',
        },
        body: jsonEncode(<String, String>{
-         "ownerEmail": email.toString(),
-         "ownerAbout": about.toString(),
+         "email": email.toString(),
+         "about": about.toString(),
        }),
      );
 
@@ -338,7 +341,7 @@ class ApiService {
        debugPrint("Api is not Working !");}
 
    }
-   Future<List<OwnerAboutModel>> getOwnerAbout ()async{ //create function in list type becoze we get data and set in _product array
+   Future<List<OwnerAboutModel>> getAbout ()async{ //create function in list type becoze we get data and set in _product array
      var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/OwnerProfileAbout'));
      List<OwnerAboutModel> ownerAbout=[]; //the scope of the array is Inside the function
      if(response.statusCode==200) {
@@ -349,7 +352,7 @@ class ApiService {
        for(var jsonData in jsonArrayData){
          ownerAbout.add(OwnerAboutModel.fromJson(jsonData));//set json data in productlist
        }}
-     else{ debugPrint("Api is not Working !");}
+     else{ debugPrint("Api is not Working of About !");}
      return ownerAbout;
    }
 
@@ -474,6 +477,180 @@ class ApiService {
 // then throw an exception.
        throw Exception('Failed to Owner About. Api');
      }
+   }
+
+   Future<String> createProfessionalsProfile(String title, String firstName,String lastName,String currentUserEmail,String companyName,String country,String city,String zipPostalCode,
+       String streetAddress,String phoneNo,String cnincNo,String ntnNo,String licenseNo,String permitNo,PlatformFile profileFile,PlatformFile cnicFile,String timeNow) async {
+     var request = http.MultipartRequest(
+       'POST',
+       Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile'),
+     );
+
+     // Add image file to request
+     //  print("Api cover file name : "+coverFile.name);
+     //  debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+     var profileImageFileName=profileFile!.name;
+     var profileImageBytes = profileFile!.bytes;
+     var profileImage = http.MultipartFile.fromBytes(
+       'uploadPhoto',
+       profileImageBytes!,
+       filename: profileImageFileName,
+     );
+     request.files.add(profileImage);
+
+     print("Api cover cnic name : "+cnicFile.name);
+     var cnicImageFileName=cnicFile!.name;
+     var cnicImageBytes = cnicFile!.bytes;
+     var cnicImage = http.MultipartFile.fromBytes(
+       'uploadCnicPhoto',
+       cnicImageBytes!,
+       filename: cnicImageFileName,
+     );
+     request.files.add(cnicImage);
+
+     // Add other form data (if any)'
+     request.fields['title'] = title;
+     request.fields['firstName'] = firstName;
+     request.fields['lastName'] = lastName;
+     request.fields['email'] = currentUserEmail;
+     request.fields['companyName'] = companyName;
+     request.fields['country']=country;
+     request.fields['city']=city;
+     request.fields['zipPostalCode']=zipPostalCode;
+     request.fields['streetAddress']=streetAddress;
+     request.fields['phoneNo']=phoneNo;
+     request.fields['cnicNo']=cnincNo;
+     request.fields['ntnNo']=ntnNo;
+     request.fields['permitNo']=permitNo;
+     request.fields['licenseNo']=licenseNo;
+     request.fields['timeNow']=timeNow;
+
+     var response = await request.send();
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
+   Future<String> createProfessionalsProfileDefaultImage(String title, String firstName,String lastName,String currentUserEmail,String companyName,String country,String city,String zipPostalCode,
+       String streetAddress,String phoneNo,String cnincNo,String ntnNo,String licenseNo,String permitNo,final ByteData data,PlatformFile cnicFile,String timeNow) async {
+     var request = http.MultipartRequest(
+       'POST',
+       Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile'),
+     );
+     //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
+     defaultImageBytes = data.buffer.asUint8List();
+     deFalultImageName = 'avatar.png';
+     //   print('Default Image name : $deFalultImageName');
+     //  print('Default Image bytes: $defaultImageBytes');
+
+     // Add image file to request
+
+     var coverImage = http.MultipartFile.fromBytes(
+       'uploadPhoto',
+       defaultImageBytes !,
+       filename: deFalultImageName,
+     );
+     request.files.add(coverImage);
+
+     print("Api cover cnic name : "+cnicFile.name);
+     var cnicImageFileName=cnicFile!.name;
+     var cnicImageBytes = cnicFile!.bytes;
+     var cnicImage = http.MultipartFile.fromBytes(
+       'uploadCnicPhoto',
+       cnicImageBytes!,
+       filename: cnicImageFileName,
+     );
+     request.files.add(cnicImage);
+
+     // Add other form data (if any)
+     request.fields['title'] = firstName;
+     request.fields['firstName'] = firstName;
+     request.fields['lastName'] = lastName;
+     request.fields['email'] = currentUserEmail;
+     request.fields['companyName'] = companyName;
+     request.fields['country']=country;
+     request.fields['city']=city;
+     request.fields['zipPostalCode']=zipPostalCode;
+     request.fields['streetAddress']=streetAddress;
+     request.fields['phoneNo']=phoneNo;
+     request.fields['cnicNo']=cnincNo;
+     request.fields['ntnNo']=ntnNo;
+     request.fields['permitNo']=permitNo;
+     request.fields['licenseNo']=licenseNo;
+     request.fields['timeNow']=timeNow;
+
+     var response = await request.send();
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
+   Future<List<ProfessionalsProfileModel>> getProProfile ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile'));
+
+     List<ProfessionalsProfileModel> getProProfileDataList=[]; //the scope of the array is Inside the function
+
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+       var prJson=json.decode(response.body);
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         getProProfileDataList.add(ProfessionalsProfileModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Api is not Working !");}
+     return getProProfileDataList;
+   }
+   Future<String> InsertProCoverPhoto(PlatformFile coverFile,String email) async {
+     final request = http.MultipartRequest(
+       'POST',
+       Uri.parse('http://localhost:3000/smart-builders/ProCoverPhoto'),
+     );
+     print("Api cover cnic name : "+coverFile.name);
+     var coverImageFileName=coverFile!.name;
+     var coverImageBytes = coverFile!.bytes;
+     var coverImage = http.MultipartFile.fromBytes(
+       'uploadCoverPhoto',
+       coverImageBytes!,
+       filename: coverImageFileName,
+     );
+     request.files.add(coverImage);
+     request.fields['email'] = email;
+
+     var response = await request.send();
+
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
+   Future<List<ProfessionalsProfileModel>> getProCoverPhotoData ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/ProCoverPhoto'), headers: {'Cache-Control': 'no-cache'},);
+
+     List<ProfessionalsProfileModel> getProProfileDataList=[];
+     //the scope of the array is Inside the function
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+
+       var prJson=json.decode(response.body);
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         getProProfileDataList.add(ProfessionalsProfileModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Api is not Working !");}
+     return getProProfileDataList;
    }
 }
 

@@ -6,7 +6,7 @@ class ProfessionalsProfileModel {
   late String? lastName;
   late String? title;
   late String ? email;
-  late String ? occupation;
+  late String ? companyName;
   late String? country;
   late String? city;
   late String? zipPostalCode;
@@ -27,7 +27,7 @@ class ProfessionalsProfileModel {
     this.firstName,
     this.lastName,
     this.email,
-    this.occupation,
+    this.companyName,
     this.country,
     this.city,
     this.zipPostalCode,
@@ -49,7 +49,7 @@ class ProfessionalsProfileModel {
     lastName = json['lastName'];
      title= json['title'];
     email= json['email'];
-    occupation= json['occupation'];
+    companyName= json['companyName'];
     country=json['country'];
     city=json['city'];
     zipPostalCode=json['zipPostalCode'];
@@ -73,7 +73,7 @@ class ProfessionalsProfileModel {
     _data['firstName'] = firstName;
     _data['lastName'] =lastName;
     _data['email'] =email;
-    _data['occupation'] =occupation;
+    _data['companyName'] = companyName;
     _data['country'] = country;
     _data['city'] = city;
     _data['zipPostalCode'] = zipPostalCode;

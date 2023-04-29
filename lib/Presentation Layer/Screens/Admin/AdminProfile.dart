@@ -80,8 +80,8 @@ class _ViewProfileInterface extends State<ViewProfileInterface> {
                       height: 40,
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const NiceWork()));
+                           /* Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const NiceWork()));*/
                           },
                           // ignore: sort_child_properties_last
                           child: Row(children: const <Widget>[

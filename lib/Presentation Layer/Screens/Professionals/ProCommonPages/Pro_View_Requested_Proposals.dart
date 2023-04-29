@@ -5,7 +5,7 @@ import 'package:hovering/hovering.dart';
 import '../../HomePage/footer.dart';
 import '../../HomePage/header.dart';
 import '../../Owner/Owner_Desire_Building.dart';
-import 'Pro_Porfile_Page.dart';
+import 'Pro_View_Profile.dart';
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
@@ -439,7 +439,7 @@ class Button extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ViewProfile()));
+                          builder: (context) => ProViewProfile("")));
                     },
                     // ignore: sort_child_properties_last
                     child: Row(children: const <Widget>[

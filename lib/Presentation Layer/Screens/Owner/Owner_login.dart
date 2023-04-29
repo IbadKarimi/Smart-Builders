@@ -6,7 +6,7 @@ import 'package:hovering/hovering.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Forget_Password.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Pofile_Info.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_View_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_SignUp.dart';
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';

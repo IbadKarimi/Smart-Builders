@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 
 import "../Owner/OwnerUserSetting/UserSetting.dart";
 import "../Owner/Owner_Desire_Building.dart";
-import "../Professionals/ProCommonPages/Pro_Porfile_Page.dart";
+import "../Professionals/ProCommonPages/Pro_View_Profile.dart";
 import "Chat/ChatScreen.dart";
 import "JoinOwnerPro.dart";
 import "home_page.dart";
@@ -226,7 +226,7 @@ class DesktopNavBar extends StatelessWidget {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const ViewProfile()));
+                                                         ProViewProfile("")));
                                           },
                                           child: Container(
                                               width: 60,
@@ -350,7 +350,7 @@ class DesktopNavBar extends StatelessWidget {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const ViewProfile()));
+                                                          ProViewProfile("")));
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -365,7 +365,7 @@ class DesktopNavBar extends StatelessWidget {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const ViewProfile()));
+                                                           ProViewProfile("")));
                                             },
                                             child: Padding(
                                                 padding: EdgeInsets.only(

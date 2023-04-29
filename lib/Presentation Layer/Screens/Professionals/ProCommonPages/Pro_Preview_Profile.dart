@@ -81,10 +81,10 @@ class _ProfessionalsPreviewProfileInterface extends State<ProfessionalsPreviewPr
                   height: 40,
                   child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
+                        /* Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const NiceWork()));
-                      },
-                      // ignore: sort_child_properties_last
+                      },*/
+                      }, // ignore: sort_child_properties_last
                       child: Row(children: const <Widget>[
                         Padding(
                             padding: EdgeInsets.only(left: 10),
@@ -390,8 +390,7 @@ class _SubmitProfileState extends State<SubmitProfile> {
                 height: 40,
                 child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const NiceWork()));
+
                     },
                     // ignore: sort_child_properties_last
                     child: Row(children: const <Widget>[

@@ -83,7 +83,7 @@ class OwnerCoverProfile extends StatefulWidget {
 class _OwnerCoverProfile extends State<OwnerCoverProfile> {
 
   ApiService apiService = new ApiService();
-  CurrentUser currentUserEmailObject=CurrentUser();
+  //CurrentUser currentUserEmailObject=CurrentUser();
   List<OwnerProfileModel> _getOwnerProfileData=[];
   List<OwnerProfileModel> _getOwnerCoverPhotoData=[];
   List<OwnerAboutModel> _getOwnerAboutData=[];
@@ -126,6 +126,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
             print("CNIC no is    :" + _getOwnerProfileData[index].cnicNo.toString());
             print("Ntn  no is    :" + _getOwnerProfileData[index].ntnNo.toString());
             print("Time Now      :" + _getOwnerProfileData[index].timeNow.toString());
+            print("profilePhoto      :" + _getOwnerProfileData[index].uploadPhoto.toString());
             print("--------------------------------------------------------------");
 
           }
@@ -134,7 +135,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
       });
     });
 
-   apiService.getOwnerAbout().then((value){
+   apiService.getAbout().then((value){
      _getOwnerAboutData.addAll(value);
      for(int i=0;i<_getOwnerAboutData.length;i++){
        if(currentUserEmail.toString()==_getOwnerAboutData[i].email){
@@ -153,7 +154,7 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
           if( _getOwnerCoverPhotoData[i].email.toString()==currentUserEmail){
             id= _getOwnerCoverPhotoData[i].id.toString();
             coverPhotoUrl= _getOwnerCoverPhotoData[i].uploadCoverPhoto.toString();
-           // print("Cover Photo Url :"+_getOwnerCoverPhotoData[i].uploadCoverPhoto.toString());
+           print("Cover Photo Url :"+_getOwnerCoverPhotoData[i].uploadCoverPhoto.toString());
             //print("Id              :"+_getOwnerCoverPhotoData[i].id.toString());
             //print("Email is        :" + _getOwnerCoverPhotoData[i].email.toString());
             //print("Current User Email =:"+currentUserEmail.toString());//set data we get
@@ -217,14 +218,14 @@ class _OwnerCoverProfile extends State<OwnerCoverProfile> {
             padding:  EdgeInsets.only(left:50,top:220),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child:coverPhotoUrl!=null? Image.network(
+                child:profilePhoto!=null? Image.network(
                   profilePhoto.toString(),
                   height: 140.0,
                   width: 140.0,
                   scale: 2,
                   fit: BoxFit.cover,
-                ):Container(width:900,height: 300,decoration: BoxDecoration(
-                    color: Colors.grey,
+                ):Container(width:140,height: 140,decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
                     borderRadius: BorderRadius.circular((10),)),)
             ),
           ),
@@ -1140,7 +1141,7 @@ class _OverViewDialog extends State<OverViewDialog> {
                                 child: ElevatedButton(
                                     onPressed: () async{
                                       if(_OwnerAboutFormKey.currentState!.validate()){
-                                   var response=await apiService.InsertOwnerAbout(currentUserEmail.toString(),_aboutController.text);
+                                   var response=await apiService.InsertAbout(currentUserEmail.toString(),_aboutController.text);
                                        if(response=="200"){
                                           Navigator.of(context).push(
                                               MaterialPageRoute(

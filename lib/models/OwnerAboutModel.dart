@@ -5,14 +5,14 @@ class OwnerAboutModel {
   OwnerAboutModel({this.about, this.email});
 
   OwnerAboutModel.fromJson(Map<String, dynamic> json) {
-    about = json['ownerAbout'];
-    email = json['ownerEmail'];
+    about = json['about'];
+    email = json['email'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> _data = new Map<String, dynamic>();
-    _data['ownerAbout'] = this.about;
-    _data['ownerEmail'] = this.email;
+    _data['about'] = this.about;
+    _data['email'] = this.email;
     return _data;
   }
 }

@@ -7,7 +7,7 @@ import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Accept_Decline_Offer.dart';
 import 'Owner_Desire_Building.dart';
-import 'Owner_Pofile_Info.dart';
+import 'Owner_View_Profile.dart';
 
 
 const lightGrey = Color(0xFFEDEDED);

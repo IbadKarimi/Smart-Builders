@@ -6,7 +6,7 @@ import 'package:hovering/hovering.dart';
 import '../HomePage/Chat/ChatScreen.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
-import '../Professionals/ProCommonPages/Pro_Porfile_Page.dart';
+import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'Owner_Desire_Building.dart';
 import 'Owner_Mange_Offers.dart';
 
@@ -1390,7 +1390,7 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ViewProfile()));
+                                    builder: (context) => ProViewProfile("")));
                               },
                               // ignore: sort_child_properties_last
                               child: Row(children: const <Widget>[

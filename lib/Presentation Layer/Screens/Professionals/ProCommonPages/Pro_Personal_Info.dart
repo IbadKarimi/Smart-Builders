@@ -14,9 +14,11 @@ import 'package:flutter/services.dart';
 import 'Pro_Preview_Profile.dart';
 import 'package:dotted_border/dotted_border.dart';
 
+import 'Pro_Profile_Ready.dart';
+
 
 PlatformFile? cnicFile;
-PlatformFile? coverFile;
+PlatformFile? profileFile;
 bool isVisibleNtnNoField=false;
 bool cnicError=false;
 String? currentUserEmail;
@@ -45,6 +47,7 @@ class _ProfessionalsProfile extends State<ProfessionalsProfile> {
   Widget build(BuildContext context) {
     currentUserEmail=widget.email;
     title=widget.title;
+    print("title"+title.toString());
     return Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -117,6 +120,7 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
   bool checkbox = false;
   @override
   Widget build(BuildContext context) {
+    //---------------Date Time Format Set here---------------------//
     DateTime now = DateTime.now();
     DateTime currentDate = DateTime.now();
     String _currentDateNow = DateFormat('dd-MM-yyy').format(currentDate);
@@ -1108,18 +1112,21 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                             height: 40,
                             child: ElevatedButton(
                                 onPressed: () async {
-                                  setState(() {
-                                    //  progressBarVisible=true;
-                                  });
-                                  if( _ProfessionalProfileFormKey.currentState!.validate()&&cnicFile!=null){
-                                    setState(() {
-                                      cnicError=false;
-                                    });
-                                    if(coverFile!=null){
-                                      var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text,currentUserEmail.toString(),  _companyNameController.text,
+                                  //--------------Cnic error visible --------------------//
+                                 if(cnicFile!=null){
+                                   setState(() {
+                                     cnicError=false;
+                                   });
+                                 }else{setState(() {
+                                   cnicError=true;
+                                 });}
+                                  if( _ProfessionalProfileFormKey.currentState!.validate()){
+
+                                    if(profileFile!=null){
+                                      var response=await apiService.createProfessionalsProfile(title.toString(),_firstNameController.text, _lastNameController.text,currentUserEmail.toString(),  _companyNameController.text,
                                           selectedOptionCountry , _cityController.text, _zipPostalCodeController.text,
                                           _streetAddressController.text, _phoneNoController.text, _cnicNoController.text,
-                                          _ntnNoController.text, coverFile!, cnicFile!,currentTimeNow);
+                                          _ntnNoController.text,_licenseNoController.text, _permitNoController.text, profileFile!, cnicFile!,currentTimeNow);
                                       if(response=='200'){
                                         setState(() {
                                           progressBarVisible=false;
@@ -1127,7 +1134,7 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                                         });
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => ProfessionalsPreviewProfile()),
+                                          MaterialPageRoute(builder: (context) => ProfessionalsNiceWork(_firstNameController.text,_lastNameController.text,currentUserEmail.toString())),
                                         );
                                       }
                                       else{
@@ -1141,8 +1148,10 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                                     else{
                                       final ByteData data = await rootBundle.load('Logo/Avatar.png');
 
-                                      var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text,currentUserEmail.toString(), _companyNameController.text, selectedOptionCountry, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
-                                          _cnicNoController.text, _ntnNoController.text,data!, cnicFile!,currentTimeNow);
+                                      var response= await apiService.createProfessionalsProfileDefaultImage(title.toString(),_firstNameController.text, _lastNameController.text,currentUserEmail.toString(),  _companyNameController.text,
+                                          selectedOptionCountry , _cityController.text, _zipPostalCodeController.text,
+                                          _streetAddressController.text, _phoneNoController.text, _cnicNoController.text,
+                                          _ntnNoController.text,_licenseNoController.text, _permitNoController.text, data!, cnicFile!,currentTimeNow);
                                       if(response=='200'){
 
                                         setState(() {
@@ -1150,7 +1159,7 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                                         });
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => ProfessionalsPreviewProfile()),
+                                          MaterialPageRoute(builder: (context) => ProfessionalsNiceWork(_firstNameController.text,_lastNameController.text,currentUserEmail.toString())),
                                         );
 
                                       }
@@ -1164,7 +1173,7 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                                   }
                                   else{
                                     setState(() {
-                                      cnicError=true;
+                                     // cnicError=true;
                                       _autoValidate=true;
                                     });
 
@@ -1175,7 +1184,7 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                                   Padding(
                                       padding: const EdgeInsets.only(left: 40),
                                       child: Text(
-                                        "Check Your,",
+                                        "Submit Your,",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 12),
                                       )),
@@ -1221,7 +1230,7 @@ class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
 
     if (picked != null) {
       setState(() {
-        coverFile = picked.files.first;
+        profileFile = picked.files.first;
       });
     }
 
@@ -1446,12 +1455,12 @@ class _uploadPhotoAlertDialog extends State<uploadPhotoAlertDialog> {
                                   height: 40,
                                   child: ElevatedButton(
                                       onPressed: () {
-                                        if(coverFile!=null){
+                                        if(profileFile!=null){
                                           setState(() {
-                                            coverFile = picked.files.first;
+                                            profileFile = picked.files.first;
 
                                           });
-                                          debugPrint( coverFile!.name);
+                                          debugPrint( profileFile!.name);
                                           Navigator.of(context).pop();
                                         }
                                         else{

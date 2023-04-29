@@ -3,7 +3,7 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Previ
 
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
-import 'Owner_Pofile_Info.dart';
+import 'Owner_View_Profile.dart';
 
 final lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
