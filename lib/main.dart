@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
 import 'dart:html';
 import 'dart:typed_data';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:ProViewProfile("ibadkarimi.10@gmail.com")),
+      home:  Scaffold(body:ContractorsMain()),
     );
   }
 }
@@ -77,3 +78,4 @@ class _Home extends State<Home> {
     );
   }
 }
+

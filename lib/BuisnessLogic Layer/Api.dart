@@ -5,12 +5,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smart_builder_web/models/OwnerProfileModel.dart';
+import 'package:smart_builder_web/models/ProWorkExperience.dart';
 
 import '../models/OwnerAboutModel.dart';
 import '../models/OwnerSignUpModel.dart';
 import 'package:http/http.dart'as http;
 
+import '../models/ProEducationHistory.dart';
 import '../models/ProfessionalsProfileModel.dart';
+import '../models/ProfessionalsSkillsModels.dart';
 
 class ApiService {
    Uint8List defaultImageBytes=Uint8List(8);
@@ -279,6 +282,33 @@ class ApiService {
      var request = http.MultipartRequest(
        'PUT',
        Uri.parse('http://localhost:3000/smart-builders/OwnerProfile/$id'),
+     );
+
+     // Add image file to request
+     print("Api cover profile name : "+profileFile.name);
+     // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+     var profileImageFileName=profileFile!.name;
+     var profileImageBytes = profileFile!.bytes;
+     var profileImage = http.MultipartFile.fromBytes(
+       'uploadPhoto',
+       profileImageBytes!,
+       filename: profileImageFileName,
+     );
+     request.files.add(profileImage);
+     var response = await request.send();
+     if (response.statusCode == 200) {
+       print('Data inserted Sucessfully !');
+
+       return '200';
+     } else {
+       print('Error uploading image: ${response.reasonPhrase}');
+       return '100';
+     }
+   }
+   Future<String> UpdateProProfilePhoto(String id,PlatformFile profileFile) async {
+     var request = http.MultipartRequest(
+       'PUT',
+       Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile/$id'),
      );
 
      // Add image file to request
@@ -652,6 +682,137 @@ class ApiService {
      else{ debugPrint("Api is not Working !");}
      return getProProfileDataList;
    }
+
+   //--------------------------------Work Experience---------------------------//
+   Future<List<ProWorkExperienceModel>> getProWorkExperience ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/WorkExperinece'));
+     List<ProWorkExperienceModel> userlist=[]; //the scope of the array is Inside the function
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+       var prJson=json.decode(response.body);
+       print(response.body.toString());
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         userlist.add(ProWorkExperienceModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Working Experience api is not working !");}
+     return userlist;
+   }
+
+
+
+   Future<String> InsertProWorkExperience(String email,String title,String companyName,String experience) async {
+     final response = await http.post(
+       Uri.parse('http://localhost:3000/smart-builders/WorkExperinece'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         "email": email.toString(),
+         "title": title.toString(),
+         "companyName": companyName.toString(),
+
+         "experience": experience.toString(),
+
+       }),
+     );
+
+     if (response.statusCode ==200) {
+       debugPrint("APi is Working");
+       return '200';
+     } else {
+       // If the server did not return a 201 CREATED response,
+       // then throw an exception.
+       throw Exception('Failed to USer Sign-Up. Api');
+     }
+   }
+   //------------------------Education History-----------------------------------//
+   Future<List<ProEducationHistoryModel>> getProEducationHistory ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/EducationHistory'));
+     List<ProEducationHistoryModel> userlist=[]; //the scope of the array is Inside the function
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+       var prJson=json.decode(response.body);
+
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         userlist.add(ProEducationHistoryModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Education history api is not working !");}
+     return userlist;
+   }
+
+
+
+   Future<String> InsertProEducationHistory(String email,String school,String qualification,String startYear,String endYear) async {
+     final response = await http.post(
+       Uri.parse('http://localhost:3000/smart-builders/EducationHistory'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         "email": email.toString(),
+         "school": school.toString(),
+         "qualification": qualification.toString(),
+         "startYear": startYear.toString(),
+         "endYear": endYear.toString(),
+
+       }),
+     );
+
+     if (response.statusCode ==200) {
+       debugPrint("APi is Working");
+       return '200';
+     } else {
+       // If the server did not return a 201 CREATED response,
+       // then throw an exception.
+       throw Exception('Failed to Insert eudcation history  Api');
+     }
+   }
+
+   Future<String> InsertProSkills(String email,String skills) async {
+     final response = await http.post(
+       Uri.parse('http://localhost:3000/smart-builders/ProfessionalsSkills'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         "email": email.toString(),
+         "skills": skills.toString(),
+
+       }),
+     );
+
+     if (response.statusCode ==200) {
+       debugPrint("APi is Working");
+       return '200';
+     } else {
+       // If the server did not return a 201 CREATED response,
+       // then throw an exception.
+       throw Exception('Failed to Insert eudcation history  Api');
+     }
+   }
+   Future<List<ProSkillsModel>> getProSkills ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/ProfessionalsSkills'));
+     List<  ProSkillsModel> userlist=[]; //the scope of the array is Inside the function
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+       var prJson=json.decode(response.body);
+     //  print(response.body.toString());
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         userlist.add(  ProSkillsModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Skills api is not working !");}
+     return userlist;
+   }
+
+
+
+
 }
 
 
