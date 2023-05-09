@@ -11,9 +11,15 @@ import '../HomePage/header.dart';
 import 'Owner_View_Profile.dart';
 import 'Owner_Proposals_Service_Providers.dart';
 String? currentUserEmail;
+String? firstName;
+String? lastName;
+String? city;
+String? country;
+String? profilePhotoUrl;
 class SelectServiceProviderTitle extends StatefulWidget {
   String email;
-  SelectServiceProviderTitle(this.email);
+  String firstName,lastName,city,country,profilePhotoUrl;
+  SelectServiceProviderTitle(this.email,this.firstName,this.lastName,this.city,this.country,this.profilePhotoUrl);
 
   @override
   State<SelectServiceProviderTitle> createState() => _SelectServiceProviderTitle();
@@ -22,6 +28,11 @@ class SelectServiceProviderTitle extends StatefulWidget {
 class _SelectServiceProviderTitle extends State<SelectServiceProviderTitle> {
   @override
   Widget build(BuildContext context) {
+    firstName=widget.firstName;
+    lastName=widget.lastName;
+    city=widget.city;
+    country=widget.country;
+    profilePhotoUrl=widget.profilePhotoUrl;
     setState(() {
       currentUserEmail=widget.email;
     });
@@ -216,22 +227,22 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
                               if (selectedOption == "Contractor") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString())));
                               }
                               if (selectedOption == "Subcontractor") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString())));
                               }
                               if (selectedOption == "Civil Engineer") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString())));
                               }
                               if (selectedOption == "Architect") {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString())));
+                                        ProposalServiceProvider(currentUserEmail.toString(),selectedOption.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString())));
                               }
                             },
                             // ignore: sort_child_properties_last

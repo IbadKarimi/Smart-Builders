@@ -1,60 +1,12 @@
 import 'dart:html';
-/*class IncrementDecrementWidget extends StatefulWidget {
-  @override
-  _IncrementDecrementWidgetState createState() => _IncrementDecrementWidgetState();
-}
 
-class _IncrementDecrementWidgetState extends State<IncrementDecrementWidget> {
-  int _value = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextFormField(
-          controller: TextEditingController(text: '$_value'),
-          keyboardType: TextInputType.number,
-          onChanged: (value) {
-            setState(() {
-              _value = int.parse(value);
-            });
-          },
-          decoration: InputDecoration(
-            labelText: 'Value',
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                setState(() {
-                  _value++;
-                });
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.remove),
-              onPressed: () {
-                setState(() {
-                  _value--;
-                });
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-*/
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hovering/hovering.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals.dart';
 
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/HiringProfessionals/Contractors.dart';
@@ -83,7 +35,11 @@ bool validateInteger(String value) {
   return true;
 }
 
-
+String? firstName;
+String? lastName;
+String? city;
+String? country;
+String? profilePhotoUrl;
 PlatformFile? attachFile;
 ApiService apiService = new ApiService();
 String? serviceProviderTitle;
@@ -91,7 +47,8 @@ String? currentUserEmail;
 class ProposalServiceProvider extends StatefulWidget {
   String _email;
   String _serviceProviderTitle;
-  ProposalServiceProvider(this._email,this._serviceProviderTitle);
+  String firstName,lastName,city,country,profilePhotoUrl;
+  ProposalServiceProvider(this._email,this._serviceProviderTitle,this.firstName,this.lastName,this.city,this.country,this.profilePhotoUrl);
 
   @override
   State<ProposalServiceProvider> createState() => _ProposalServiceProvider();
@@ -100,6 +57,11 @@ class ProposalServiceProvider extends StatefulWidget {
 class _ProposalServiceProvider extends State<ProposalServiceProvider> {
   @override
   Widget build(BuildContext context) {
+    firstName=widget.firstName;
+    lastName=widget.lastName;
+    city=widget.city;
+    country=widget.country;
+    profilePhotoUrl=widget.profilePhotoUrl;
     setState(() {
       serviceProviderTitle=widget._serviceProviderTitle;
       currentUserEmail=widget._email;
@@ -1349,7 +1311,7 @@ relationship, and anything unique about your project, team, or company. ''',
                                 onPressed: ()async {
                                   if(_OwnerSubmitProposalsFormKey.currentState!.validate()){
 
-                                       if(attachFile!=null){  var response=await apiService.InsertOwnerSubmitProposals(currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
+                                       if(attachFile!=null){  var response=await apiService.InsertOwnerSubmitProposals(firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString(),currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
                                            _months.toString(),_projectBudgetController.text, _plotWidthFrontSideController.text, _plotWidthBackSideController.text, _plotLengthLeftSideController.text,
                                            _plotLengthRightSideController.text, _actualPlotSizeController.text, _counter.toString(),_groundFloor.toString(), _selectedValue.toString(),_plotLocationController.text, _describeYourProjectController.text,
                                            attachFile!, _currentTimeNow, _currentDateNow);
@@ -1357,7 +1319,7 @@ relationship, and anything unique about your project, team, or company. ''',
                                          Navigator.of(context).push(MaterialPageRoute(
                                              builder: (context) => OfferSentShowDialog()));
                                        }}else{
-                                         var response=await apiService.InsertOwnerSubmitProposals_(currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
+                                         var response=await apiService.InsertOwnerSubmitProposals_(firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString(),currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
                                              _months.toString(),_projectBudgetController.text, _plotWidthFrontSideController.text, _plotWidthBackSideController.text, _plotLengthLeftSideController.text,
                                              _plotLengthRightSideController.text, _actualPlotSizeController.text, _counter.toString(),_groundFloor.toString(), _selectedValue.toString(),_plotLocationController.text,
                                              _describeYourProjectController.text,

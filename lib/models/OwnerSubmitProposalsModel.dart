@@ -19,6 +19,11 @@ class OwnerSubmitProposalsModel {
   String? projectFile;
   String? proposalCreatedTime;
   String? proposalSavedDate;
+  String? firstName;
+  String? lastName;
+  String? ownerCity;
+  String? country;
+  String? profilePicUrl;
 
 
   OwnerSubmitProposalsModel(
@@ -40,6 +45,11 @@ class OwnerSubmitProposalsModel {
         this.proposalCreatedTime,
         this.proposalSavedDate,
         this.grroundFloor,
+        this.firstName,
+        this.lastName,
+        this.ownerCity,
+        this.country,
+        this.profilePicUrl,
         this.sId});
 
   OwnerSubmitProposalsModel.fromJson(Map<String, dynamic> json) {
@@ -62,6 +72,11 @@ class OwnerSubmitProposalsModel {
     projectFile = json['projectFile'];
     proposalCreatedTime = json['proposalCreatedTime'];
     proposalSavedDate = json['proposalSavedDate'];
+    firstName = json['ownerFirstName'];
+    lastName = json['ownerLastName'];
+   ownerCity = json['ownerCity'];
+    country = json['ownerCountry'];
+    profilePicUrl = json['ownerProfilePicUrl'];
     sId = json['_id'];
   }
 
@@ -87,6 +102,11 @@ class OwnerSubmitProposalsModel {
     _data['proposalCreatedTime'] = this.proposalCreatedTime;
     _data['proposalSavedDate'] = this.proposalSavedDate;
     _data['_id'] = this.sId;
+    _data['ownerFirstName']=this.firstName;
+    _data['ownerLastName']=this.lastName;
+    _data['ownerCity']=this.ownerCity;
+    _data['ownerCountry']=this.country;
+    _data['ownerProfilePicUrl']=this.profilePicUrl;
     return _data;
   }
 }

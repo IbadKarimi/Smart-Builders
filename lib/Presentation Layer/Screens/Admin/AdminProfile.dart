@@ -7,7 +7,7 @@ import '../Professionals/ProCommonPages/Pro_Accepted_Offers.dart';
 import '../Professionals/ProCommonPages/Pro_Accepted_Proposals.dart';
 import '../Professionals/ProCommonPages/Pro_My_Offers.dart';
 import '../Professionals/ProCommonPages/Pro_Profile_Ready.dart';
-import '../Professionals/ProCommonPages/Pro_View_Requested_Proposals.dart';
+import '../Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart';
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
@@ -406,8 +406,8 @@ class _AddProposal extends State<AddProposal> {
               height: 60,
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ViewProposalMain()));
+                   /* Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ViewProposalMain()));*/
                   },
                   // ignore: sort_child_properties_last
                   child: Row(

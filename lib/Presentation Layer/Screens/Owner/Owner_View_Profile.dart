@@ -409,7 +409,7 @@ class _OwnerAddProposal extends State<OwnerAddProposal> {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>  SelectServiceProviderTitle(currentUserEmail.toString())));
+                        builder: (context) =>  SelectServiceProviderTitle(currentUserEmail.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhoto.toString())));
                   },
                   // ignore: sort_child_properties_last
                   child: Row(

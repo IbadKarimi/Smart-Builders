@@ -19,7 +19,7 @@ import 'Pro_Accepted_Offers.dart';
 import 'Pro_Accepted_Proposals.dart';
 import 'Pro_My_Offers.dart';
 import 'Pro_Profile_Ready.dart';
-import 'Pro_View_Requested_Proposals.dart';
+import 'Pro_View_Requested_Proposals_List.dart';
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
@@ -507,7 +507,7 @@ class _AddProposal extends State<AddProposal> {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ViewProposalMain()));
+                        builder: (context) =>  ViewProposalRequestedProposalList(currentUserEmail.toString())));
                   },
                   // ignore: sort_child_properties_last
                   child: Row(
@@ -2172,7 +2172,7 @@ class _uploadProfilePhotoAlertDialog extends State<uploadProfilePhotoAlertDialog
                                       String response;
                                       //   if(isEditMode!=true){
                                       response=await apiService.UpdateProProfilePhoto(proId.toString(),editprofilePhotoObject!,);
-                                      print(ownerId.toString());
+                                     // print(ownerId.toString());
 
                                       // response=await apiService.UpdateCoverPhotoData(id.toString(),coverPhotoObject!, );
                                       //  print("Update as Image");

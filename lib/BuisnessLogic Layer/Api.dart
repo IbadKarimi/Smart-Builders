@@ -387,7 +387,7 @@ class ApiService {
      return ownerAbout;
    }
 
-   Future<String> InsertOwnerSubmitProposals(String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
+   Future<String> InsertOwnerSubmitProposals(String firstName,String lastName,String ownerCity,String country,String profilePhoto,String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
        String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
        PlatformFile projectFile,String proposalsCreatedTime,String proposalsSavedDate) async {
     if(projectFile!=null){
@@ -406,6 +406,11 @@ class ApiService {
      request.files.add(coverImage);
 
      request.fields['email']= email.toString();
+     request.fields['ownerFirstName']= firstName.toString();
+     request.fields['ownerLastName']= lastName.toString();
+     request.fields["ownerCity"]=ownerCity.toString();
+     request.fields["ownerCountry"]=country.toString();
+     request.fields["ownerProfilePicUrl"]=profilePhoto.toString();
      request.fields['to']=to.toString();
      request.fields['projectTitle']=projectTitle.toString();
      request.fields['projectType']=projectType.toString();
@@ -440,7 +445,7 @@ class ApiService {
    }
     return "100";
   }
-   Future<String> InsertOwnerSubmitProposals_(String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
+   Future<String> InsertOwnerSubmitProposals_(String firstName,String lastName,String ownerCity,String country,String profilePhoto,String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
        String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
       String proposalsCreatedTime,String proposalsSavedDate) async {
      final response = await http.post(
@@ -450,6 +455,11 @@ class ApiService {
        },
        body: jsonEncode(<String, String>{
          "email": email.toString(),
+         "ownerFirstName":firstName.toString(),
+         "ownerLastName":lastName.toString(),
+         "ownerCity":ownerCity.toString(),
+         "ownerCountry":country.toString(),
+         "ownerProfilePicUrl":profilePhoto.toString(),
          "to": to.toString(),
          "projectTitle":projectTitle.toString(),
          "projectType":projectType.toString(),
@@ -465,7 +475,7 @@ class ApiService {
          "city":city.toString(),
          "plotLocation":plotLocation.toString(),
          "describeYourProject":describeYourProject.toString(),
-         "proposalsCreatedTime":proposalsCreatedTime.toString(),
+         "proposalCreatedTime":proposalsCreatedTime.toString(),
          "proposalSavedDate":proposalsSavedDate.toString(),
 
        }),

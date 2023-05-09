@@ -106,7 +106,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
       setState(() {
         _getUserList.addAll(value);
         for(int i=0;i< _getUserList.length;i++){
-          if(_getUserList[i].email.toString()=="ibadkarimi.10@gmail.com") {
+          if(_getUserList[i].email.toString()==currentUserEmail) {
             firstName = _getUserList[i].firstName;
             lastName = _getUserList[i].lastName;
             if(_firstNameController.text=="" || _firstNameController.text==""){
