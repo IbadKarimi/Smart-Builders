@@ -13,6 +13,7 @@ import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
+import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'Owner_Desire_Building.dart';
 
 
@@ -88,6 +89,7 @@ class _LoginInterface extends State<LoginInterface> {
 
     for(int i=0;i<_getUserList.length;i++) {
       print(_getUserList[i].email);
+      print(_getUserList[i].role);
     }
     bool isFirstName=false;
     return Row(
@@ -282,19 +284,32 @@ class _LoginInterface extends State<LoginInterface> {
                             ),
                             child: ElevatedButton(
                                 onPressed: ()async {
-                                  if(_formKey.currentState!.validate()){
-                                   debugPrint("Form is Valid");
-                                   for(int i=0;i<_getUserList.length;i++) {
-                                     if(_emailController.text==_getUserList[i].email&&_passwordController.text==_getUserList[i].password){
-                                       CurrentUser currentUserEmail=CurrentUser();
-                                       currentUserEmail.SetCurrentUserEmail(_emailController.text);
-                                       Navigator.of(context).push(MaterialPageRoute(
-                                           builder: (context) => OwnerViewProfile(_emailController.text)));
-                                     }
-
-                                   }
-
-                                      }},
+                                  if(_formKey.currentState!.validate()) {
+                                    debugPrint("Form is Valid");
+                                    for (int i = 0; i < _getUserList.length; i++) {
+                                      if ( _getUserList[i].email.toString()==_emailController.text &&  _getUserList[i].password.toString()==_passwordController.text ) {
+                                              String email=_getUserList[i].email.toString();
+                                              String role=_getUserList[i].role.toString();
+                                              if(role=="owner"){
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            OwnerViewProfile(
+                                                                email)));
+                                              }
+                                              else{
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ProViewProfile(
+                                                                email)));
+                                              }
+                                      print( "Owner email is"+email.toString());
+                                      print( "Owner role is"+role.toString());
+                                      /**/
+                                      }
+                                    }
+                                  } },
 
                                 // ignore: sort_child_properties_last
                                 child: Row(

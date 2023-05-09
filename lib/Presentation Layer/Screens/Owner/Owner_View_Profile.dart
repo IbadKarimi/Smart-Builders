@@ -444,7 +444,9 @@ class _OwnerAddProposal extends State<OwnerAddProposal> {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const OwnerSubmittedProposals()));
+                        builder: (context) => OwnerSubmittedProposals(currentUserEmail.toString())));//proposals/Submitted
+                    //list
+
                   },
                   // ignore: sort_child_properties_last
                   child: Row(

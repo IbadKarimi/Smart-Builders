@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 
 
 
+import '../../../BuisnessLogic Layer/Api.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
@@ -12,9 +14,41 @@ import 'Owner_Submitted_Proposals.dart';
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
-
+String? projectTitle;
+String ?projectType;
+String ?workMonth;
+String ?projectBudget;
+String ?plotFrontSideWidth;
+String ?plotBackSideWidth;
+String ?plotLeftSideLength;
+String ?plotRightSideLength;
+String ?actualPlotSize;
+String ?city;
+String ?plotLocation;
+String ?describeYourProject;
+String ?projectFile;
+String ?email;
 class ViewSubmittedProposals extends StatefulWidget {
-  const ViewSubmittedProposals({super.key});
+ String projectTitle;
+ String projectType;
+ String workMonth;
+ String projectBudget;
+ String plotFrontSideWidth;
+ String plotBackSideWidth;
+ String plotLeftSideLength;
+ String plotRightSideLength;
+ String actualPlotSize;
+ String city;
+ String plotLocation;
+ String describeYourProject;
+ String projectFile;
+ String email;
+
+
+
+ ViewSubmittedProposals(this.email,this.projectTitle,this.projectType,this.workMonth,this.projectBudget,
+     this.plotFrontSideWidth,this.plotBackSideWidth,this.plotLeftSideLength,
+     this.plotRightSideLength,this.actualPlotSize,this.city,this.plotLocation,this.describeYourProject,{required this.projectFile});
 
   @override
   State<ViewSubmittedProposals> createState() => _ViewSubmittedProposals();
@@ -23,8 +57,24 @@ class ViewSubmittedProposals extends StatefulWidget {
 class _ViewSubmittedProposals extends State<ViewSubmittedProposals> {
   @override
   Widget build(BuildContext context) {
+    projectTitle=widget.projectTitle;
+    projectType=widget.projectType;
+    workMonth=widget.workMonth;
+    projectBudget=widget.projectBudget;
+    plotFrontSideWidth=widget.plotFrontSideWidth;
+    plotBackSideWidth=widget.plotBackSideWidth;
+    plotLeftSideLength=widget.plotLeftSideLength;
+    plotRightSideLength=widget.plotRightSideLength;
+    actualPlotSize=widget.actualPlotSize;
+    city=widget.city;
+    plotLocation=widget.plotLocation;
+    describeYourProject=widget.describeYourProject;
+    projectFile=widget.projectFile;
+    email=widget.email;
+    print("project file is"+projectFile.toString());
+
     return Scaffold(
-        body: SingleChildScrollView(
+        body:SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
                 color: Colors.white,
@@ -46,7 +96,7 @@ class _ViewSubmittedProposals extends State<ViewSubmittedProposals> {
                                     onPressed: () {
                                       Navigator.of(context).push(MaterialPageRoute(
                                           builder: (context) =>
-                                              const OwnerSubmittedProposals()));
+                                              OwnerSubmittedProposals(email.toString())));
                                     },
                                     // ignore: sort_child_properties_last
                                     child: const Text(
@@ -68,6 +118,8 @@ class _ViewSubmittedProposals extends State<ViewSubmittedProposals> {
   }
 }
 
+
+
 class ProposalServiceProviderI extends StatefulWidget {
   const ProposalServiceProviderI({super.key});
 
@@ -76,6 +128,19 @@ class ProposalServiceProviderI extends StatefulWidget {
 }
 
 class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
+  ApiService apiService = new ApiService();
+  //CurrentUser currentUserEmailObject=CurrentUser();
+  List<OwnerSubmitProposalsModel> _getOwnerProposal=[];
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+    apiService.getOwnerSubmitProposal().then((value){
+      setState(() {
+        _getOwnerProposal.addAll(value);
+        //set data we get
+      });
+    });
+    super.initState();
+  }
   @override
   bool isOpenProjectType = false;
   String selectedOptionProjectType = "Select Option";
@@ -83,9 +148,10 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
     "Residential ",
     'Commercial',
   ];
-  String? _months;
+  int _months=1;
 
   Widget build(BuildContext context) {
+
     const checkbox = false;
     return Container(
         margin: const EdgeInsets.only(top: 60, bottom: 10),
@@ -96,7 +162,7 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
+           Padding(
                 padding: EdgeInsets.only(top: 50, left: 80, bottom: 0),
                 child: Text(
                   "Add Details , write the proper requirement to hire a Professional for your project",
@@ -106,8 +172,8 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                     fontWeight: FontWeight.w600,
                   ),
                 )),
-            const Padding(
-                padding: EdgeInsets.only(top: 50, left: 60, bottom: 0),
+            Padding(
+                padding: EdgeInsets.only(top: 50, left: 50, bottom: 0),
                 child: Text(
                   "Project Title",
                   style: TextStyle(
@@ -117,45 +183,72 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                   ),
                 )),
             Padding(
-                padding: EdgeInsets.only(top: 10, left: 60),
-                child: SizedBox(
+                padding: EdgeInsets.only(top: 10, left: 50),
+                child: Container(
                     width: 400,
                     height: 35,
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      )),
-                    ))),
-            Stack(
-              children: [
-                RadioButtons(),
-                const Padding(
-                    padding: EdgeInsets.only(top: 10, left: 60, bottom: 0),
-                    child: Text(
-                      "Project Type",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
-                const Padding(
-                    padding: EdgeInsets.only(top: 90, left: 60, bottom: 0),
-                    child: Text(
-                      "How long will your work take",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
-                ProjectTypeCustomDropDown()
-              ],
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0),
+                    border: Border.all(color: strokeColor,width:1)
+                  ),
+                    child:Padding(
+                      padding: EdgeInsets.only(left:10,top:5),
+                      child:Text(projectTitle.toString(), style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),),)
+                   ),
             ),
-            //-----------------------------Project Budget-----------------//
             const Padding(
                 padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                child: Text(
+                  "Project Type",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )),
+                  Padding(
+                  padding: EdgeInsets.only(top: 10, left: 50),
+                 child: Container(
+              width: 400,
+              height: 35,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0),
+                  border: Border.all(color: Colors.grey,width:1)
+              ),
+              child:Padding(
+                  padding: EdgeInsets.only(left:10,top:5),
+                  child:Text(projectType.toString(), style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),)),
+            )),
+            const Padding(
+                padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                child: Text(
+                  "How long will your work take",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )),
+                Padding(
+                  padding: EdgeInsets.only(top: 10, left: 50, bottom: 0),
+                      child:RadioListTile(
+                      title: Text(workMonth.toString()),
+                      value: 1,
+                     groupValue: _months,
+                    onChanged: (value) {
+                    _months=1;
+              },
+            )),
+
+            //-----------------------------Project Budget-----------------//
+            const Padding(
+                padding: EdgeInsets.only(top: 10, left: 50, bottom: 0),
                 child: Text(
                   "Project Budget",
                   style: TextStyle(
@@ -165,16 +258,21 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                   ),
                 )),
             Padding(
-                padding: EdgeInsets.only(top: 10, left: 50, bottom: 30),
-                child: SizedBox(
-                    width: 400,
-                    height: 35,
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      )),
-                    ))),
+                padding: EdgeInsets.only(top: 10, left: 50,bottom: 10),
+                child: Container(
+                  width: 400,
+                  height: 35,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0),
+                      border: Border.all(color: Colors.grey,width:1)
+                  ),
+                  child:Padding(
+                      padding: EdgeInsets.only(left:10,top:6),
+                      child:Text(projectBudget.toString(), style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),)),
+                )),
 
             //----------------Review and Submit--------------//
           ],
@@ -182,153 +280,6 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
   }
 }
 
-class ProjectTypeCustomDropDown extends StatefulWidget {
-  @override
-  State<ProjectTypeCustomDropDown> createState() =>
-      _ProjectTypeCustomDropDownState();
-}
-
-class _ProjectTypeCustomDropDownState extends State<ProjectTypeCustomDropDown> {
-  @override
-  bool isOpenProjectType = false;
-  String selectedOptionProjectType = "Select Option";
-  List<String> optionsProjectTypeList = [
-    "Residential ",
-    'Commercial',
-  ];
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          GestureDetector(
-              onTap: () {
-                isOpenProjectType = !isOpenProjectType;
-                setState(() {});
-              },
-              child: Container(
-                width: 300,
-                height: 35,
-                margin: const EdgeInsets.only(left: 60, top: 30),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black38, width: 1),
-                    borderRadius: BorderRadius.circular(5)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(selectedOptionProjectType),
-                      Icon(
-                          isOpenProjectType
-                              ? Icons.arrow_drop_up
-                              : Icons.arrow_drop_down,
-                          color: Colors.black),
-                    ],
-                  ),
-                ),
-              )),
-          if (isOpenProjectType)
-            Container(
-              width: 300,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black38, width: 1),
-                  borderRadius: BorderRadius.circular(5)),
-              margin: const EdgeInsets.only(left: 60),
-              child: ListView(
-                  primary: true,
-                  shrinkWrap: true,
-                  children: optionsProjectTypeList
-                      .map((e) => Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  isOpenProjectType = false;
-                                  selectedOptionProjectType = e;
-                                  setState(() {});
-                                },
-                                child: HoverContainer(
-                                    height: 35,
-                                    hoverDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                          color: const Color(0xFFFFA62B),
-                                          width: 1),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Text(e),
-                                        ],
-                                      ),
-                                    )),
-                              ),
-                            ),
-                          ))
-                      .toList()),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class RadioButtons extends StatefulWidget {
-  @override
-  State<RadioButtons> createState() => _RadioButtonsState();
-}
-
-class _RadioButtonsState extends State<RadioButtons> {
-  @override
-  String? _months;
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 35, top: 110),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RadioListTile(
-            title: Text("1 to 3 months"),
-            value: "1 to 3 months",
-            groupValue: _months,
-            onChanged: (value) {
-              setState(() {
-                _months = value.toString();
-              });
-            },
-          ),
-          RadioListTile(
-            title: Text("3 to 6 months"),
-            value: "",
-            groupValue: _months,
-            onChanged: (value) {
-              setState(() {
-                _months = value.toString();
-              });
-            },
-          ),
-          RadioListTile(
-            title: Text("more than 6 months"),
-            value: "more than 6 months",
-            groupValue: _months,
-            onChanged: (value) {
-              setState(() {
-                _months = value.toString();
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class PlotSize extends StatefulWidget {
   const PlotSize({super.key});
@@ -412,20 +363,28 @@ class _PlotSize extends State<PlotSize> {
                   child: Stack(
                     children: [
                       Padding(
-                          padding: const EdgeInsets.only(top: 0, right: 0),
+                          padding:  EdgeInsets.only(top: 0, right: 0),
                           child: Container(
                               width: 250,
                               height: 32,
-                              decoration: const BoxDecoration(),
-                              child: const TextField(
-                                decoration:
-                                    InputDecoration(border: InputBorder.none),
-                              ))),
+                              decoration:  BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  border: Border.all(color: Colors.grey,width:1)
+
+                              ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(plotFrontSideWidth.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
                       Container(
                         margin: const EdgeInsets.only(left: 210),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: const Color(0xFFFFA62B),
+
                         ),
                         child: Container(
                             width: 40,
@@ -463,13 +422,21 @@ class _PlotSize extends State<PlotSize> {
                       Padding(
                           padding: const EdgeInsets.only(top: 0, right: 0),
                           child: Container(
-                              width: 250,
-                              height: 32,
-                              decoration: const BoxDecoration(),
-                              child: const TextField(
-                                decoration:
-                                    InputDecoration(border: InputBorder.none),
-                              ))),
+                            width: 250,
+                            height: 32,
+                            decoration:  BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.grey,width:1)
+
+                            ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(plotBackSideWidth.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
                       Container(
                         margin: const EdgeInsets.only(left: 210),
                         decoration: BoxDecoration(
@@ -515,7 +482,7 @@ class _PlotSize extends State<PlotSize> {
                         ),
                       )),
                   const Padding(
-                      padding: EdgeInsets.only(top: 20, left: 210, bottom: 0),
+                      padding: EdgeInsets.only(top: 20, left: 220, bottom: 0),
                       child: Text(
                         "Enter Plot Right Side Length",
                         style: TextStyle(
@@ -538,16 +505,24 @@ class _PlotSize extends State<PlotSize> {
                     children: [
                       Padding(
                           padding: const EdgeInsets.only(top: 0, right: 0),
-                          child: Container(
-                              width: 250,
-                              height: 32,
-                              decoration: const BoxDecoration(),
-                              child: const TextField(
-                                decoration:
-                                    InputDecoration(border: InputBorder.none),
-                              ))),
+                          child:Container(
+                            width: 250,
+                            height: 32,
+                            decoration:  BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.grey,width:1)
+
+                            ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(plotLeftSideLength.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
                       Container(
-                        margin: const EdgeInsets.only(left: 210),
+                        margin: const EdgeInsets.only(left: 220),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: const Color(0xFFFFA62B),
@@ -587,14 +562,22 @@ class _PlotSize extends State<PlotSize> {
                     children: [
                       Padding(
                           padding: const EdgeInsets.only(top: 0, right: 0),
-                          child: Container(
-                              width: 250,
-                              height: 32,
-                              decoration: const BoxDecoration(),
-                              child: const TextField(
-                                decoration:
-                                    InputDecoration(border: InputBorder.none),
-                              ))),
+                          child:Container(
+                            width: 250,
+                            height: 32,
+                            decoration:  BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.grey,width:1)
+
+                            ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(plotRightSideLength.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
                       Container(
                         margin: const EdgeInsets.only(left: 210),
                         decoration: BoxDecoration(
@@ -649,13 +632,21 @@ class _PlotSize extends State<PlotSize> {
                       Padding(
                           padding: const EdgeInsets.only(top: 0, right: 0),
                           child: Container(
-                              width: 250,
-                              height: 32,
-                              decoration: const BoxDecoration(),
-                              child: const TextField(
-                                decoration:
-                                    InputDecoration(border: InputBorder.none),
-                              ))),
+                            width: 250,
+                            height: 32,
+                            decoration:  BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.grey,width:1)
+
+                            ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(actualPlotSize.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
                       Container(
                         margin: const EdgeInsets.only(left: 210),
                         decoration: BoxDecoration(
@@ -717,38 +708,23 @@ class _PlotSize extends State<PlotSize> {
                               fontWeight: FontWeight.w600,
                             ),
                           )),
-                      Container(
-                          width: 150,
-                          height: 38,
-                          margin: const EdgeInsets.only(left: 50, top: 10),
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.black38, width: 1),
-                              borderRadius: BorderRadius.circular(0),
-                              boxShadow: <BoxShadow>[]),
-                          child: DropdownButtonHideUnderline(
-                              child: DropdownButtonFormField(
-                            value: _selectedValue,
-                            items: cityItems.map((e) {
-                              return DropdownMenuItem(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 0, left: 10),
-                                    child: Text(
-                                      e,
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                  value: e);
-                            }).toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectedValue = newValue as String;
-                              });
-                            },
-                            isExpanded: true,
-                          ))),
+                      Padding(
+                          padding: EdgeInsets.only(top: 10, left: 50,bottom: 10),
+                          child: Container(
+                            width: 250,
+                            height: 35,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.grey,width:1)
+                            ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(city.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
+
                     ],
                   ),
                   Column(
@@ -767,64 +743,27 @@ class _PlotSize extends State<PlotSize> {
                             ),
                           )),
                       Padding(
-                          padding: EdgeInsets.only(top: 10, left: 140),
-                          child: SizedBox(
-                              width: 400,
-                              height: 38,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(0.0),
-                                )),
-                              ))),
+                          padding: EdgeInsets.only(top: 10, left: 140,bottom: 10),
+                          child: Container(
+                            width: 300,
+                            height: 35,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(color: Colors.grey,width:1)
+                            ),
+                            child:Padding(
+                                padding: EdgeInsets.only(left:10,top:6),
+                                child:Text(plotLocation.toString(), style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),)),
+                          )),
                     ],
                   )
                 ],
               ),
-              //------------------------------Sevearge System Location
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
-                  child: Text(
-                    "Enter Sewerage System Location ",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(top: 10, left: 50),
-                  child: SizedBox(
-                      width: 400,
-                      height: 38,
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(0.0),
-                        )),
-                      ))),
-              //-------------------------------------------------------//
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
-                  child: Text(
-                    "Enter Electric Pole Location  ",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(top: 10, left: 50, bottom: 20),
-                  child: SizedBox(
-                      width: 400,
-                      height: 38,
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(0.0),
-                        )),
-                      ))),
+
+
             ]),
           ),
         ),
@@ -893,14 +832,16 @@ relationship, and anything unique about your project, team, or company. ''',
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   children: <Widget>[
-                    new TextField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left:10,top:6),
+                        child:Text(describeYourProject.toString(), style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),)),
                   ])),
           //---------------------Button-----------------//
+          if(projectFile.toString()!="")
           Padding(
               padding: const EdgeInsets.only(top: 100, left: 50, bottom: 30),
               child: Container(
@@ -961,7 +902,7 @@ relationship, and anything unique about your project, team, or company. ''',
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),
-                          backgroundColor: const Color(0xFF363B42))))),
+                          backgroundColor:const Color(0xFF363B42))))),
 
           //----------------Review and Submit--------------//
         ]));

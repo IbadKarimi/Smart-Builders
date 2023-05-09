@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
 
 import '../../Owner/Owner_Desire_Building.dart';
-import '../../Owner/Owner_Proposala_Service_Providers.dart';
+import '../../Owner/Owner_Proposals_Service_Providers.dart';
 import '../footer.dart';
 import '../header.dart';
 

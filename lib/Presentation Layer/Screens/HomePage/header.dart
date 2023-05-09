@@ -1,6 +1,7 @@
 // ignore_for_file: sized_box_for_whitespace
 
 import "package:flutter/material.dart";
+import "package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_login.dart";
 
 import "../Owner/OwnerUserSetting/UserSetting.dart";
 import "../Owner/Owner_Desire_Building.dart";
@@ -153,14 +154,19 @@ class DesktopNavBar extends StatelessWidget {
                   ),
                 )),
 
-            const Padding(
+        GestureDetector(
+          onTap: (() {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const Login()));
+          }),
+          child: const Padding(
               padding: EdgeInsets.only(top: 30, left: 20),
               child: Text("LOGIN",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                   )),
-            ),
+            )),
             const SizedBox(width: 10),
             GestureDetector(
                 onTap: (() {

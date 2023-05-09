@@ -7,6 +7,7 @@ import 'package:hovering/hovering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
 import '../../../../BuisnessLogic Layer/Api.dart';
+import '../../../../models/OwnerSignUpModel.dart';
 import '../../HomePage/footer.dart';
 import '../../HomePage/header.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +32,8 @@ final RegExp RegExpCity = RegExp(r'^[a-zA-Z ]+$');
 final RegExp RegExpAddress = RegExp(r'^[a-zA-Z0-9\s\-\#.,]+$');
 var responseApi;
 ApiService apiService = new ApiService();
-
+String ?firstName;
+String? lastName;
 
 class ProfessionalsProfile extends StatefulWidget {
   String email;
@@ -43,6 +45,7 @@ class ProfessionalsProfile extends StatefulWidget {
 }
 
 class _ProfessionalsProfile extends State<ProfessionalsProfile> {
+
   @override
   Widget build(BuildContext context) {
     currentUserEmail=widget.email;
@@ -97,7 +100,28 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
   final _licenseNoController=TextEditingController();
 
   String ?_textFormFieldValue;
+  List<OwnerSignUpModel> _getUserList=[];
 
+  void initState() {
+    apiService.getUserList().then((value) {
+      setState(() {
+        _getUserList.addAll(value);
+        for (int i = 0; i < _getUserList.length; i++) {
+          if (_getUserList[i].email.toString() == currentUserEmail) {
+            firstName = _getUserList[i].firstName;
+            lastName = _getUserList[i].lastName;
+            if (_firstNameController.text == "" ||
+                _firstNameController.text == "") {
+              _firstNameController.text = firstName.toString();
+              _lastNameController.text = lastName.toString();
+            }
+            print(firstName.toString());
+          }
+        } //set data we get
+      });
+    });
+    super.initState();
+  }
 
 
 
@@ -136,7 +160,8 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
 
     return  Form(
         autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
-        key:_ProfessionalProfileFormKey,
+        key:
+        _ProfessionalProfileFormKey,
         child:Container(
             margin: const EdgeInsets.only(top: 60, bottom: 40),
             width: 900,
@@ -1123,7 +1148,8 @@ class _ProfessionalsProfileI extends State<ProfessionalsProfileI> {
                                   if( _ProfessionalProfileFormKey.currentState!.validate()){
 
                                     if(profileFile!=null){
-                                      var response=await apiService.createProfessionalsProfile(title.toString(),_firstNameController.text, _lastNameController.text,currentUserEmail.toString(),  _companyNameController.text,
+                                      var response=await apiService.createProfessionalsProfile(title.toString(),_firstNameController.text,
+                                          _lastNameController.text,currentUserEmail.toString(),  _companyNameController.text,
                                           selectedOptionCountry , _cityController.text, _zipPostalCodeController.text,
                                           _streetAddressController.text, _phoneNoController.text, _cnicNoController.text,
                                           _ntnNoController.text,_licenseNoController.text, _permitNoController.text, profileFile!, cnicFile!,currentTimeNow);

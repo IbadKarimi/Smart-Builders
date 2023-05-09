@@ -5,6 +5,7 @@ class OwnerSubmitProposalsModel {
   String? projectTitle;
   String? projectType;
   String? workMonths;
+  String?projectBudget;
   String? plotLengthA;
   String? plotLengthB;
   String? plotWidthA;
@@ -12,6 +13,8 @@ class OwnerSubmitProposalsModel {
   String? actualPlotSize;
   String? floors;
   String? city;
+  String?plotLocation;
+  String ?grroundFloor;
   String? describeYourProject;
   String? projectFile;
   String? proposalCreatedTime;
@@ -24,6 +27,7 @@ class OwnerSubmitProposalsModel {
         this.projectTitle,
         this.projectType,
         this.workMonths,
+        this.projectBudget,
         this.plotLengthA,
         this.plotLengthB,
         this.plotWidthA,
@@ -35,6 +39,7 @@ class OwnerSubmitProposalsModel {
         this.projectFile,
         this.proposalCreatedTime,
         this.proposalSavedDate,
+        this.grroundFloor,
         this.sId});
 
   OwnerSubmitProposalsModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +48,7 @@ class OwnerSubmitProposalsModel {
     projectTitle = json['projectTitle'];
     projectType = json['projectType'];
     workMonths = json['workMonths'];
+    projectBudget=json["projectBudget"];
     plotLengthA = json['plotLengthA'];
     plotLengthB = json['plotLengthB'];
     plotWidthA = json['plotWidthA'];
@@ -50,6 +56,8 @@ class OwnerSubmitProposalsModel {
     actualPlotSize = json['actualPlotSize'];
     floors = json['floors'];
     city = json['city'];
+    plotLocation = json['plotLocation'];
+    grroundFloor = json['groundFloor'];
     describeYourProject = json['describeYourProject'];
     projectFile = json['projectFile'];
     proposalCreatedTime = json['proposalCreatedTime'];
@@ -64,6 +72,7 @@ class OwnerSubmitProposalsModel {
     _data['projectTitle'] = this.projectTitle;
     _data['projectType'] = this.projectType;
     _data['workMonths'] = this.workMonths;
+    _data['projectBudget'] = this.projectBudget;
     _data['plotLengthA'] = this.plotLengthA;
     _data['plotLengthB'] = this.plotLengthB;
     _data['plotWidthA'] = this.plotWidthA;
@@ -71,6 +80,8 @@ class OwnerSubmitProposalsModel {
     _data['actualPlotSize'] = this.actualPlotSize;
     _data['floors'] = this.floors;
     _data['city'] = this.city;
+    _data['plotLocation'] = this.plotLocation;
+    _data['groundFloor'] = this.grroundFloor;
     _data['describeYourProject'] = this.describeYourProject;
     _data['projectFile'] = this.projectFile;
     _data['proposalCreatedTime'] = this.proposalCreatedTime;

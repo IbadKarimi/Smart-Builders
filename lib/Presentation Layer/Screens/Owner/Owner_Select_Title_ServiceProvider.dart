@@ -9,7 +9,7 @@ import '../HomePage/HiringProfessionals/SubContractors.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_View_Profile.dart';
-import 'Owner_Proposala_Service_Providers.dart';
+import 'Owner_Proposals_Service_Providers.dart';
 String? currentUserEmail;
 class SelectServiceProviderTitle extends StatefulWidget {
   String email;

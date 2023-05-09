@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smart_builder_web/models/OwnerProfileModel.dart';
+import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 import 'package:smart_builder_web/models/ProWorkExperience.dart';
 
 import '../models/OwnerAboutModel.dart';
@@ -387,7 +388,7 @@ class ApiService {
    }
 
    Future<String> InsertOwnerSubmitProposals(String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
-       String actualPlotSize,String floors,String city,String plotLocation,String describeYourProject,
+       String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
        PlatformFile projectFile,String proposalsCreatedTime,String proposalsSavedDate) async {
     if(projectFile!=null){
      final request = http.MultipartRequest(
@@ -417,8 +418,10 @@ class ApiService {
      // a left side b right side
      request.fields["actualPlotSize"]=actualPlotSize.toString();
      request.fields["floors"]=floors.toString();
+     request.fields["groundFloor"]=groundFloor.toString();
 
      request.fields["city"]=city.toString();
+     request.fields["describeYourProject"]=describeYourProject.toString();
      request.fields["plotLocation"]=plotLocation.toString();
      request.fields["proposalCreatedTime"]=proposalsCreatedTime.toString();
      request.fields["proposalSavedDate"]=proposalsSavedDate.toString();
@@ -434,45 +437,11 @@ class ApiService {
        throw Exception("Api is Failed");
      }
 
-   }else{
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          "email": email.toString(),
-          "to": to.toString(),
-          "projectTitle":projectTitle.toString(),
-          "projectType":projectType.toString(),
-          "workMonths":workMonths.toString(),
-          "plotWidthA":plotFrontSideWidth.toString(),
-          "plotWidthB":plotBackSideWidth.toString(),
-          "plotLengthA":plotLeftSideLength.toString(),
-          "plotLengthB":plotRightSideLength.toString(),
-          "actualPlotSize":actualPlotSize.toString(),
-          "floors":floors.toString(),
-          "city":city.toString(),
-          "plotLocation":plotLocation.toString(),
-          "describeYourProject":describeYourProject.toString(),
-          "proposalsCreatedTime":proposalsCreatedTime.toString(),
-          "proposalSavedDate":proposalsSavedDate.toString(),
-        }),
-      );
-
-      if (response.statusCode ==200) {
-        debugPrint("APi is Working");
-        return '200';
-      } else {
-        // If the server did not return a 201 CREATED response,
-        // then throw an exception.
-        throw Exception('Failed to Owner About. Api');
-      }
-    }
+   }
     return "100";
   }
    Future<String> InsertOwnerSubmitProposals_(String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
-       String actualPlotSize,String floors,String city,String plotLocation,String describeYourProject,
+       String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
       String proposalsCreatedTime,String proposalsSavedDate) async {
      final response = await http.post(
        Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals'),
@@ -485,17 +454,20 @@ class ApiService {
          "projectTitle":projectTitle.toString(),
          "projectType":projectType.toString(),
          "workMonths":workMonths.toString(),
+         "projectBudget":projectBudget.toString(),
          "plotWidthA":plotFrontSideWidth.toString(),
          "plotWidthB":plotBackSideWidth.toString(),
          "plotLengthA":plotLeftSideLength.toString(),
          "plotLengthB":plotRightSideLength.toString(),
          "actualPlotSize":actualPlotSize.toString(),
          "floors":floors.toString(),
+         "groundFloor":groundFloor.toString(),
          "city":city.toString(),
          "plotLocation":plotLocation.toString(),
          "describeYourProject":describeYourProject.toString(),
          "proposalsCreatedTime":proposalsCreatedTime.toString(),
          "proposalSavedDate":proposalsSavedDate.toString(),
+
        }),
      );
 
@@ -505,8 +477,24 @@ class ApiService {
      } else {
 // If the server did not return a 201 CREATED response,
 // then throw an exception.
-       throw Exception('Failed to Owner About. Api');
+       throw Exception('Failed to Owner Submit proposal. Api');
      }
+   }
+   Future<List<OwnerSubmitProposalsModel>> getOwnerSubmitProposal ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals'));
+
+     List<OwnerSubmitProposalsModel> getOwnerProposalList=[]; //the scope of the array is Inside the function
+
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+       var prJson=json.decode(response.body);
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         getOwnerProposalList.add(OwnerSubmitProposalsModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Api is not Working !");}
+     return getOwnerProposalList;
    }
 
    Future<String> createProfessionalsProfile(String title, String firstName,String lastName,String currentUserEmail,String companyName,String country,String city,String zipPostalCode,

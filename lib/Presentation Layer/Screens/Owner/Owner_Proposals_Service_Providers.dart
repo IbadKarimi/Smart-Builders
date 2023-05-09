@@ -1,5 +1,54 @@
 import 'dart:html';
+/*class IncrementDecrementWidget extends StatefulWidget {
+  @override
+  _IncrementDecrementWidgetState createState() => _IncrementDecrementWidgetState();
+}
 
+class _IncrementDecrementWidgetState extends State<IncrementDecrementWidget> {
+  int _value = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextFormField(
+          controller: TextEditingController(text: '$_value'),
+          keyboardType: TextInputType.number,
+          onChanged: (value) {
+            setState(() {
+              _value = int.parse(value);
+            });
+          },
+          decoration: InputDecoration(
+            labelText: 'Value',
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                setState(() {
+                  _value++;
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: () {
+                setState(() {
+                  _value--;
+                });
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+*/
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +63,8 @@ import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+
+import 'Owner_View_Profile.dart';
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
@@ -76,12 +127,25 @@ class ProposalServiceProviderI extends StatefulWidget {
 }
 
 class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+  void _decrementCounter() {
+    setState(() {
+      _counter--;
+    });
+  }
   @override
   _ProposalServiceProviderI() {
     // defauslt value set in constructor
     _selectedValue = cityItems[0];
   }
   String? _months;
+  String? _groundFloor;
   String? _projectType;
   String city = "Rawalpindi";
   String? floors;
@@ -105,13 +169,22 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
   final _plotWidthBackSideController=TextEditingController();
   final _actualPlotSizeController=TextEditingController();
   final _plotLocationController=TextEditingController();
+  final _floorsController=TextEditingController();
   final _describeYourProjectController=TextEditingController();
+
 
   //-----------------------------------------------------------------//
 
 
 
+
+
+
   Widget build(BuildContext context) {
+
+    TextEditingController _controller = TextEditingController(text: '$_counter');
+
+
     DateTime now = DateTime.now();
     DateTime currentDate = DateTime.now();
     String _currentDateNow = DateFormat('dd-MM-yyy').format(currentDate);
@@ -289,7 +362,7 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                                   padding: const EdgeInsets.only(left:30),
                                   child:RadioListTile(
                                   title: Text("3 to 6 months"),
-                                  value: "",
+                                  value: "3 to 6 months",
                                   groupValue: _months,
                                   onChanged: (value) {
                                     state.setValue(true);
@@ -441,7 +514,6 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                               padding: const EdgeInsets.only(top: 10,left:60 ),
                               child: SizedBox(
                                   width:250,
-
                                   child:TextFormField(
                                     // autovalidateMode:AutovalidateMode.onUserInteraction,
                                     inputFormatters: <TextInputFormatter>[
@@ -821,7 +893,7 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                           )
                         ],
                       ),
-                      //---------------------Second Field
+
                     ]),
                     const Padding(
                         padding:
@@ -834,6 +906,115 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                             fontWeight: FontWeight.w600,
                           ),
                         )),
+
+
+                    Stack(
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(top: 10,left:60 ),
+                            child: SizedBox(
+                                width:150,
+
+                                child:TextFormField(
+                                  onTap: () {
+                                    // Move cursor to the end of the text field
+                                    _controller.selection = TextSelection.fromPosition(
+                                        TextPosition(offset: _controller.text.length)
+                                    );
+                                  },
+                                  // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  controller:_controller,
+
+                                  decoration: InputDecoration(
+
+
+                                      helperText: "",
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(vertical: 18.0,horizontal: 11),
+
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      )),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _counter = int.parse(value);
+                                    });
+                                  },
+                                  validator: (value){
+
+                                    if(value!.trim().isEmpty){
+                                      return "Field is Required";
+
+                                    }
+
+                                    return null;
+                                  },
+                                ))),
+                        Container(
+                          margin: const EdgeInsets.only(left: 169,top:11),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+
+                          ),
+                          child: Container(
+                              width: 40,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                  color: Color(0xFFD9D9D9),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(5),
+                                      bottomRight: Radius.circular(5))),
+                              child:  Column(
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 0, left: 5, bottom: 0),
+                                      child: GestureDetector(
+                                          onTap:(){
+                                            setState(() {
+                                              _counter++;
+                                            });
+                                          },
+
+                                          child:Text(
+                                            "+",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ))),
+
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 0, left: 5, bottom: 0),
+                                      child: GestureDetector(
+                                          onTap:(){
+                                          setState(() {
+                                            if(_counter>=1){
+                                              _counter--;
+                                            }
+
+                                          });
+                                          },
+                                          child:Text("_",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ))),
+                                  //------------------------Ground floor-----------------//
+
+                                ],
+                              )),
+                        )
+                      ],
+                    ),
                     FormField(
                       builder: (FormFieldState<bool> state) {
                         return Padding(
@@ -852,73 +1033,49 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                                 )
                                     : Container(),
                                 Padding(
-                                  padding: const EdgeInsets.only(left:30,top:0),
-                                  child: RadioListTile(
-                                    title: Text("1st Floor"),
-                                    value: "1st Floor",
-                                    groupValue: floors,
+                                  padding: const EdgeInsets.only(left:30),
+                                  child:  RadioListTile(
+                                    title: Text("With ground floor ?"),
+                                    value: "With ground floor",
+                                    groupValue: _groundFloor,
                                     onChanged: (value) {
+                                      state.setValue(true);
+                                      _counter=_counter+1;
                                       setState(() {
+                                        _groundFloor = value.toString();
+                                      });
+                                    },
+                                  ),),
+                                Padding(
+                                    padding: const EdgeInsets.only(left:30),
+                                    child:RadioListTile(
+                                      title: Text("Without ground floor ?"),
+                                      value: "Without ground floor",
+                                      groupValue: _groundFloor,
+                                      onChanged: (value) {
                                         state.setValue(true);
-                                        floors = value.toString();
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left:30,top:0),
-                                  child: RadioListTile(
-                                    title: Text("2nd Floor"),
-                                    value: "2nd Floor",
-                                    groupValue: floors,
-                                    onChanged: (value) {
-                                      state.setValue(true);
-                                      setState(() {
-                                        floors = value.toString();
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left:30,top:0),
-                                  child: RadioListTile(
-                                    title: Text("3rd Floor"),
-                                    value: "3rd Floor",
-                                    groupValue: floors,
-                                    onChanged: (value) {
-                                      state.setValue(true);
-                                      setState(() {
-                                        floors = value.toString();
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left:30,top:0),
-                                  child: RadioListTile(
-                                    title: Text("4th Floor"),
-                                    value: "4th Floor",
-                                    groupValue: floors,
-                                    onChanged: (value) {
-                                      state.setValue(true);
-                                      setState(() {
-                                        floors = value.toString();
-                                      });
-                                    },
-                                  ),
-                                ),
+                                        if(_groundFloor=="With ground floor"){
+                                          _counter=_counter-1;
+                                        }
+
+                                        setState(() {
+                                          _groundFloor = value.toString();
+                                        });
+                                      },
+                                    )),
+
+
 
                               ],
                             ));
                       },
                       validator: (value) {
                         if (value != true) {
-                          return 'Floors are required';
+                          return 'Work months are required';
                         }
                         return null;
                       },
                     ),
-
                     //-------------------Location
                     const Padding(
                         padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
@@ -1194,7 +1351,7 @@ relationship, and anything unique about your project, team, or company. ''',
 
                                        if(attachFile!=null){  var response=await apiService.InsertOwnerSubmitProposals(currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
                                            _months.toString(),_projectBudgetController.text, _plotWidthFrontSideController.text, _plotWidthBackSideController.text, _plotLengthLeftSideController.text,
-                                           _plotLengthRightSideController.text, _actualPlotSizeController.text, floors.toString(), _selectedValue.toString(),_plotLocationController.text, _describeYourProjectController.text,
+                                           _plotLengthRightSideController.text, _actualPlotSizeController.text, _counter.toString(),_groundFloor.toString(), _selectedValue.toString(),_plotLocationController.text, _describeYourProjectController.text,
                                            attachFile!, _currentTimeNow, _currentDateNow);
                                        if(response=="200"){
                                          Navigator.of(context).push(MaterialPageRoute(
@@ -1202,7 +1359,7 @@ relationship, and anything unique about your project, team, or company. ''',
                                        }}else{
                                          var response=await apiService.InsertOwnerSubmitProposals_(currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
                                              _months.toString(),_projectBudgetController.text, _plotWidthFrontSideController.text, _plotWidthBackSideController.text, _plotLengthLeftSideController.text,
-                                             _plotLengthRightSideController.text, _actualPlotSizeController.text, floors.toString(), _selectedValue.toString(),_plotLocationController.text,
+                                             _plotLengthRightSideController.text, _actualPlotSizeController.text, _counter.toString(),_groundFloor.toString(), _selectedValue.toString(),_plotLocationController.text,
                                              _describeYourProjectController.text,
                                               _currentTimeNow, _currentDateNow);
                                          if(response=="200"){
@@ -1334,7 +1491,7 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>  ProViewProfile("")));
+                                    builder: (context) =>  OwnerViewProfile(currentUserEmail.toString())));
                               },
                               // ignore: sort_child_properties_last
                               child: Row(children: const <Widget>[

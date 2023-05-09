@@ -105,7 +105,7 @@ class _ProProfile extends State<ProProfile> {
       setState(() {
         _getOwnerProfileData.addAll(value);
         for(int index=0;index<_getOwnerProfileData.length;index++) {
-          if (_getOwnerProfileData[index].email=="ibadkarimi.10@gmail.com") {
+          if (_getOwnerProfileData[index].email==currentUserEmail) {
 
             proId=_getOwnerProfileData[index].id.toString();
             companyName=_getOwnerProfileData[index].companyName.toString();
@@ -2807,7 +2807,7 @@ class _EducationHistory extends State<EducationHistory> {
                      )),
                if(school==null)
                  Padding(
-                     padding: EdgeInsets.only(top: 5, left: 50, bottom: 30),
+                     padding: EdgeInsets.only(top: 5, left: 0, bottom: 30),
                      child: Text(
                        "No item is dipslay" ,
                        style: TextStyle(

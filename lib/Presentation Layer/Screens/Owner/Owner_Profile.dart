@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:hovering/hovering.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
+import '../../../models/OwnerSignUpModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import 'Owner_Preview_Profile.dart';
@@ -33,7 +34,7 @@ final RegExp RegExpLastName = RegExp(r'^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$');
 final RegExp RegExpCity = RegExp(r'^[a-zA-Z ]+$');
 final RegExp RegExpAddress = RegExp(r'^[a-zA-Z0-9\s\-\#.,]+$');
 var responseApi;
-
+String ?currentUserEmail;
 
 class OwnerProfile extends StatefulWidget {
   final String email;
@@ -50,7 +51,7 @@ class _OwnerProfile extends State<OwnerProfile> {
 
   Widget build(BuildContext context) {
 
-    var _email = widget.email;
+     currentUserEmail = widget.email;
     return Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -59,16 +60,17 @@ class _OwnerProfile extends State<OwnerProfile> {
                 child: Column(
                   children: <Widget>[
                     Boxes(),
-                    OwnerProfileInterface(_email),
+                    OwnerProfileInterface(),
                     Footer(),
                   ],
                 ))));
   }
 }
-
+String ?firstName;
+String? lastName;
 class OwnerProfileInterface extends StatefulWidget {
-  final String email;
-  const OwnerProfileInterface(this.email);
+
+  const OwnerProfileInterface({super.key});
 
   @override
   State<OwnerProfileInterface> createState() => _OwnerProfileInterface();
@@ -85,6 +87,8 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   final _OwnerProfileFormKey = GlobalKey<FormState>();
   final _firstNameController=TextEditingController();
   final _lastNameController=TextEditingController();
+
+
   final _occupationController=TextEditingController();
   final _countryController=TextEditingController();
   final _cityController=TextEditingController();
@@ -95,7 +99,35 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   final _ntnNoController=TextEditingController();
 
   String _textFormFieldValue="";
+  List<OwnerSignUpModel> _getUserList=[];
 
+  void initState() {
+    apiService.getUserList().then((value){
+      setState(() {
+        _getUserList.addAll(value);
+        for(int i=0;i< _getUserList.length;i++){
+          if(_getUserList[i].email.toString()=="ibadkarimi.10@gmail.com") {
+            firstName = _getUserList[i].firstName;
+            lastName = _getUserList[i].lastName;
+            if(_firstNameController.text=="" || _firstNameController.text==""){
+
+              _firstNameController.text=firstName.toString();
+              _lastNameController.text=lastName.toString();
+
+            }
+            print(firstName.toString());
+          }}//set data we get
+      });
+
+    });
+
+
+
+
+    // Output: 2:30 PM
+    //print('$hour:$minute');
+    super.initState();
+  }
 
 
 
@@ -118,6 +150,11 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
   bool checkbox = false;
   @override
   Widget build(BuildContext context) {
+  //  _firstNameController.text="Bilal";
+    setState(() {
+      print(_firstNameController.text);
+    });
+
     DateTime now = DateTime.now();
     DateTime currentDate = DateTime.now();
     String _currentDateNow = DateFormat('dd-MM-yyy').format(currentDate);
@@ -128,8 +165,8 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
     print(currentTimeNow);
 
     // List of items in our dropdown menu
-    String currentUserEmail=widget.email;
-    debugPrint("current user email :"+currentUserEmail);
+
+
 
 
     return  Form(
@@ -315,7 +352,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                           child:TextFormField(
                             // autovalidateMode:AutovalidateMode.onUserInteraction,
                             keyboardType: TextInputType.name,
-                            controller: _firstNameController,
+                            controller:_firstNameController,
 
                             decoration: InputDecoration(
 
@@ -913,15 +950,17 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                         height: 40,
                         child: ElevatedButton(
                             onPressed: () async {
-                              setState(() {
-                              //  progressBarVisible=true;
-                              });
-                              if( _OwnerProfileFormKey.currentState!.validate()&&cnicFile!=null){
+                              if(cnicFile!=null){
                                 setState(() {
                                   cnicError=false;
                                 });
+                              }else{setState(() {
+                                cnicError=true;
+                              });}
+                              if( _OwnerProfileFormKey.currentState!.validate()){
+
                               if(coverFile!=null){
-                              var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text,currentUserEmail, _occupationController.text,
+                              var response=await apiService.createOwnerProfile(_firstNameController.text, _lastNameController.text,currentUserEmail.toString(), _occupationController.text,
                                   selectedOptionCountry , _cityController.text, _zipPostalCodeController.text,
                                   _streetAddressController.text, _phoneNoController.text, _cnicNoController.text,
                                   _ntnNoController.text, coverFile!, cnicFile!,currentTimeNow);
@@ -932,7 +971,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                  });
                                  Navigator.push(
                                    context,
-                                   MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail)),
+                                   MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail.toString())),
                                  );
                                }
                                else{
@@ -946,7 +985,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                               else{
                                 final ByteData data = await rootBundle.load('Logo/Avatar.png');
 
-                                var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text,currentUserEmail,_occupationController.text, selectedOptionCountry, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
+                                var response= await apiService.createOwnerProfileDefaultImage(_firstNameController.text, _lastNameController.text,currentUserEmail.toString(),_occupationController.text, selectedOptionCountry, _cityController.text, _zipPostalCodeController.text, _streetAddressController.text, _phoneNoController.text,
                                     _cnicNoController.text, _ntnNoController.text,data!, cnicFile!,currentTimeNow);
                                 if(response=='200'){
 
@@ -955,7 +994,7 @@ class _OwnerProfileInterface extends State<OwnerProfileInterface> {
                                   });
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail)),
+                                    MaterialPageRoute(builder: (context) => OwnerPreviewProfile(currentUserEmail.toString())),
                                   );
 
                                 }

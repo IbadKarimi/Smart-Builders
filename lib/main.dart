@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Proposals_Service_Providers.dart';
 import 'dart:html';
 import 'dart:typed_data';
 
@@ -9,7 +10,9 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/Pro
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
+import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
+import 'Presentation Layer/Screens/Owner/Owner_View_Submitted_Proposals.dart';
 
 //import 'mongodb.dart';
 
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:ContractorsMain()),
+      home:  Scaffold(body:OwnerViewProfile("bilal@gmail.com"),),
     );
   }
 }
@@ -74,6 +77,100 @@ class _Home extends State<Home> {
           showMenus(context);
         },
         child: Text('Solutions'),
+      ),
+    );
+  }
+}
+
+
+class SearchPage extends StatefulWidget {
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  String searchQuery = '';
+  List<String> data = [
+    'Apple',
+    'Banana',
+    'Cherry',
+    'Durian',
+    'Elderberry',
+    'Fig',
+    'Grape',
+    'Honeydew',
+    'Jackfruit',
+    'Kiwi',
+    'Mango',
+    'Mango',
+    'Nectarine',
+    'Orange',
+    'Papaya',
+    'Quince',
+    'Raspberry',
+    'Strawberry',
+    'Tomato',
+    'Ugli Fruit',
+    'Watermelon',
+  ];
+
+  List<String> filteredData = [];
+
+  @override
+  void initState() {
+    filteredData.addAll(data);
+    super.initState();
+  }
+
+  void filterData(String query) {
+    setState(() {
+      filteredData = data.where((item) => item.toLowerCase().contains(query.toLowerCase())).toList();
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Search Page'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(10.0),
+            child: TextField(
+              onChanged: (value) {
+                searchQuery = value;
+                filterData(searchQuery);
+              },
+              decoration: InputDecoration(
+                labelText: 'Search',
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredData.length,
+              itemBuilder: (BuildContext context, int index) {
+                String item = filteredData[index];
+                return ListTile(
+                  title: RichText(
+                    text: TextSpan(
+                      text: item.substring(0, searchQuery.length),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: item.substring(searchQuery.length),
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
