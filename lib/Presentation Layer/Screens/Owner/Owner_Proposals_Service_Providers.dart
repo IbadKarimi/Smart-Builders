@@ -44,11 +44,12 @@ PlatformFile? attachFile;
 ApiService apiService = new ApiService();
 String? serviceProviderTitle;
 String? currentUserEmail;
+String ?selectedContractorCity;
 class ProposalServiceProvider extends StatefulWidget {
   String _email;
   String _serviceProviderTitle;
-  String firstName,lastName,city,country,profilePhotoUrl;
-  ProposalServiceProvider(this._email,this._serviceProviderTitle,this.firstName,this.lastName,this.city,this.country,this.profilePhotoUrl);
+  String firstName,lastName,city,country,profilePhotoUrl,selectContractorCity;
+  ProposalServiceProvider(this._email,this._serviceProviderTitle,this.selectContractorCity,this.firstName,this.lastName,this.city,this.country,this.profilePhotoUrl);
 
   @override
   State<ProposalServiceProvider> createState() => _ProposalServiceProvider();
@@ -62,6 +63,7 @@ class _ProposalServiceProvider extends State<ProposalServiceProvider> {
     city=widget.city;
     country=widget.country;
     profilePhotoUrl=widget.profilePhotoUrl;
+    selectedContractorCity=widget.selectContractorCity;
     setState(() {
       serviceProviderTitle=widget._serviceProviderTitle;
       currentUserEmail=widget._email;
@@ -1311,7 +1313,8 @@ relationship, and anything unique about your project, team, or company. ''',
                                 onPressed: ()async {
                                   if(_OwnerSubmitProposalsFormKey.currentState!.validate()){
 
-                                       if(attachFile!=null){  var response=await apiService.InsertOwnerSubmitProposals(firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString(),currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
+                                       if(attachFile!=null){
+                                         var response=await apiService.InsertOwnerSubmitProposals(selectedContractorCity.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString(),currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
                                            _months.toString(),_projectBudgetController.text, _plotWidthFrontSideController.text, _plotWidthBackSideController.text, _plotLengthLeftSideController.text,
                                            _plotLengthRightSideController.text, _actualPlotSizeController.text, _counter.toString(),_groundFloor.toString(), _selectedValue.toString(),_plotLocationController.text, _describeYourProjectController.text,
                                            attachFile!, _currentTimeNow, _currentDateNow);
@@ -1319,7 +1322,7 @@ relationship, and anything unique about your project, team, or company. ''',
                                          Navigator.of(context).push(MaterialPageRoute(
                                              builder: (context) => OfferSentShowDialog()));
                                        }}else{
-                                         var response=await apiService.InsertOwnerSubmitProposals_(firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString(),currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
+                                         var response=await apiService.InsertOwnerSubmitProposals_(selectedContractorCity.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString(),currentUserEmail.toString(), serviceProviderTitle.toString(), _projectTitleController.text, _projectType.toString(),
                                              _months.toString(),_projectBudgetController.text, _plotWidthFrontSideController.text, _plotWidthBackSideController.text, _plotLengthLeftSideController.text,
                                              _plotLengthRightSideController.text, _actualPlotSizeController.text, _counter.toString(),_groundFloor.toString(), _selectedValue.toString(),_plotLocationController.text,
                                              _describeYourProjectController.text,

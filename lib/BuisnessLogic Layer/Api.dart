@@ -387,7 +387,7 @@ class ApiService {
      return ownerAbout;
    }
 
-   Future<String> InsertOwnerSubmitProposals(String firstName,String lastName,String ownerCity,String country,String profilePhoto,String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
+   Future<String> InsertOwnerSubmitProposals(String  selectedContractorCity,String firstName,String lastName,String ownerCity,String country,String profilePhoto,String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
        String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
        PlatformFile projectFile,String proposalsCreatedTime,String proposalsSavedDate) async {
     if(projectFile!=null){
@@ -430,6 +430,7 @@ class ApiService {
      request.fields["plotLocation"]=plotLocation.toString();
      request.fields["proposalCreatedTime"]=proposalsCreatedTime.toString();
      request.fields["proposalSavedDate"]=proposalsSavedDate.toString();
+     request.fields["selectedContractorCity"]= selectedContractorCity.toString();
      var response = await request.send();
 
 
@@ -445,7 +446,7 @@ class ApiService {
    }
     return "100";
   }
-   Future<String> InsertOwnerSubmitProposals_(String firstName,String lastName,String ownerCity,String country,String profilePhoto,String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
+   Future<String> InsertOwnerSubmitProposals_(String selectedContractorCity,String firstName,String lastName,String ownerCity,String country,String profilePhoto,String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
        String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
       String proposalsCreatedTime,String proposalsSavedDate) async {
      final response = await http.post(
@@ -477,6 +478,7 @@ class ApiService {
          "describeYourProject":describeYourProject.toString(),
          "proposalCreatedTime":proposalsCreatedTime.toString(),
          "proposalSavedDate":proposalsSavedDate.toString(),
+         "selectedContractorCity":selectedContractorCity.toString(),
 
        }),
      );

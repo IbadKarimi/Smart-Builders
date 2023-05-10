@@ -24,6 +24,7 @@ class OwnerSubmitProposalsModel {
   String? ownerCity;
   String? country;
   String? profilePicUrl;
+  String? selectedContractorCity;
 
 
   OwnerSubmitProposalsModel(
@@ -50,6 +51,7 @@ class OwnerSubmitProposalsModel {
         this.ownerCity,
         this.country,
         this.profilePicUrl,
+        this.selectedContractorCity,
         this.sId});
 
   OwnerSubmitProposalsModel.fromJson(Map<String, dynamic> json) {
@@ -74,9 +76,10 @@ class OwnerSubmitProposalsModel {
     proposalSavedDate = json['proposalSavedDate'];
     firstName = json['ownerFirstName'];
     lastName = json['ownerLastName'];
-   ownerCity = json['ownerCity'];
+    ownerCity = json['ownerCity'];
     country = json['ownerCountry'];
     profilePicUrl = json['ownerProfilePicUrl'];
+    selectedContractorCity=json["selectedContractorCity"];
     sId = json['_id'];
   }
 
@@ -107,6 +110,7 @@ class OwnerSubmitProposalsModel {
     _data['ownerCity']=this.ownerCity;
     _data['ownerCountry']=this.country;
     _data['ownerProfilePicUrl']=this.profilePicUrl;
+    _data['selectedContractorCity']=this.selectedContractorCity;
     return _data;
   }
 }

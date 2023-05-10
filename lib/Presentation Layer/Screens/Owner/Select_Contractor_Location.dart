@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
-import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Select_Contractor_Location.dart';
 import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 
 import '../HomePage/HiringProfessionals/Architect.dart';
@@ -17,22 +16,24 @@ String? lastName;
 String? city;
 String? country;
 String? profilePhotoUrl;
-class SelectServiceProviderTitle extends StatefulWidget {
+String ?title;
+class SelectContractorLocation extends StatefulWidget {
   String email;
-  String firstName,lastName,city,country,profilePhotoUrl;
-  SelectServiceProviderTitle(this.email,this.firstName,this.lastName,this.city,this.country,this.profilePhotoUrl);
+  String firstName,lastName,city,country,profilePhotoUrl,title;
+  SelectContractorLocation(this.email,this.title,this.firstName,this.lastName,this.city,this.country,this.profilePhotoUrl);
 
   @override
-  State<SelectServiceProviderTitle> createState() => _SelectServiceProviderTitle();
+  State<SelectContractorLocation> createState() => _SelectContractorLocation();
 }
 
-class _SelectServiceProviderTitle extends State<SelectServiceProviderTitle> {
+class _SelectContractorLocation extends State<SelectContractorLocation> {
   @override
   Widget build(BuildContext context) {
     firstName=widget.firstName;
     lastName=widget.lastName;
     city=widget.city;
     country=widget.country;
+    title=widget.title;
     profilePhotoUrl=widget.profilePhotoUrl;
     setState(() {
       currentUserEmail=widget.email;
@@ -45,7 +46,7 @@ class _SelectServiceProviderTitle extends State<SelectServiceProviderTitle> {
               child: Column(
                 children: <Widget>[
                   Boxes(),
-                  SelectServiceProviderTitleInterface(),
+                  SelectContractorLocationInterface(),
                   Footer(),
                 ],
               ),
@@ -53,23 +54,21 @@ class _SelectServiceProviderTitle extends State<SelectServiceProviderTitle> {
   }
 }
 
-class SelectServiceProviderTitleInterface extends StatefulWidget {
-  const SelectServiceProviderTitleInterface({super.key});
+class SelectContractorLocationInterface extends StatefulWidget {
+  const SelectContractorLocationInterface({super.key});
 
   @override
-  State<SelectServiceProviderTitleInterface> createState() =>
-      _SelectServiceProviderTitleInterface();
+  State<SelectContractorLocationInterface> createState() =>
+      _SelectContractorLocationInterface();
 }
 
-class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTitleInterface> {
+class _SelectContractorLocationInterface extends State<SelectContractorLocationInterface> {
   @override
   bool isOpen = false;
   String selectedOption = "Select Option";
   List<String> options = [
-    "Contractor",
-    'Subcontractor',
-    'Civil Engineer',
-    'Architect',
+    "Islamabad",
+    'Rawalpindi',
   ];
   Widget build(BuildContext context) {
     // List of items in our dropdown menu
@@ -86,16 +85,16 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const Padding(
-                padding: EdgeInsets.only(top: 40, right: 0),
+                padding: EdgeInsets.only(top: 40, right: 0,bottom: 30),
                 child: Text(
-                  "Select a service provider which you want ",
+                  "Now Select a location to hire a Contractor",
                   style: TextStyle(
                     color: Color(0xFF3D424A),
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
                 )),
-            const Padding(
+           /* const Padding(
                 padding: EdgeInsets.only(top: 40, right: 0),
                 child: Text(
                   "It is your choice where you send the proposal",
@@ -103,7 +102,7 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
                     color: Color(0xFF3D424A),
                     fontSize: 16,
                   ),
-                )),
+                )),*/
             Container(
               height: 300,
               child: Padding(
@@ -123,7 +122,7 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
                           margin: const EdgeInsets.only(left: 5, top: 0),
                           decoration: BoxDecoration(
                               border:
-                                  Border.all(color: Colors.black38, width: 1),
+                              Border.all(color: Colors.black38, width: 1),
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -154,40 +153,40 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
                             shrinkWrap: true,
                             children: options
                                 .map((e) => Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            isOpen = false;
-                                            selectedOption = e;
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(5)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    isOpen = false;
+                                    selectedOption = e;
 
-                                            setState(() {});
-                                          },
-                                          child: HoverContainer(
-                                              height: 35,
-                                              hoverDecoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                border: Border.all(
-                                                    color:
-                                                        const Color(0xFFFFA62B),
-                                                    width: 1),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  children: [
-                                                    Text(e),
-                                                  ],
-                                                ),
-                                              )),
-                                        ),
+                                    setState(() {});
+                                  },
+                                  child: HoverContainer(
+                                      height: 35,
+                                      hoverDecoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(5),
+                                        border: Border.all(
+                                            color:
+                                            const Color(0xFFFFA62B),
+                                            width: 1),
                                       ),
-                                    ))
+                                      child: Padding(
+                                        padding:
+                                        const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            Text(e),
+                                          ],
+                                        ),
+                                      )),
+                                ),
+                              ),
+                            ))
                                 .toList()),
                       ),
                   ],
@@ -225,13 +224,11 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
                         height: 35,
                         child: ElevatedButton(
                             onPressed: () {
-                              if (selectedOption == "Contractor") {
+                              if (selectedOption!=null) {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        SelectContractorLocation(currentUserEmail.toString(),selectedOption.toString(), firstName.toString(), lastName.toString(), city.toString(),
-                                            country.toString(), profilePhotoUrl.toString())));}
-
-
+                                        ProposalServiceProvider(currentUserEmail.toString(),title.toString(),selectedOption.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString())));
+                              }
 
                             },
                             // ignore: sort_child_properties_last
