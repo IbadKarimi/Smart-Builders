@@ -1,7 +1,8 @@
-class OwnerSubmitProposalsModel {
-  String? email;
-  String? to;
+class ProAcceptedProposalsModel {
+  String? senderEmail;
+  String ? accepterEmail;
   String? sId;
+  String? projectStatus;
   String? projectTitle;
   String? projectType;
   String? workMonths;
@@ -17,16 +18,15 @@ class OwnerSubmitProposalsModel {
   String ?grroundFloor;
   String? describeYourProject;
   String? projectFile;
-  String? proposalCreatedTime;
-  String? proposalSavedDate;
+  String? proposalAcceptedTime;
+  String? proposalAcceptedDate;
   String? firstName;
   String? lastName;
   String? ownerCity;
   String? country;
   String? profilePicUrl;
-  String? selectedContractorCity;
   String? status;
-  String? proEmail;
+
   String? proFirstName;
   String? proLastName;
   String? proCity;
@@ -34,9 +34,11 @@ class OwnerSubmitProposalsModel {
   String? proProfilePicUrl;
 
 
-  OwnerSubmitProposalsModel(
-      {this.email,
-        this.to,
+
+
+  ProAcceptedProposalsModel(
+      {this.senderEmail,
+        this.accepterEmail,
         this.status,
         this.projectTitle,
         this.projectType,
@@ -51,17 +53,15 @@ class OwnerSubmitProposalsModel {
         this.city,
         this.describeYourProject,
         this.projectFile,
-        this.proposalCreatedTime,
-        this.proposalSavedDate,
+        this.proposalAcceptedTime,
+        this.proposalAcceptedDate,
         this.grroundFloor,
         this.firstName,
         this.lastName,
         this.ownerCity,
         this.country,
         this.profilePicUrl,
-        this.selectedContractorCity,
         this.sId,
-        this.proEmail,
         this.proFirstName,
         this.proLastName,
         this.proCity,
@@ -71,14 +71,13 @@ class OwnerSubmitProposalsModel {
 
 
 
-
-
       });
 
-  OwnerSubmitProposalsModel.fromJson(Map<String, dynamic> json) {
-    email = json['email'];
-    to = json['to'];
-    status = json['status'];
+  ProAcceptedProposalsModel.fromJson(Map<String, dynamic> json) {
+    senderEmail = json['senderEmail'];
+    status = json['projectStatus'];
+    accepterEmail = json['accepterEmail'];
+    projectStatus = json['projectStatus'];
     projectTitle = json['projectTitle'];
     projectType = json['projectType'];
     workMonths = json['workMonths'];
@@ -94,29 +93,29 @@ class OwnerSubmitProposalsModel {
     grroundFloor = json['groundFloor'];
     describeYourProject = json['describeYourProject'];
     projectFile = json['projectFile'];
-    proposalCreatedTime = json['proposalCreatedTime'];
-    proposalSavedDate = json['proposalSavedDate'];
+    proposalAcceptedTime = json['proposalAcceptedTime'];
+    proposalAcceptedDate = json['proposalAcceptedDate'];
     firstName = json['ownerFirstName'];
     lastName = json['ownerLastName'];
     ownerCity = json['ownerCity'];
     country = json['ownerCountry'];
     profilePicUrl = json['ownerProfilePicUrl'];
-    selectedContractorCity=json["selectedContractorCity"];
-    sId = json['_id'];
 
     proFirstName = json['proFirstName'];
     proLastName = json['proLastName'];
     proCity = json['proCity'];
     proCountry = json['proCountry'];
     proProfilePicUrl = json['proProfilePicUrl'];
-    proEmail=json['proEmail'];
+
+    sId = json['_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> _data = new Map<String, dynamic>();
-    _data['email'] = this.email;
-    _data['to'] = this.to;
-    _data['status'] = this.status;
+    _data['senderEmail'] = this.senderEmail ;
+    _data['projectStatus'] = this.status ;
+    _data['accepterEmail'] = this.accepterEmail ;
+    _data['projectStatus'] = this.projectStatus;
     _data['projectTitle'] = this.projectTitle;
     _data['projectType'] = this.projectType;
     _data['workMonths'] = this.workMonths;
@@ -132,21 +131,23 @@ class OwnerSubmitProposalsModel {
     _data['groundFloor'] = this.grroundFloor;
     _data['describeYourProject'] = this.describeYourProject;
     _data['projectFile'] = this.projectFile;
-    _data['proposalCreatedTime'] = this.proposalCreatedTime;
-    _data['proposalSavedDate'] = this.proposalSavedDate;
+    _data['proposalAcceptedTime'] = this.proposalAcceptedTime;
+    _data['proposalAcceptedDate'] = this.proposalAcceptedDate;
     _data['_id'] = this.sId;
     _data['ownerFirstName']=this.firstName;
     _data['ownerLastName']=this.lastName;
     _data['ownerCity']=this.ownerCity;
     _data['ownerCountry']=this.country;
     _data['ownerProfilePicUrl']=this.profilePicUrl;
-    _data['selectedContractorCity']=this.selectedContractorCity;
-    _data['proEmail']=this.proEmail;
+
+
     _data['proFirstName']=this.proFirstName;
     _data['proLastName']=this.proLastName;
     _data['proCity']=this.proCity;
     _data['proCountry']=this.proCountry;
     _data['proProfilePicUrl']=this.proProfilePicUrl;
+
     return _data;
+
   }
 }

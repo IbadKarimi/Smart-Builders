@@ -9,6 +9,7 @@ import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 import 'package:smart_builder_web/models/ProWorkExperience.dart';
 
 import '../models/OwnerAboutModel.dart';
+import '../models/OwnerAcceptedProposalModel.dart';
 import '../models/OwnerSignUpModel.dart';
 import 'package:http/http.dart'as http;
 
@@ -809,6 +810,114 @@ class ApiService {
      else{ debugPrint("Skills api is not working !");}
      return userlist;
    }
+
+   Future<String> InsertAcceptedProposals(String senderEmail ,String accepterEmail,String firstName,String lastName,String ownerCity,String country,String profilePhoto,
+   String proFirstName,String proLastName,String proCity,String proCountry,String proProfilePhoto,String projectStatus,String projectTitle,String projectType,String workMonths,String projectBudget,
+       String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
+       String actualPlotSize,String floors,String groundFloor,String city,String plotLocation,String describeYourProject,
+       String projectFile,String proposalsAcceptedTime,String proposalsAcceptedDate) async {
+     final response = await http.post(
+       Uri.parse('http://localhost:3000/smart-builders/AcceptedProposal'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         "senderEmail": senderEmail.toString(),
+         "accepterEmail": accepterEmail.toString(),
+
+         "ownerFirstName":firstName.toString(),
+         "ownerLastName":lastName.toString(),
+         "ownerCity":ownerCity.toString(),
+         "ownerCountry":country.toString(),
+         "ownerProfilePicUrl":profilePhoto.toString(),
+
+         "proFirstName":proFirstName.toString(),
+         "proLastName":proLastName.toString(),
+         "proCity":proCity.toString(),
+         "proCountry":proCountry.toString(),
+         "proProfilePicUrl":proProfilePhoto.toString(),
+
+         "projectStatus":projectStatus.toString(),
+         "projectTitle":projectTitle.toString(),
+         "projectType":projectType.toString(),
+         "workMonths":workMonths.toString(),
+         "projectBudget":projectBudget.toString(),
+         "plotWidthA":plotFrontSideWidth.toString(),
+         "plotWidthB":plotBackSideWidth.toString(),
+         "plotLengthA":plotLeftSideLength.toString(),
+         "plotLengthB":plotRightSideLength.toString(),
+         "actualPlotSize":actualPlotSize.toString(),
+         "floors":floors.toString(),
+         "groundFloor":groundFloor.toString(),
+         "city":city.toString(),
+         "plotLocation":plotLocation.toString(),
+         "describeYourProject":describeYourProject.toString(),
+         "proposalAcceptedTime":proposalsAcceptedTime.toString(),
+         "proposalAcceptedDate":proposalsAcceptedDate.toString(),
+
+
+       }),
+     );
+
+
+       if (response.statusCode ==200) {
+         debugPrint("APi is Working");
+         return '200';
+       } else {
+         // If the server did not return a 201 CREATED response,
+         // then throw an exception.
+
+         throw Exception("Api accepted proposal is Failed");
+       }
+     return "100";
+     }
+   Future<List<ProAcceptedProposalsModel>> getAcceptedProposal ()async{ //create function in list type becoze we get data and set in _product array
+     var response = await http.get(Uri.parse('http://localhost:3000/smart-builders/AcceptedProposal'));
+
+     List<ProAcceptedProposalsModel> getAceptedProposalList=[]; //the scope of the array is Inside the function
+
+     if(response.statusCode==200) {
+       debugPrint("Api is Working !");
+       var prJson=json.decode(response.body);
+       final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+       for(var jsonData in jsonArrayData){
+         getAceptedProposalList.add(ProAcceptedProposalsModel.fromJson(jsonData));//set json data in productlist
+       }}
+     else{ debugPrint("Api is not Working !");}
+     return getAceptedProposalList;
+   }
+
+
+
+   Future<String> updateProposalStatus(String id,String status,String proEmail,String proFirstName,String proLastName,String proCity,String proCountry,String proProfilePhoto) async {
+     final response = await http.put(
+       Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         'status': status,
+         'proEmail': proEmail,
+         'proFirstName':proFirstName,
+         'proLastName':proLastName,
+         'proCity':proCity,
+         'proCountry':proCountry,
+         'proProfilePicUrl':proProfilePhoto,
+       }),
+     );
+
+     if (response.statusCode == 200) {
+       // If the server did return a 200 OK response,r
+       // then parse the JSON.
+       return "200";
+     } else {
+       // If the server did not return a 200 OK response,
+       // then throw an exception.
+       throw Exception('Failed to update proposal.');
+     }
+   }
+
 
 
 

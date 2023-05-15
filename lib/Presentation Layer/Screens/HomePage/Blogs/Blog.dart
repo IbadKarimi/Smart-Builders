@@ -182,7 +182,7 @@ class _BlogsSecondPage extends State<BlogsSecondPage> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.only(top: 100, left: 100, bottom: 50),
+                       EdgeInsets.only(top: 100, left: 100, bottom: 50),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [

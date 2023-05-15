@@ -10,12 +10,14 @@ import '../../../models/OwnerAboutModel.dart';
 import '../../../models/OwnerProfileModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
+import '../Professionals/ProCommonPages/Pro_View_Accepted_Propsal_List.dart';
 import 'Owner_Desire_Building.dart';
 import 'Owner_Manage_Accepted_Offer.dart';
 import 'Owner_Manage_Applied_Contracts.dart';
 import 'Owner_Mange_Offers.dart';
 import 'Owner_Select_Title_ServiceProvider.dart';
 import 'Owner_Submitted_Proposals.dart';
+import 'Owner_View_Accepted_Proposal_List.dart';
 
 
 const lightGrey = Color(0xFFEDEDED);
@@ -469,6 +471,39 @@ class _OwnerAddProposal extends State<OwnerAddProposal> {
                                   color: Color(0xFFFF9900), fontSize: 16),
                             )),
                       ]),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF363B42)))),
+        ),
+        Center(
+          child: Container(
+              margin: const EdgeInsets.only(
+                top: 40,
+              ),
+              width: 300,
+              height: 60,
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>  OwnerViewAcceptedProposalList(currentUserEmail.toString())));
+                  },
+                  // ignore: sort_child_properties_last
+                  child: Row(children: const <Widget>[
+                    Padding(
+                        padding: EdgeInsets.only(left: 70),
+                        child: Center(
+                          child: Text(
+                            "Accepted Proposals",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: Text(
+                          "(0)",
+                          style:
+                          TextStyle(color: Color(0xFFFF9900), fontSize: 16),
+                        )),
+                  ]),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF363B42)))),
         ),

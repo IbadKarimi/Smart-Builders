@@ -42,7 +42,8 @@ class MyApp extends StatelessWidget {
     ),
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home:  Scaffold(body:OwnerViewProfile("bilal@gmail.com")),
+      home:  Scaffold
+        (body:ProViewProfile("abdullahgul391@gmail.com")),
     );
   }
 }

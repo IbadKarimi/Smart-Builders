@@ -19,6 +19,7 @@ import 'Pro_Accepted_Offers.dart';
 import 'Pro_Accepted_Proposals.dart';
 import 'Pro_My_Offers.dart';
 import 'Pro_Profile_Ready.dart';
+import 'Pro_View_Accepted_Propsal_List.dart';
 import 'Pro_View_Requested_Proposals_List.dart';
 
 const lightGrey = Color(0xFFEDEDED);
@@ -542,7 +543,7 @@ class _AddProposal extends State<AddProposal> {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AcceptedProposalMain()));
+                        builder: (context) =>  ViewAcceptedProposalList(currentUserEmail.toString())));
                   },
                   // ignore: sort_child_properties_last
                   child: Row(children: const <Widget>[
@@ -550,7 +551,7 @@ class _AddProposal extends State<AddProposal> {
                         padding: EdgeInsets.only(left: 70),
                         child: Center(
                           child: Text(
-                            "Accepted Proposals",
+                            "My Accepted Proposals",
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         )),
@@ -650,6 +651,7 @@ class _Offers extends State<Offers> {
                             Padding(
                                 padding: EdgeInsets.only(left: 0),
                                 child: Text(
+
                                   "Accepter Offers",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),

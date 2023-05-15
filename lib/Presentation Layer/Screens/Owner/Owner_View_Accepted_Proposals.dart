@@ -3,15 +3,19 @@ import 'package:hovering/hovering.dart';
 import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 
 import '../../../../BuisnessLogic Layer/Api.dart';
-import '../../HomePage/Chat/ChatScreen.dart';
-import '../../HomePage/footer.dart';
-import '../../HomePage/header.dart';
-import '../../Owner/Owner_Desire_Building.dart';
-import 'Pro_View_Profile.dart';
-import 'Pro_View_Requested_Proposals_List.dart';
+
 import 'package:intl/intl.dart';
 
-bool progressBarVisible=false;
+import '../HomePage/Chat/ChatScreen.dart';
+import '../HomePage/footer.dart';
+import '../HomePage/header.dart';
+import '../Professionals/ProCommonPages/Pro_View_Accepted_Propsal_List.dart';
+import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
+import 'Owner_Desire_Building.dart';
+import 'Owner_View_Accepted_Proposal_List.dart';
+import 'Owner_View_Profile.dart';
+
+
 
 
 const lightGrey = Color(0xFFEDEDED);
@@ -38,11 +42,9 @@ String? ownercountry;
 String ?ownerProfilePicture;
 String ?floors;
 String ?groundFloors;
-String ?_currentUserEmailVRP;
-String ?id;
-String ?status;
+String ?_currentUserEmailVAP;
 
-class ProViewRequestedProposals extends StatefulWidget {
+class OwnerViewAcceptedProposals extends StatefulWidget {
   String id;
   String projectTitle;
   String projectType;
@@ -65,23 +67,22 @@ class ProViewRequestedProposals extends StatefulWidget {
   String Ownercity;
   String Ownercountry;
   String OwnerProfilePicture;
-  String _currentUserEmailVRP;
-  String status;
+  String _currentUserEmailVAP;
 
 
 
 
-  ProViewRequestedProposals(this._currentUserEmailVRP,this.id,this.email,this.status,this.projectTitle,this.projectType,this.workMonth,this.projectBudget,
+  OwnerViewAcceptedProposals(this._currentUserEmailVAP,this.id,this.email,this.projectTitle,this.projectType,this.workMonth,this.projectBudget,
       this.plotFrontSideWidth,this.plotBackSideWidth,this.plotLeftSideLength,
       this.plotRightSideLength,this.actualPlotSize,this.floors,this.groundFloors,this.city,this.plotLocation,this.describeYourProject,this.OwnerfirstName,
       this.OwnerlastName,this.Ownercity,this.Ownercountry,this.OwnerProfilePicture,
       {required this.projectFile});
 
   @override
-  State<ProViewRequestedProposals> createState() => _ProViewRequestedProposals();
+  State<OwnerViewAcceptedProposals> createState() => _OwnerViewAcceptedProposals();
 }
 
-class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
+class _OwnerViewAcceptedProposals extends State<OwnerViewAcceptedProposals> {
   @override
   Widget build(BuildContext context) {
 
@@ -94,7 +95,7 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
     plotLeftSideLength=widget.plotLeftSideLength;
     plotRightSideLength=widget.plotRightSideLength;
     actualPlotSize=widget.actualPlotSize;
-     _currentUserEmailVRP=widget._currentUserEmailVRP;
+    _currentUserEmailVAP=widget._currentUserEmailVAP;
     city=widget.city;
     plotLocation=widget.plotLocation;
     describeYourProject=widget.describeYourProject;
@@ -107,9 +108,6 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
     ownerProfilePicture=widget.OwnerProfilePicture;
     floors=widget.floors;
     groundFloors=widget.groundFloors;
-    id=widget.id;
-    status=widget.status;
-    debugPrint(id.toString());
 
     print("project file is"+projectFile.toString());
 
@@ -123,17 +121,9 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Boxes(),
-                    Padding(
-                        padding:
-                        const EdgeInsets.only(top:20),
-                        child:progressBarVisible!=true?Container():Center(child: CircularProgressIndicator())),
-                Row(  mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-
-                    ProposalServiceProviderI(),
-
-                    ProAcceptDeclinePropsals()]),
+                    Row(  mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[ProposalServiceProviderI(),ProAcceptDeclinePropsals()]),
                     PlotSize(),
                     DescribeYourProject(),
                     Row(
@@ -147,9 +137,9 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
                                 height: 35,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                     Navigator.of(context).push(MaterialPageRoute(
+                                      Navigator.of(context).push(MaterialPageRoute(
                                           builder: (context) =>
-                                     ViewProposalRequestedProposalList(_currentUserEmailVRP.toString())));//professsioal_view_requested_proposal_list naviagte krna hai
+                                              OwnerViewAcceptedProposalList(_currentUserEmailVAP.toString())));//professsioal_view_requested_proposal_list naviagte krna hai
                                     },
                                     // ignore: sort_child_properties_last
                                     child: const Text(
@@ -415,7 +405,7 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                                               fontSize: 12,
                                               fontWeight:
                                               FontWeight.w400))),
-                                   Padding(
+                                  Padding(
                                       padding: EdgeInsets.only(
                                           top: 5, left: 20),
                                       child: Text(
@@ -431,17 +421,14 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                           ),
 
                           //---------------------------Message--------------------//
-                          if(status!="Accepted")
                           Row(
                             children: <Widget>[
                               Padding(
                                   padding: const EdgeInsets.only(
                                       top: 30, left: 90),
-
                                   child: SizedBox(
                                       width: 90,
                                       height: 30,
-
                                       child: ElevatedButton(
                                           onPressed: () {
                                             Navigator.of(context).push(
@@ -484,153 +471,8 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                                     crossAxisAlignment:
                                     CrossAxisAlignment.center,
                                     children: [
-                                      if(status!="Accepted")
-                                      Padding(
-                                          padding:
-                                          const EdgeInsets.only(
-                                              top: 0, left: 0),
-                                          child: Container(
-                                              width: 210,
-                                              height: 40,
-                                              child: ElevatedButton(
-                                                  onPressed: () async{
-                                                    var response1=await apiService.InsertAcceptedProposals(email.toString(),_currentUserEmailVRP.toString(), ownerfirstName.toString(), ownerlastName.toString(), ownercity.toString(),
-                                                        ownercountry.toString(), ownerProfilePicture.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhoto.toString(), "Accepted", projectTitle.toString(), projectType.toString(), workMonth.toString(),
-                                                        projectBudget.toString(), plotFrontSideWidth.toString(), plotBackSideWidth.toString(), plotLeftSideLength.toString(), plotRightSideLength.toString(),
-                                                        actualPlotSize.toString(), floors.toString(), groundFloors.toString(), city.toString(), plotLocation.toString(), describeYourProject.toString(),
-                                                        projectFile.toString(), _currentTimeNow.toString(), _currentDateNow.toString());
 
-                                                    var response2=await apiService.updateProposalStatus(id.toString(), "Accepted",_currentUserEmailVRP.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhoto.toString());
-                                                    if(response1=="200" && response2=="200"){
-                                                      setState(() {
-                                                        progressBarVisible=false;
-                                                        debugPrint("Working Perfectly");
-                                                      });
-                                                      Navigator.of(
-                                                          context)
-                                                          .push(MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                           OfferSentShowDialog(ownerfirstName.toString(),ownerlastName.toString(),)));
-                                                    }else{
-                                                      setState(() {
-                                                        progressBarVisible=true;
-                                                        debugPrint("Working Perfectly");
-                                                      });
-                                                    }
 
-                                                  },
-                                                  // ignore: sort_child_properties_last
-                                                  child: Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: <
-                                                          Widget>[
-                                                        Padding(
-                                                            padding: const EdgeInsets
-                                                                .only(
-                                                                left:
-                                                                0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                              children: [
-                                                                const Text(
-                                                                  "Accept ",
-                                                                  style: TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontSize: 12),
-                                                                ),
-                                                                const Padding(
-                                                                  padding:
-                                                                  EdgeInsets.only(left: 5),
-                                                                  child:
-                                                                  Text(
-                                                                    "Proposal",
-                                                                    style:
-                                                                    TextStyle(color: Color(0xFFFFA62B), fontSize: 12),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )),
-                                                      ]),
-                                                  style: ElevatedButton
-                                                      .styleFrom(
-                                                      shape:
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            30.0),
-                                                      ),
-                                                      backgroundColor:
-                                                      const Color(
-                                                          0xFF363B42))))),
-                                      if(status!="Accepted")
-                                      Padding(
-                                          padding:
-                                          const EdgeInsets.only(
-                                              top: 10, left: 0),
-                                          child: Container(
-                                              width: 210,
-                                              height: 40,
-                                              child: ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.of(
-                                                        context)
-                                                        .push(MaterialPageRoute(
-                                                        builder:
-                                                            (context) =>
-                                                        const DesireBuilding()));
-                                                  },
-                                                  // ignore: sort_child_properties_last
-                                                  child: Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: <
-                                                          Widget>[
-                                                        Padding(
-                                                            padding: const EdgeInsets
-                                                                .only(
-                                                                left:
-                                                                0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                              children: [
-                                                                const Text(
-                                                                  "Decline",
-                                                                  style: TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontSize: 12),
-                                                                ),
-                                                                const Padding(
-                                                                  padding:
-                                                                  EdgeInsets.only(left: 5),
-                                                                  child:
-                                                                  Text(
-                                                                    "Proposal",
-                                                                    style:
-                                                                    TextStyle(color: Color(0xFFFFA62B), fontSize: 12),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )),
-                                                      ]),
-                                                  style: ElevatedButton
-                                                      .styleFrom(
-                                                      shape:
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            30.0),
-                                                      ),
-                                                      backgroundColor:
-                                                      const Color(
-                                                          0xFF363B42))))),
                                     ],
                                   ),
                                 ),
@@ -1299,7 +1141,6 @@ relationship, and anything unique about your project, team, or company. ''',
                         },
                         // ignore: sort_child_properties_last
                         child: Row(children: <Widget>[
-                          if(status!="Accepted")
                           Padding(
                               padding: const EdgeInsets.only(left: 0),
                               child: Row(
@@ -1356,9 +1197,7 @@ relationship, and anything unique about your project, team, or company. ''',
 }
 
 class OfferSentShowDialog extends StatefulWidget {
-  String firstName;
-  String lastName;
-   OfferSentShowDialog(this.firstName,this.lastName);
+  const OfferSentShowDialog({super.key});
 
   @override
   State<OfferSentShowDialog> createState() => _OfferSentShowDialog();
@@ -1394,22 +1233,22 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                     image:
                     DecorationImage(image: AssetImage("Logo/accept.png")),
                   )),
-              Padding(
+              const Padding(
                   padding: EdgeInsets.only(left: 0, top: 40),
                   child: Center(
                       child: Text(
-                        "Offer sent to"+" "+firstName.toString()+" "+lastName.toString()+"!",
+                        "Offer sent to Abdullah Gul!",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
                       ))),
-             Padding(
+              const Padding(
                   padding: EdgeInsets.only(left: 0, top: 10),
                   child: Center(
                       child: Text(
-                        "We will notify you When"+" "+firstName.toString()+" "+lastName.toString()+" "+"Responds to your offer ",
+                        "We will notify you When Ibad karimi Responds to your offer ",
                         style: TextStyle(
                           color: Color(0xFFFFA62B),
                           fontSize: 12,
@@ -1430,7 +1269,7 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ProViewProfile(_currentUserEmailVRP.toString())));
+                                    builder: (context) => OwnerViewProfile(_currentUserEmailVAP.toString())));
                               },
                               // ignore: sort_child_properties_last
                               child: Row(children: const <Widget>[
