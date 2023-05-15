@@ -8,6 +8,8 @@ import 'dart:typed_data';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Personal_Info.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_Sign_Up.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Profile.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
 import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals.dart';
@@ -43,7 +45,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
       home:  Scaffold
-        (body:ProViewProfile("abdullahgul391@gmail.com")),
+        (body:ViewProposalRequestedProposalList("ibadkarimi.10@gmail.com")),
     );
   }
 }
@@ -189,4 +191,8 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+
+
+
 

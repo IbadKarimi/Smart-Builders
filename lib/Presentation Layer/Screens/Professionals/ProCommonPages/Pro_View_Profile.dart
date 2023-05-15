@@ -651,7 +651,6 @@ class _Offers extends State<Offers> {
                             Padding(
                                 padding: EdgeInsets.only(left: 0),
                                 child: Text(
-
                                   "Accepter Offers",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),

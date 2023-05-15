@@ -332,14 +332,14 @@ class _ViewProposal extends State<ViewProposal> {
                                               ),
                                             ): Padding(
                                                 padding:EdgeInsets.only(top: 0, left: 10, bottom: 5),
-                                                child:Text(
+                                                child:_getOwnerProposal[index].proEmail!=currenUserEmailRPL.toString() &&_getOwnerProposal[index].status=="Accepted"?Text(
                                               "This proposal is Accepted by another service provider !",
                                               style: TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500,
                                               ),
-                                            ))),
+                                            ):Text(""))),
                                       ],
                                     ),
                                   ]),

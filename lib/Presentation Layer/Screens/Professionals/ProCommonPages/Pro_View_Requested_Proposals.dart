@@ -631,6 +631,69 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                                                       backgroundColor:
                                                       const Color(
                                                           0xFF363B42))))),
+
+                                      Padding(
+                                          padding:
+                                          const EdgeInsets.only(
+                                              top: 10, left: 0),
+                                          child: Container(
+                                              width: 210,
+                                              height: 40,
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return showOfferAlertDialog(); //---------calling the class here
+                                                        });
+                                                  },
+                                                  // ignore: sort_child_properties_last
+                                                  child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .center,
+                                                      children: <
+                                                          Widget>[
+                                                        Padding(
+                                                            padding: const EdgeInsets
+                                                                .only(
+                                                                left:
+                                                                0),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                              children: [
+                                                                const Text(
+                                                                  "Bid",
+                                                                  style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 12),
+                                                                ),
+                                                                const Padding(
+                                                                  padding:
+                                                                  EdgeInsets.only(left: 5),
+                                                                  child:
+                                                                  Text(
+                                                                    "Now",
+                                                                    style:
+                                                                    TextStyle(color: Color(0xFFFFA62B), fontSize: 12),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )),
+                                                      ]),
+                                                  style: ElevatedButton
+                                                      .styleFrom(
+                                                      shape:
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            30.0),
+                                                      ),
+                                                      backgroundColor:
+                                                      const Color(
+                                                          0xFF363B42))))),
                                     ],
                                   ),
                                 ),
@@ -1454,6 +1517,271 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
               ),
             ],
           )),
+    );
+  }
+}
+
+
+
+
+class showOfferAlertDialog extends StatefulWidget {
+  const showOfferAlertDialog ({super.key});
+
+  @override
+  State<showOfferAlertDialog > createState() =>
+      _showOfferAlertDialog ();
+}
+
+class _showOfferAlertDialog  extends State<showOfferAlertDialog> {
+
+  final _keySkills = GlobalKey<FormState>();
+  final _offerController=TextEditingController();
+
+  bool _autoValidate=false;
+  static const checkbox = false;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: StatefulBuilder(builder: (context, setState) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Container(
+                  width: 550,
+
+                  child: Form(
+                    key: _keySkills,
+                    autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+
+                          //  Form(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(top: 20, left:10),
+                                  child: Text(
+                                    "Project Proposal",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  )),
+
+                            ],
+                          ),
+
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 20, left:10, bottom: 0),
+                              child: Text(
+                                "Project Title",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )),
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 10, left:10, bottom: 0),
+                              child: Text(
+                                projectTitle.toString(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )),
+
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 20, left:10, bottom: 0),
+                              child: Text(
+                                "Project Budget",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )),
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 10, left:10, bottom: 20),
+                              child: Text(
+                                projectBudget.toString(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )),
+                          Divider(),
+
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 20, left:10, bottom: 10),
+                              child: Text(
+                                "Tell your offer about proposal ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )),
+
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 20, left:10, bottom: 10),
+                              child: Text(
+                                "Enter your offer ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )),
+
+                          Padding(
+                              padding: EdgeInsets.only(top: 0, left:10),
+                              child: SizedBox(
+                                  width: 640,
+
+                                  child: TextFormField(
+                                    // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                    keyboardType: TextInputType.name,
+                                    controller: _offerController,
+                                    decoration: InputDecoration(
+                                        helperText: "",
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(vertical: 12.0,horizontal: 11),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        )),
+                                    onChanged: (value) {
+                                      final formatter = NumberFormat('#,##0', 'en_US');
+                                      final newValue = value.replaceAll(',', '');
+                                      final formattedValue = formatter.format(int.parse(newValue));
+                                      if (value != formattedValue) {
+                                        _offerController.value =  _offerController.value.copyWith(
+                                          text: formattedValue,
+                                          selection: TextSelection.collapsed(
+                                            offset: formattedValue.length,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    validator: (value){
+
+                                      if(value!.trim().isEmpty){
+                                        return "Offer is Required";
+                                      }
+
+                                      return null;
+                                    },
+                                  ))),
+
+
+                          // ignore: prefer_const_literals_to_create_immutables
+
+                          Stack(
+                            alignment: AlignmentDirectional.topStart,
+                            children: [
+                              Row(
+                                children: <Widget>[
+                                  Padding(
+                                      padding:
+                                      const EdgeInsets.only(top: 120, left: 240,bottom: 30),
+                                      child: SizedBox(
+                                          width: 140,
+                                          height: 35,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              // ignore: sort_child_properties_last
+                                              child: const Text(
+                                                "Back",
+                                                style: TextStyle(color: Colors.black),
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                const Color(0xFFD9D9D9),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                                ),
+                                              )))),
+                                  Padding(
+                                      padding:
+                                      const EdgeInsets.only(top: 120, left: 20,bottom: 30),
+                                      child: Container(
+                                          width: 140,
+                                          height: 40,
+                                          child: ElevatedButton(
+                                              onPressed: ()async {
+                                                if( _keySkills.currentState!.validate()){
+                                                  var response=await apiService.InsertProSkills(currentUserEmail.toString(),_offerController.text);
+                                                  if(response=="200"){
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ProViewProfile(currentUserEmail.toString())));
+                                                  }
+
+
+                                                }else{
+
+                                                  setState(() {
+
+                                                    _autoValidate=true;
+                                                  });
+
+
+                                                }
+
+                                              },
+                                              // ignore: sort_child_properties_last
+                                              child: Row(children: const <Widget>[
+                                                Padding(
+                                                    padding:
+                                                    EdgeInsets.only(left: 30),
+                                                    child: Center(
+                                                        child: Text(
+                                                          "Submit",
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12),
+                                                        ))),
+                                              ]),
+                                              style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(30.0),
+                                                  ),
+                                                  backgroundColor:
+                                                  const Color(0xFF363B42))))),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          // ignore: prefer_const_literals_to_create_immutables
+
+                          //Back and Next Button--------------------------------------------------------------------------------------------
+                        ]),
+                  ))),
+        );
+      }),
     );
   }
 }

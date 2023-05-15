@@ -15,8 +15,10 @@ import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
-
+import 'package:flutter/material.dart';
 import 'Owner_View_Profile.dart';
+
+
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
@@ -406,22 +408,31 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5.0),
                                 )),
+                            onChanged: (value) {
+                              final formatter = NumberFormat('#,##0', 'en_US');
+                              final newValue = value.replaceAll(',', '');
+                              final formattedValue = formatter.format(int.parse(newValue));
+                              if (value != formattedValue) {
+                                _projectBudgetController.value =  _projectBudgetController.value.copyWith(
+                                  text: formattedValue,
+                                  selection: TextSelection.collapsed(
+                                    offset: formattedValue.length,
+                                  ),
+                                );
+                              }
+                            },
                             validator: (value){
 
                               if(value!.trim().isEmpty){
                                 return "Project budget is Required";
 
                               }
-
-
-
-
-
                               return null;
                             },
                           ))),
 
                   //----------------Review and Submit--------------//
+
                 ],
               )),
           Column(
@@ -1291,7 +1302,7 @@ relationship, and anything unique about your project, team, or company. ''',
                             child: ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => const ContractorsMain()));
+                                      builder: (context) => OwnerViewProfile(currentUserEmail.toString())));
                                 },
                                 // ignore: sort_child_properties_last
                                 child: const Text(
