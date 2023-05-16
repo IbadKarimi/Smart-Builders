@@ -32,7 +32,10 @@ class OwnerSubmitProposalsModel {
   String? proCity;
   String? proCountry;
   String? proProfilePicUrl;
-
+  String ?offer;
+  String ?offerCreatedTime;
+  String ?offerSavedDate;
+  String ?offerStatus;
 
   OwnerSubmitProposalsModel(
       {this.email,
@@ -67,7 +70,10 @@ class OwnerSubmitProposalsModel {
         this.proCity,
         this.proCountry,
         this.proProfilePicUrl,
-
+        this.offer,
+        this.offerCreatedTime,
+        this.offerSavedDate,
+        this.offerStatus,
 
 
 
@@ -110,6 +116,15 @@ class OwnerSubmitProposalsModel {
     proCountry = json['proCountry'];
     proProfilePicUrl = json['proProfilePicUrl'];
     proEmail=json['proEmail'];
+
+
+    offer = json['offer'];
+    offerCreatedTime = json['offerCreatedTime'];
+    offerSavedDate=json['offerSavedDate'];
+    offerStatus=json['offerStatus'];
+
+
+
   }
 
   Map<String, dynamic> toJson() {
@@ -147,6 +162,11 @@ class OwnerSubmitProposalsModel {
     _data['proCity']=this.proCity;
     _data['proCountry']=this.proCountry;
     _data['proProfilePicUrl']=this.proProfilePicUrl;
+
+    _data['offer']=this.offer;
+    _data['offerCreatedTime']=this.offerCreatedTime;
+    _data['offerSavedDate']=this.offerSavedDate;
+    _data['offerStatus'] = this.offerStatus;
     return _data;
   }
 }

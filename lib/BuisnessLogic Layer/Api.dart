@@ -919,6 +919,84 @@ class ApiService {
    }
 
 
+   Future<String> ProOffer(String id,String status,String proEmail,String proFirstName,String proLastName,String proCity,String proCountry,String proProfilePhoto,
+       String offer,String offerCreatedTime,String offerSavedDate) async {
+     final response = await http.put(
+       Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         'status': status,
+         'proEmail': proEmail,
+         'proFirstName':proFirstName,
+         'proLastName':proLastName,
+         'proCity':proCity,
+         'proCountry':proCountry,
+         'proProfilePicUrl':proProfilePhoto,
+         'offer':offer,
+         'offerCreatedTime':offerCreatedTime,
+         'offerSavedDate':offerSavedDate,
+       }),
+     );
+
+     if (response.statusCode == 200) {
+       // If the server did return a 200 OK response,r
+       // then parse the JSON.
+       return "200";
+     } else {
+       // If the server did not return a 200 OK response,
+       // then throw an exception.
+       throw Exception('Failed to add offer api.');
+     }
+   }
+
+   Future<String> updateStatus(String id,String status,) async {
+     final response = await http.put(
+       Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         'status': status,
+       }),
+     );
+
+     if (response.statusCode == 200) {
+       // If the server did return a 200 OK response,r
+       // then parse the JSON.
+       return "200";
+     } else {
+       // If the server did not return a 200 OK response,
+       // then throw an exception.
+       throw Exception('Failed to update status.');
+     }
+   }
+
+   Future<String> SetOffer(String id,String offerStatus,) async {
+     final response = await http.put(
+       Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+       headers: <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+       },
+       body: jsonEncode(<String, String>{
+         'offerStatus': offerStatus,
+       }),
+     );
+
+     if (response.statusCode == 200) {
+       // If the server did return a 200 OK response,r
+       // then parse the JSON.
+       return "200";
+     } else {
+       // If the server did not return a 200 OK response,
+       // then throw an exception.
+       throw Exception('Failed to update status.');
+     }
+   }
+
+
+
 
 
 

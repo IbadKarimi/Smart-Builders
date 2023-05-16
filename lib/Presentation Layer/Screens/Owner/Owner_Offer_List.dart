@@ -1,23 +1,22 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
-import 'package:smart_builder_web/models/OwnerAcceptedProposalModel.dart';
 
 import '../../../../BuisnessLogic Layer/Api.dart';
-import '../../../../models/OwnerProfileModel.dart';
+
 import '../../../../models/OwnerSubmitProposalsModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
-import '../Professionals/ProCommonPages/Pro_View_Accepted_Proposal.dart';
-import 'Owner_Desire_Building.dart';
-import 'Owner_View_Accepted_Proposals.dart';
+import 'Owner_Offer.dart';
 import 'Owner_View_Profile.dart';
+import 'Owner_Offer.dart';
+
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
 
-String? currenUserEmailAPL;
+String? currenUserEmailOfferList;
 String? ownerId;
 String? _firstName;
 String? _lastName;
@@ -28,15 +27,18 @@ String? _ownerEmail;
 
 
 
-class OwnerViewAcceptedProposalList extends StatefulWidget {
+
+
+
+class OwnerOfferList extends StatefulWidget {
   String email;
-  OwnerViewAcceptedProposalList(this.email);
+  OwnerOfferList(this.email);
 
   @override
-  State<OwnerViewAcceptedProposalList> createState() => _OwnerViewAcceptedProposalList();
+  State<OwnerOfferList > createState() => _OwnerOfferList();
 }
 
-class _OwnerViewAcceptedProposalList extends State<OwnerViewAcceptedProposalList> {
+class _OwnerOfferList  extends State<OwnerOfferList > {
 
   ApiService apiService = new ApiService();
   //CurrentUser currentUserEmailObject=CurrentUser();
@@ -44,7 +46,7 @@ class _OwnerViewAcceptedProposalList extends State<OwnerViewAcceptedProposalList
 
   @override
   Widget build(BuildContext context) {
-    currenUserEmailAPL=widget.email;
+    currenUserEmailOfferList=widget.email;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -55,7 +57,7 @@ class _OwnerViewAcceptedProposalList extends State<OwnerViewAcceptedProposalList
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Boxes(),
-                    ViewProposal(),
+                    MyOffersList(),
                     Button(),
                     Footer()
                   ],
@@ -67,45 +69,29 @@ String? projectTitle;
 String ?proposalCreatedTime;
 String ?proposalSavedTime;
 String ?length;
-class ViewProposal extends StatefulWidget {
-  const ViewProposal({super.key});
+class  MyOffersList extends StatefulWidget {
+  const  MyOffersList({super.key});
 
   @override
-  State<ViewProposal> createState() => _ViewProposal();
+  State<MyOffersList> createState() => _MyOffersList();
 }
 
-class _ViewProposal extends State<ViewProposal> {
+class _MyOffersList extends State<MyOffersList> {
+
   ApiService apiService = new ApiService();
-  //CurrentUser currentUserEmailObject=CurrentUser();
-  List<OwnerSubmitProposalsModel> _getSubmitProposals=[];
-  List<OwnerProfileModel> _getOwnerProfileData=[];
+
+  List<OwnerSubmitProposalsModel> _getOwnerProposal=[];
 
   void initState() {
     // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
     apiService.getOwnerSubmitProposal().then((value){
       setState(() {
-        _getSubmitProposals.addAll(value);
-        //set data we get//set data we get
-      });
-    });
-    apiService.getOwnerProfile().then((value){
-      setState(() {
-        _getOwnerProfileData.addAll(value);
-        for(int index=0;index<_getOwnerProfileData.length;index++) {
-          if(_ownerEmail != null) {
-            ownerId = _getOwnerProfileData[index].id.toString();
+        _getOwnerProposal.addAll(value);
 
-            _firstName = _getOwnerProfileData[index].firstName.toString();
-            _lastName = _getOwnerProfileData[index].lastName.toString();
-            _city = _getOwnerProfileData[index].city.toString();
-            _country = _getOwnerProfileData[index].country.toString();
-            _profilePhoto = _getOwnerProfileData[index].uploadPhoto.toString();
-            print(_firstName.toString());
-            print(_lastName.toString());
-          } }//set data we get
-        //set data we get
       });
     });
+
+
     super.initState();
   }
   @override
@@ -124,7 +110,7 @@ class _ViewProposal extends State<ViewProposal> {
               const Padding(
                   padding: EdgeInsets.only(top: 20, left: 20, bottom: 0),
                   child: Text(
-                    "Proposals",
+                    "My Offers",
                     style: TextStyle(
                       color: Color(0xFFFFA62B),
                       fontSize: 16,
@@ -134,7 +120,7 @@ class _ViewProposal extends State<ViewProposal> {
               const Padding(
                   padding: EdgeInsets.only(top: 20, left: 5, bottom: 0),
                   child: Text(
-                    "/View Accepted Proposals",
+                    "/Offers",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -178,45 +164,43 @@ class _ViewProposal extends State<ViewProposal> {
             ]),
             //------------------------------------------top end--------------------//
             Column(children: [
-              for(int index=0;index<_getSubmitProposals.length;index++)
-                if(_getSubmitProposals[index].email==currenUserEmailAPL&&_getSubmitProposals[index].status=="Accepted")
-                //  if (_getOwnerProposal[index].email==_currentUserEmail.toString())
+              for(int index=0;index<_getOwnerProposal.length;index++)
+                if (_getOwnerProposal[index].email==currenUserEmailOfferList.toString()&&_getOwnerProposal[index].status=="Pending"&&_getOwnerProposal[index].offerStatus!="Rejected")
                   SizedBox(
-                      height: 150,
+                      height: 160,
                       child:
+
                       GestureDetector(
 
                         onTap: (){
-                          if(_getSubmitProposals[index].projectFile!=null){
+                          if(_getOwnerProposal[index].projectFile!=null){
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => OwnerViewAcceptedProposals(currenUserEmailAPL.toString(),_getSubmitProposals[index].sId.toString(),_getSubmitProposals[index].proEmail.toString(),_getSubmitProposals[index].projectTitle.toString(),_getSubmitProposals[index].projectType.toString(),
-                                  _getSubmitProposals[index].workMonths.toString(),_getSubmitProposals[index].projectBudget.toString()
-                                  ,_getSubmitProposals[index].plotWidthA.toString(),
-                                  _getSubmitProposals[index].plotWidthB.toString(),_getSubmitProposals[index].plotLengthA.toString(),
-                                  _getSubmitProposals[index].plotLengthB.toString(),_getSubmitProposals[index].actualPlotSize.toString(),
-                                  _getSubmitProposals[index].floors.toString(),_getSubmitProposals[index].grroundFloor.toString(),
-                                  _getSubmitProposals[index].city.toString(),
-                                  _getSubmitProposals[index].plotLocation.toString(),_getSubmitProposals[index].describeYourProject.toString(),
-                                  _getSubmitProposals[index].proFirstName.toString(),_getSubmitProposals[index].proLastName.toString(),_getSubmitProposals[index].proCity.toString(),_getSubmitProposals[index].proCountry.toString(),_getSubmitProposals[index].proProfilePicUrl.toString(),
-                                  projectFile: _getSubmitProposals[index].projectFile.toString(),)));}
+                                builder: (context) => OwnerViewProOffers(currenUserEmailOfferList.toString(),_getOwnerProposal[index].sId.toString(),_getOwnerProposal[index].email.toString(),_getOwnerProposal[index].status.toString(),_getOwnerProposal[index].projectTitle.toString(),_getOwnerProposal[index].projectType.toString(),_getOwnerProposal[index].workMonths.toString(),_getOwnerProposal[index].projectBudget.toString(),_getOwnerProposal[index].plotWidthA.toString(),
+                                  _getOwnerProposal[index].plotWidthB.toString(),_getOwnerProposal[index].plotLengthA.toString(),
+                                  _getOwnerProposal[index].plotLengthB.toString(),_getOwnerProposal[index].actualPlotSize.toString(),
+                                  _getOwnerProposal[index].floors.toString(),_getOwnerProposal[index].grroundFloor.toString(),
+                                  _getOwnerProposal[index].city.toString(),
+                                  _getOwnerProposal[index].plotLocation.toString(),_getOwnerProposal[index].describeYourProject.toString(),
+                                  _getOwnerProposal[index].proFirstName.toString(),_getOwnerProposal[index].proLastName.toString(),_getOwnerProposal[index].proCity.toString(),_getOwnerProposal[index].proCountry.toString(),_getOwnerProposal[index].proProfilePicUrl.toString(),
+                                  _getOwnerProposal[index].offer.toString(),_getOwnerProposal[index].offerSavedDate.toString(),projectFile: _getOwnerProposal[index].projectFile.toString(),)));}
                           else{
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>  OwnerViewAcceptedProposals(currenUserEmailAPL.toString(),_getSubmitProposals[index].sId.toString(),_getSubmitProposals[index].proEmail.toString(),_getSubmitProposals[index].projectTitle.toString(),_getSubmitProposals[index].projectType.toString(),
-                                  _getSubmitProposals[index].workMonths.toString(),_getSubmitProposals[index].projectBudget.toString()
-                                  ,_getSubmitProposals[index].plotWidthA.toString(),
-                                  _getSubmitProposals[index].plotWidthB.toString(),_getSubmitProposals[index].plotLengthA.toString(),
-                                  _getSubmitProposals[index].plotLengthB.toString(),_getSubmitProposals[index].actualPlotSize.toString(),
-                                  _getSubmitProposals[index].floors.toString(),_getSubmitProposals[index].grroundFloor.toString(),
-                                  _getSubmitProposals[index].city.toString(),
-                                  _getSubmitProposals[index].plotLocation.toString(),_getSubmitProposals[index].describeYourProject.toString(),
-                                  _getSubmitProposals[index].proFirstName.toString(),_getSubmitProposals[index].proLastName.toString(),_getSubmitProposals[index].proCity.toString(),_getSubmitProposals[index].proCountry.toString(),_getSubmitProposals[index].proProfilePicUrl.toString(),
-                                  projectFile: "",)));}
-                        },
+                                builder: (context) => OwnerViewProOffers(currenUserEmailOfferList.toString().toString(),_getOwnerProposal[index].sId.toString(),_getOwnerProposal[index].email.toString(),_getOwnerProposal[index].status.toString(),_getOwnerProposal[index].projectTitle.toString(),_getOwnerProposal[index].projectType.toString(),_getOwnerProposal[index].workMonths.toString(),_getOwnerProposal[index].projectBudget.toString(),_getOwnerProposal[index].plotWidthA.toString(),
+                                  _getOwnerProposal[index].plotWidthB.toString(),_getOwnerProposal[index].plotLengthA.toString(),
+                                  _getOwnerProposal[index].plotLengthB.toString(),_getOwnerProposal[index].actualPlotSize.toString(),
+                                  _getOwnerProposal[index].floors.toString(),_getOwnerProposal[index].grroundFloor.toString(),
+                                  _getOwnerProposal[index].city.toString(),
+                                  _getOwnerProposal[index].plotLocation.toString(),_getOwnerProposal[index].describeYourProject.toString()
+                                  ,  _getOwnerProposal[index].proFirstName.toString(),_getOwnerProposal[index].proLastName.toString(),_getOwnerProposal[index].proCity.toString(),_getOwnerProposal[index].proCountry.toString(),_getOwnerProposal[index].proProfilePicUrl.toString(),
+                                  _getOwnerProposal[index].offer.toString(),_getOwnerProposal[index].offerSavedDate.toString(),projectFile: "",)));}
+                        }
+
+                        ,
 
 
 
                         child: HoverContainer(
-                          height: 150,
+                          height: 160,
                           width: 800,
                           margin: const EdgeInsets.only(top: 10),
                           hoverDecoration: BoxDecoration(
@@ -242,7 +226,7 @@ class _ViewProposal extends State<ViewProposal> {
                                         padding:
                                         EdgeInsets.only(top: 30, left: 20, bottom: 0),
                                         child: Text(
-                                          _getSubmitProposals[index].projectTitle.toString(),
+                                          _getOwnerProposal[index].projectTitle.toString(),
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 16,
@@ -253,7 +237,7 @@ class _ViewProposal extends State<ViewProposal> {
                                         padding:
                                         EdgeInsets.only(top: 10, left: 20, bottom: 0),
                                         child: Text(
-                                          "Proposal Accepted at " + _getSubmitProposals[index].proposalCreatedTime.toString(),
+                                          "Offer Created at " +_getOwnerProposal[index].offerCreatedTime.toString(),
                                           style: TextStyle(
                                             color: Colors.grey,
                                             fontSize: 16,
@@ -264,13 +248,14 @@ class _ViewProposal extends State<ViewProposal> {
                                         padding:
                                         EdgeInsets.only(top: 10, left: 20, bottom: 0),
                                         child: Text(
-                                          "Proposal Saved at " + _getSubmitProposals[index].proposalSavedDate.toString(),
+                                          "Offer Saved at " +_getOwnerProposal[index].offerSavedDate.toString(),
                                           style: TextStyle(
                                             color: Colors.grey,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         )),
+
                                   ]),
                               Container(
                                 width: 30,
@@ -296,106 +281,7 @@ class _ViewProposal extends State<ViewProposal> {
   }
 }
 
-class AddProposal extends StatefulWidget {
-  const AddProposal({super.key});
 
-  @override
-  State<AddProposal> createState() => _AddProposal();
-}
-
-class _AddProposal extends State<AddProposal> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 900,
-      height: 370,
-      margin: const EdgeInsets.only(top: 50, bottom: 0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: strokeColor)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-          Widget>[
-        const Padding(
-            padding: EdgeInsets.only(left: 50, top: 20),
-            child: Text(
-              "Proposals",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700),
-            )),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DesireBuilding()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Text(
-                              "View Accepted Proposals",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 14),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "(0)",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 16),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 40,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DesireBuilding()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(children: const <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 50),
-                        child: Center(
-                          child: Text(
-                            "Accepted for Bidding",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          "(0)",
-                          style:
-                          TextStyle(color: Color(0xFFFF9900), fontSize: 16),
-                        )),
-                  ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-      ]),
-    );
-  }
-}
 
 class Button extends StatelessWidget {
   @override
@@ -410,7 +296,7 @@ class Button extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>  OwnerViewProfile(currenUserEmailAPL.toString())));
+                          builder: (context) =>  OwnerViewProfile(currenUserEmailOfferList.toString().toString())));
                     },
                     // ignore: sort_child_properties_last
                     child: Row(children: const <Widget>[

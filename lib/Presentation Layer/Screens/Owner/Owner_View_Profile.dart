@@ -15,8 +15,9 @@ import 'Owner_Desire_Building.dart';
 import 'Owner_Manage_Accepted_Offer.dart';
 import 'Owner_Manage_Applied_Contracts.dart';
 import 'Owner_Mange_Offers.dart';
+import 'Owner_Offer_List.dart';
 import 'Owner_Select_Title_ServiceProvider.dart';
-import 'Owner_Submitted_Proposals.dart';
+import 'Owner_Submitted_Proposals_List.dart';
 import 'Owner_View_Accepted_Proposal_List.dart';
 
 
@@ -551,7 +552,7 @@ class _OwnerOffers extends State<OwnerOffers> {
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => OwnerManageOffers()));
+                            builder: (context) => OwnerOfferList(currentUserEmail.toString())));
                       },
                       // ignore: sort_child_properties_last
                       child: Row(

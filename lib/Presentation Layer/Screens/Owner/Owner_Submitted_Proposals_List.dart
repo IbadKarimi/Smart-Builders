@@ -1,51 +1,34 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
-import 'package:smart_builder_web/models/OwnerAcceptedProposalModel.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
 
-import '../../../../BuisnessLogic Layer/Api.dart';
-import '../../../../models/OwnerProfileModel.dart';
-import '../../../../models/OwnerSubmitProposalsModel.dart';
-import '../../HomePage/footer.dart';
-import '../../HomePage/header.dart';
-import '../../Owner/Owner_Desire_Building.dart';
-import '../../Owner/Owner_View_Submitted_Proposals.dart';
-import 'Pro_View_Accepted_Proposal.dart';
-import 'Pro_View_Profile.dart';
-import 'Pro_View_Requested_Proposals.dart';
 
+import '../../../BuisnessLogic Layer/Api.dart';
+import '../../../models/OwnerSubmitProposalsModel.dart';
+import '../HomePage/footer.dart';
+import '../HomePage/header.dart';
+import 'Owner_Desire_Building.dart';
+import 'Owner_View_Profile.dart';
+import 'Owner_View_Submitted_Proposals.dart';
+
+String? _currentUserEmail;
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
 
-String? currenUserEmailAPL;
-String? ownerId;
-String? _firstName;
-String? _lastName;
-String? _city;
-String ?_country;
-String? _profilePhoto;
-String? _ownerEmail;
-
-
-
-class ViewAcceptedProposalList extends StatefulWidget {
+class OwnerSubmittedProposals extends StatefulWidget {
   String email;
-  ViewAcceptedProposalList(this.email);
+ OwnerSubmittedProposals(this.email);
 
   @override
-  State<ViewAcceptedProposalList> createState() => _ViewAcceptedProposalList();
+  State<OwnerSubmittedProposals> createState() => _OwnerSubmittedProposals();
 }
 
-class _ViewAcceptedProposalList extends State<ViewAcceptedProposalList> {
-
-  ApiService apiService = new ApiService();
-  //CurrentUser currentUserEmailObject=CurrentUser();
-
-
+class _OwnerSubmittedProposals extends State<OwnerSubmittedProposals> {
   @override
   Widget build(BuildContext context) {
-    currenUserEmailAPL=widget.email;
+    _currentUserEmail=widget.email;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -57,13 +40,13 @@ class _ViewAcceptedProposalList extends State<ViewAcceptedProposalList> {
                   children: <Widget>[
                     Boxes(),
                     ViewProposal(),
+
                     Button(),
                     Footer()
                   ],
                 ))));
   }
 }
-
 String? projectTitle;
 String ?proposalCreatedTime;
 String ?proposalSavedTime;
@@ -78,56 +61,33 @@ class ViewProposal extends StatefulWidget {
 class _ViewProposal extends State<ViewProposal> {
   ApiService apiService = new ApiService();
   //CurrentUser currentUserEmailObject=CurrentUser();
-  List<ProAcceptedProposalsModel> _getAcceptedProposals=[];
-  List<OwnerProfileModel> _getOwnerProfileData=[];
-
-  List<OwnerSubmitProposalsModel> _getSubmitProposals=[];
-
+  List<OwnerSubmitProposalsModel> _getOwnerProposal=[];
+  List<OwnerSubmitProposalsModel> _getOwnerProposalByEmail=[];
   void initState() {
     // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
-    apiService.getAcceptedProposal().then((value){
-      setState(() {
-        _getAcceptedProposals.addAll(value);
-        for(int index=0;index<_getAcceptedProposals.length;index++) {
-
-
-          print("--------------------------------------------------------------");
-          print("Title:          :" + _getAcceptedProposals[index].projectTitle.toString());
-          projectTitle=_getAcceptedProposals[index].projectTitle.toString();
-          proposalCreatedTime=_getAcceptedProposals[index].proposalAcceptedTime.toString();
-          proposalSavedTime=_getAcceptedProposals[index].proposalAcceptedDate.toString();
-          _ownerEmail=_getAcceptedProposals[index].senderEmail.toString();
-          print("--------------------------------------------------------------");
-          print("Title:          :" + _getAcceptedProposals[index].projectTitle.toString());
-
-          print("--------------------------------------------------------------");
-
-        }
-        //set data we get
-        //set data we get
-      });
-    });
-    apiService.getOwnerProfile().then((value){
-      setState(() {
-        _getOwnerProfileData.addAll(value);
-        for(int index=0;index<_getOwnerProfileData.length;index++) {
-          if(_ownerEmail != null) {
-            ownerId = _getOwnerProfileData[index].id.toString();
-
-            _firstName = _getOwnerProfileData[index].firstName.toString();
-            _lastName = _getOwnerProfileData[index].lastName.toString();
-            _city = _getOwnerProfileData[index].city.toString();
-            _country = _getOwnerProfileData[index].country.toString();
-            _profilePhoto = _getOwnerProfileData[index].uploadPhoto.toString();
-            print(_firstName.toString());
-            print(_lastName.toString());
-          } }//set data we get
-        //set data we get
-      });
-    });
     apiService.getOwnerSubmitProposal().then((value){
       setState(() {
-        _getSubmitProposals.addAll(value);
+        _getOwnerProposal.addAll(value);
+        for(int index=0;index<_getOwnerProposal.length;index++) {
+          if (_getOwnerProposal[index].email==_currentUserEmail.toString()) {
+
+            print("--------------------------------------------------------------");
+            print("Title:          :" + _getOwnerProposal[index].projectTitle.toString());
+            projectTitle=_getOwnerProposal[index].projectTitle.toString();
+            proposalCreatedTime=_getOwnerProposal[index].proposalCreatedTime.toString();
+            proposalSavedTime=_getOwnerProposal[index].proposalSavedDate.toString();
+
+
+
+            print("--------------------------------------------------------------");
+            print("Title:          :" + _getOwnerProposal[index].projectTitle.toString());
+            print("Created time    :" + _getOwnerProposal[index].proposalCreatedTime.toString());
+            print("sved Date       :" + _getOwnerProposal[index].proposalSavedDate.toString());
+            print("--------------------------------------------------------------");
+
+          }
+        }//set data we get
+        //set data we get
       });
     });
     super.initState();
@@ -158,7 +118,7 @@ class _ViewProposal extends State<ViewProposal> {
               const Padding(
                   padding: EdgeInsets.only(top: 20, left: 5, bottom: 0),
                   child: Text(
-                    "/View Accepted Proposals",
+                    "/Submitted Proposals",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -182,7 +142,7 @@ class _ViewProposal extends State<ViewProposal> {
                             decoration: const BoxDecoration(),
                             child: const TextField(
                               decoration:
-                              InputDecoration(border: InputBorder.none),
+                                  InputDecoration(border: InputBorder.none),
                             ))),
                     Container(
                       margin: const EdgeInsets.only(left: 220),
@@ -202,42 +162,34 @@ class _ViewProposal extends State<ViewProposal> {
             ]),
             //------------------------------------------top end--------------------//
             Column(children: [
-              for(int index=0;index<_getSubmitProposals.length;index++)
-                if(_getSubmitProposals[index].proEmail.toString()==currenUserEmailAPL &&_getSubmitProposals[index].status.toString()=="Accepted")
-              //  if (_getOwnerProposal[index].email==_currentUserEmail.toString())
+              for(int index=0;index<_getOwnerProposal.length;index++)
+              if (_getOwnerProposal[index].email==_currentUserEmail.toString())
                 SizedBox(
                     height: 150,
                     child:
+
                     GestureDetector(
 
                       onTap: (){
-                        if(_getSubmitProposals[index].projectFile!=null){
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProViewAcceptedProposals(currenUserEmailAPL.toString(),_getSubmitProposals[index].sId.toString(),_getSubmitProposals[index].email.toString(),_getSubmitProposals[index].projectTitle.toString(),_getSubmitProposals[index].projectType.toString(),
-                                _getSubmitProposals[index].workMonths.toString(),_getSubmitProposals[index].projectBudget.toString()
-                                ,_getSubmitProposals[index].plotWidthA.toString(),
-                                _getSubmitProposals[index].plotWidthB.toString(),_getSubmitProposals[index].plotLengthA.toString(),
-                                _getSubmitProposals[index].plotLengthB.toString(),_getSubmitProposals[index].actualPlotSize.toString(),
-                                _getSubmitProposals[index].floors.toString(),_getSubmitProposals[index].grroundFloor.toString(),
-                                _getSubmitProposals[index].city.toString(),
-                                _getSubmitProposals[index].plotLocation.toString(),_getSubmitProposals[index].describeYourProject.toString(),
-                                _getSubmitProposals[index].firstName.toString(),_getSubmitProposals[index].lastName.toString(),_getSubmitProposals[index].ownerCity.toString(),_getSubmitProposals[index].country.toString(),_getSubmitProposals[index].profilePicUrl.toString(),
-                                projectFile: _getSubmitProposals[index].projectFile.toString(),)));}
-                        else{
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>ProViewAcceptedProposals(currenUserEmailAPL.toString(),_getSubmitProposals[index].sId.toString(),_getSubmitProposals[index].email.toString(),_getSubmitProposals[index].projectTitle.toString(),_getSubmitProposals[index].projectType.toString(),
-                                _getSubmitProposals[index].workMonths.toString(),_getSubmitProposals[index].projectBudget.toString()
-                                ,_getSubmitProposals[index].plotWidthA.toString(),
-                                _getSubmitProposals[index].plotWidthB.toString(),_getSubmitProposals[index].plotLengthA.toString(),
-                                _getSubmitProposals[index].plotLengthB.toString(),_getSubmitProposals[index].actualPlotSize.toString(),
-                                _getSubmitProposals[index].floors.toString(),_getSubmitProposals[index].grroundFloor.toString(),
-                                _getSubmitProposals[index].city.toString(),
-                                _getSubmitProposals[index].plotLocation.toString(),_getSubmitProposals[index].describeYourProject.toString(),
-                                _getSubmitProposals[index].firstName.toString(),_getSubmitProposals[index].lastName.toString(),_getSubmitProposals[index].ownerCity.toString(),_getSubmitProposals[index].country.toString(),_getSubmitProposals[index].profilePicUrl.toString(),
-                                projectFile: "",)));}
-                      }
+                        if(_getOwnerProposal[index].projectFile!=null){
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ViewSubmittedProposals(_currentUserEmail.toString(),_getOwnerProposal[index].projectTitle.toString(),_getOwnerProposal[index].projectType.toString(),_getOwnerProposal[index].workMonths.toString(),_getOwnerProposal[index].projectBudget.toString(),_getOwnerProposal[index].plotWidthA.toString(),
+                                _getOwnerProposal[index].plotWidthB.toString(),_getOwnerProposal[index].plotLengthA.toString(),
+                              _getOwnerProposal[index].plotLengthB.toString(),_getOwnerProposal[index].actualPlotSize.toString(),
+                              _getOwnerProposal[index].city.toString(),
+                                _getOwnerProposal[index].plotLocation.toString(),_getOwnerProposal[index].describeYourProject.toString(),
+                              projectFile: _getOwnerProposal[index].projectFile.toString(),)));}
+                      else{
+    Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => ViewSubmittedProposals(_currentUserEmail.toString(),_getOwnerProposal[index].projectTitle.toString(),_getOwnerProposal[index].projectType.toString(),_getOwnerProposal[index].workMonths.toString(),_getOwnerProposal[index].projectBudget.toString(),_getOwnerProposal[index].plotWidthA.toString(),
+    _getOwnerProposal[index].plotWidthB.toString(),_getOwnerProposal[index].plotLengthA.toString(),
+    _getOwnerProposal[index].plotLengthB.toString(),_getOwnerProposal[index].actualPlotSize.toString(),
+    _getOwnerProposal[index].city.toString(),
+    _getOwnerProposal[index].plotLocation.toString(),_getOwnerProposal[index].describeYourProject.toString(),
+    projectFile: "",)));}
+                        }
 
-                      ,
+                        ,
 
 
 
@@ -268,7 +220,7 @@ class _ViewProposal extends State<ViewProposal> {
                                       padding:
                                       EdgeInsets.only(top: 30, left: 20, bottom: 0),
                                       child: Text(
-                                        _getSubmitProposals[index].projectTitle.toString(),
+                                        _getOwnerProposal[index].projectTitle.toString(),
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,
@@ -279,7 +231,7 @@ class _ViewProposal extends State<ViewProposal> {
                                       padding:
                                       EdgeInsets.only(top: 10, left: 20, bottom: 0),
                                       child: Text(
-                                        "Proposal Accepted at " +_getSubmitProposals[index].proposalCreatedTime.toString(),
+                                        "Proposal Created at " +_getOwnerProposal[index].proposalCreatedTime.toString(),
                                         style: TextStyle(
                                           color: Colors.grey,
                                           fontSize: 16,
@@ -290,7 +242,7 @@ class _ViewProposal extends State<ViewProposal> {
                                       padding:
                                       EdgeInsets.only(top: 10, left: 20, bottom: 0),
                                       child: Text(
-                                        "Proposal Saved at " +_getSubmitProposals[index].proposalSavedDate.toString(),
+                                        "Proposal Saved " +_getOwnerProposal[index].proposalSavedDate.toString(),
                                         style: TextStyle(
                                           color: Colors.grey,
                                           fontSize: 16,
@@ -317,7 +269,7 @@ class _ViewProposal extends State<ViewProposal> {
 
                 ),],),
 
-          ]),
+    ]),
         ));
   }
 }
@@ -372,7 +324,7 @@ class _AddProposal extends State<AddProposal> {
                             child: Text(
                               "View Requested Proposals",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 14),
+                                  TextStyle(color: Colors.white, fontSize: 14),
                             )),
                         Padding(
                             padding: EdgeInsets.only(left: 5),
@@ -412,7 +364,7 @@ class _AddProposal extends State<AddProposal> {
                         child: Text(
                           "(0)",
                           style:
-                          TextStyle(color: Color(0xFFFF9900), fontSize: 16),
+                              TextStyle(color: Color(0xFFFF9900), fontSize: 16),
                         )),
                   ]),
                   style: ElevatedButton.styleFrom(
@@ -436,7 +388,7 @@ class Button extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>  ProViewProfile(currenUserEmailAPL.toString())));
+                          builder: (context) =>  OwnerViewProfile(_currentUserEmail.toString())));
                     },
                     // ignore: sort_child_properties_last
                     child: Row(children: const <Widget>[
@@ -444,12 +396,12 @@ class Button extends StatelessWidget {
                           padding: EdgeInsets.only(left: 3),
                           child: Center(
                               child: Text(
-                                "Go Back to My Profile",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
-                              ))),
+                            "Go Back to My Profile",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                            ),
+                          ))),
                     ]),
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(

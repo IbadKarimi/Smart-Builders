@@ -9,7 +9,7 @@ import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'Owner_Desire_Building.dart';
-import 'Owner_Submitted_Proposals.dart';
+import 'Owner_Submitted_Proposals_List.dart';
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);

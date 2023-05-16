@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Select_Title_ServiceProvider.dart';
 import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 
 import '../HomePage/HiringProfessionals/Architect.dart';
@@ -204,7 +205,7 @@ class _SelectContractorLocationInterface extends State<SelectContractorLocationI
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      OwnerViewProfile("")));
+                                      SelectServiceProviderTitle(currentUserEmail.toString(),firstName.toString(),lastName.toString(),city.toString(),country.toString(),profilePhotoUrl.toString())));
                             },
                             // ignore: sort_child_properties_last
                             child: const Text(

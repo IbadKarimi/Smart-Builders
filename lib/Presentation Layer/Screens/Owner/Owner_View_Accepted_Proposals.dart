@@ -420,43 +420,7 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                             ],
                           ),
 
-                          //---------------------------Message--------------------//
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 30, left: 90),
-                                  child: SizedBox(
-                                      width: 90,
-                                      height: 30,
-                                      child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    const Chat()));
-                                          },
-                                          // ignore: sort_child_properties_last
-                                          child: const Text(
-                                            "Message",
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: Color(0xFFFFA62B),
-                                            ),
-                                          ),
-                                          style:
-                                          ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                            Colors.white,
-                                            shape:
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    20)),
-                                          )))),
-                            ],
-                          ),
+
                           //-----------------------Accept Decline Button
                           Column(
                               crossAxisAlignment:

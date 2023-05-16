@@ -18,6 +18,7 @@ import '../../Owner/Owner_View_Profile.dart';
 import 'Pro_Accepted_Offers.dart';
 import 'Pro_Accepted_Proposals.dart';
 import 'Pro_My_Offers.dart';
+import 'Pro_Offer_List.dart';
 import 'Pro_Profile_Ready.dart';
 import 'Pro_View_Accepted_Propsal_List.dart';
 import 'Pro_View_Requested_Proposals_List.dart';
@@ -610,7 +611,7 @@ class _Offers extends State<Offers> {
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const MyOffersMain()));
+                            builder: (context) =>ProOfferList(currentUserEmail.toString())));
                       },
                       // ignore: sort_child_properties_last
                       child: Row(

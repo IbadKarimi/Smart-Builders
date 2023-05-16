@@ -339,7 +339,19 @@ class _ViewProposal extends State<ViewProposal> {
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500,
                                               ),
-                                            ):Text(""))),
+                                            ): Padding(
+                                                    padding:EdgeInsets.only(top: 0, left: 0, bottom: 0),
+                                                    child:_getOwnerProposal[index].proEmail==currenUserEmailRPL.toString() ||_getOwnerProposal[index].proEmail!=currenUserEmailRPL.toString() &&_getOwnerProposal[index].status=="Pending"? Text(
+                                                      "",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ):Text("")))
+
+
+                                        ),
                                       ],
                                     ),
                                   ]),

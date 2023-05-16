@@ -205,7 +205,7 @@ class _SelectServiceProviderTitleInterface extends State<SelectServiceProviderTi
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      OwnerViewProfile("")));
+                                      OwnerViewProfile(currentUserEmail.toString())));
                             },
                             // ignore: sort_child_properties_last
                             child: const Text(

@@ -12,7 +12,7 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/Pro
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
-import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals.dart';
+import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals_List.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Submitted_Proposals.dart';
 
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
       home:  Scaffold
-        (body:ViewProposalRequestedProposalList("ibadkarimi.10@gmail.com")),
+        (body:OwnerViewProfile("hamza10@gmail.com")),
     );
   }
 }
