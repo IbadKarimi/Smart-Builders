@@ -134,22 +134,7 @@ class _ViewProposal extends State<ViewProposal> {
         //set data we get
       });
     });
-    apiService.getAcceptedProposal().then((value){
-      setState(() {
-        _getAcceptedProposals.addAll(value);
-        for(int index=0;index<_getAcceptedProposals.length;index++) {
-          if(_getAcceptedProposals[index].accepterEmail==currenUserEmailRPL&&_getAcceptedProposals[index].status.toString()=="Accepted"){
-            _proStatus=_getAcceptedProposals[index].status.toString();
-              continue;
-            print(_proStatus.toString());
-          }
 
-
-        }
-        //set data we get
-        //set data we get
-      });
-    });
     super.initState();
   }
   @override

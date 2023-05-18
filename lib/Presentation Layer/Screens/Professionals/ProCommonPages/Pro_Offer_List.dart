@@ -1,6 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/models/OfferModel.dart';
 
 import '../../../../BuisnessLogic Layer/Api.dart';
 
@@ -23,32 +24,25 @@ String? ownerId;
 String? _firstName;
 String? _lastName;
 String? _city;
-String ?_country;
+String? _country;
 String? _profilePhoto;
 String? _ownerEmail;
 
-
-
-
-
-
 class ProOfferList extends StatefulWidget {
   String email;
-  ProOfferList (this.email);
+  ProOfferList(this.email);
 
   @override
-  State<ProOfferList > createState() => _ProOfferList ();
+  State<ProOfferList> createState() => _ProOfferList();
 }
 
-class _ProOfferList  extends State<ProOfferList > {
-
+class _ProOfferList extends State<ProOfferList> {
   ApiService apiService = new ApiService();
   //CurrentUser currentUserEmailObject=CurrentUser();
 
-
   @override
   Widget build(BuildContext context) {
-    currenUserEmailOfferList=widget.email;
+    currenUserEmailOfferList = widget.email;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -68,34 +62,33 @@ class _ProOfferList  extends State<ProOfferList > {
 }
 
 String? projectTitle;
-String ?proposalCreatedTime;
-String ?proposalSavedTime;
-String ?length;
-class  MyOffersList extends StatefulWidget {
-  const  MyOffersList({super.key});
+String? proposalCreatedTime;
+String? proposalSavedTime;
+String? length;
+
+class MyOffersList extends StatefulWidget {
+  const MyOffersList({super.key});
 
   @override
   State<MyOffersList> createState() => _MyOffersList();
 }
 
 class _MyOffersList extends State<MyOffersList> {
-
   ApiService apiService = new ApiService();
 
-  List<OwnerSubmitProposalsModel> _getOwnerProposal=[];
+  List<OfferProposalsModel> _getOffer = [];
 
   void initState() {
     // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
-    apiService.getOwnerSubmitProposal().then((value){
+    apiService.getOfferProposal().then((value) {
       setState(() {
-        _getOwnerProposal.addAll(value);
-
+        _getOffer.addAll(value);
       });
     });
 
-
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,7 +100,8 @@ class _MyOffersList extends State<MyOffersList> {
             border: Border.all(color: strokeColor)),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Row(children: <Widget>[
               const Padding(
                   padding: EdgeInsets.only(top: 20, left: 20, bottom: 0),
@@ -146,7 +140,7 @@ class _MyOffersList extends State<MyOffersList> {
                             decoration: const BoxDecoration(),
                             child: const TextField(
                               decoration:
-                              InputDecoration(border: InputBorder.none),
+                                  InputDecoration(border: InputBorder.none),
                             ))),
                     Container(
                       margin: const EdgeInsets.only(left: 220),
@@ -165,136 +159,129 @@ class _MyOffersList extends State<MyOffersList> {
               ),
             ]),
             //------------------------------------------top end--------------------//
-            Column(children: [
-              for(int index=0;index<_getOwnerProposal.length;index++)
-               if (_getOwnerProposal[index].proEmail==currenUserEmailOfferList.toString()&&_getOwnerProposal[index].status=="Pending")
-                SizedBox(
-                    height: 160,
-                    child:
-
-                    GestureDetector(
-
-                      onTap: (){
-                        if(_getOwnerProposal[index].projectFile!=null){
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProOffers(currenUserEmailOfferList.toString(),_getOwnerProposal[index].sId.toString(),_getOwnerProposal[index].email.toString(),_getOwnerProposal[index].status.toString(),_getOwnerProposal[index].projectTitle.toString(),_getOwnerProposal[index].projectType.toString(),_getOwnerProposal[index].workMonths.toString(),_getOwnerProposal[index].projectBudget.toString(),_getOwnerProposal[index].plotWidthA.toString(),
-                                _getOwnerProposal[index].plotWidthB.toString(),_getOwnerProposal[index].plotLengthA.toString(),
-                                _getOwnerProposal[index].plotLengthB.toString(),_getOwnerProposal[index].actualPlotSize.toString(),
-                                _getOwnerProposal[index].floors.toString(),_getOwnerProposal[index].grroundFloor.toString(),
-                                _getOwnerProposal[index].city.toString(),
-                                _getOwnerProposal[index].plotLocation.toString(),_getOwnerProposal[index].describeYourProject.toString(),
-                                _getOwnerProposal[index].firstName.toString(),_getOwnerProposal[index].lastName.toString(),_getOwnerProposal[index].ownerCity.toString(),_getOwnerProposal[index].country.toString(),_getOwnerProposal[index].profilePicUrl.toString(),
-                                _getOwnerProposal[index].offer.toString(),_getOwnerProposal[index].offerSavedDate.toString(),_getOwnerProposal[index].offerStatus.toString(),projectFile: _getOwnerProposal[index].projectFile.toString(),)));}
-                        else{
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProOffers(currenUserEmailOfferList.toString().toString(),_getOwnerProposal[index].sId.toString(),_getOwnerProposal[index].email.toString(),_getOwnerProposal[index].status.toString(),_getOwnerProposal[index].projectTitle.toString(),_getOwnerProposal[index].projectType.toString(),_getOwnerProposal[index].workMonths.toString(),_getOwnerProposal[index].projectBudget.toString(),_getOwnerProposal[index].plotWidthA.toString(),
-                                _getOwnerProposal[index].plotWidthB.toString(),_getOwnerProposal[index].plotLengthA.toString(),
-                                _getOwnerProposal[index].plotLengthB.toString(),_getOwnerProposal[index].actualPlotSize.toString(),
-                                _getOwnerProposal[index].floors.toString(),_getOwnerProposal[index].grroundFloor.toString(),
-                                _getOwnerProposal[index].city.toString(),
-                                _getOwnerProposal[index].plotLocation.toString(),_getOwnerProposal[index].describeYourProject.toString()
-                                ,  _getOwnerProposal[index].firstName.toString(),_getOwnerProposal[index].lastName.toString(),_getOwnerProposal[index].ownerCity.toString(),_getOwnerProposal[index].country.toString(),_getOwnerProposal[index].profilePicUrl.toString(),
-                                _getOwnerProposal[index].offer.toString(),_getOwnerProposal[index].offerSavedDate.toString(),_getOwnerProposal[index].offerStatus.toString(),projectFile: "",)));}
-                      }
-
-                      ,
-
-
-
-                      child: HoverContainer(
+            Column(
+              children: [
+                for (int index = 0; index < _getOffer.length; index++)
+                  if (_getOffer[index].proEmail ==
+                      currenUserEmailOfferList.toString())
+                    SizedBox(
                         height: 160,
-                        width: 800,
-                        margin: const EdgeInsets.only(top: 10),
-                        hoverDecoration: BoxDecoration(
-                            color: const Color(0xFFFFEBCC),
-                            border: Border(
-                              top: BorderSide(color:strokeColor),
-                              //  bottom: BorderSide(color: strokeColor),
-                            )),
-                        decoration: const BoxDecoration(
-                            border: Border(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ProOffers(
+                                    _getOffer[index].proposalId.toString(),
+                                    _getOffer[index].proEmail.toString(),
+                                    _getOffer[index].proFirstName.toString(),
+                                    _getOffer[index].proLastName.toString(),
+                                    _getOffer[index].proCity.toString(),
+                                    _getOffer[index].proCountry.toString(),
+                                    _getOffer[index].profilePicUrl.toString(),
+                                    _getOffer[index].offer.toString(),
+                                    _getOffer[index].offerStatus.toString(),
+                                    _getOffer[index]
+                                        .offerSavedDate
+                                        .toString())));
+                          },
+                          child: HoverContainer(
+                            height: 160,
+                            width: 800,
+                            margin: const EdgeInsets.only(top: 10),
+                            hoverDecoration: BoxDecoration(
+                                color: const Color(0xFFFFEBCC),
+                                border: Border(
+                                  top: BorderSide(color: strokeColor),
+                                  //  bottom: BorderSide(color: strokeColor),
+                                )),
+                            decoration: const BoxDecoration(
+                                border: Border(
                               top: BorderSide(color: strokeColor),
                               //bottom: BorderSide(color: strokeColor),
                             )),
-                        child:
-                        // ignore: prefer_const_literals_to_create_immutables
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children:  [
-                                  Padding(
-                                      padding:
-                                      EdgeInsets.only(top: 30, left: 20, bottom: 0),
-                                      child: Text(
-                                        _getOwnerProposal[index].projectTitle.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      )),
-                                  Padding(
-                                      padding:
-                                      EdgeInsets.only(top: 10, left: 20, bottom: 0),
-                                      child: Text(
-                                        "Offer Created at " +_getOwnerProposal[index].offerCreatedTime.toString(),
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      )),
-                                  Padding(
-                                      padding:
-                                      EdgeInsets.only(top: 10, left: 20, bottom: 0),
-                                      child: Text(
-                                        "Offer Saved at " +_getOwnerProposal[index].offerSavedDate.toString(),
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      )),
-                                  Padding(
-                                      padding:
-                                      EdgeInsets.only(top: 10, left: 20, bottom: 0),
-                                      child:offerStatus=="Rejected"? Text(
-                                        "Your offer is Rejected !",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ):Text("")),
-
-                                ]),
-                            Container(
-                              width: 30,
-                              height: 30,
-                              margin: EdgeInsets.only(right: 10),
-                              child: Icon(Icons.more_horiz),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey, width: 1),
-                                  borderRadius: BorderRadius.circular(100)),
+                            child:
+                                // ignore: prefer_const_literals_to_create_immutables
+                                Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 30, left: 20, bottom: 0),
+                                          child: Text(
+                                            _getOffer[index]
+                                                .projectTitle
+                                                .toString(),
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          )),
+                                      Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10, left: 20, bottom: 0),
+                                          child: Text(
+                                            "Offer Created at " +
+                                                _getOffer[index]
+                                                    .offerCreatedTime
+                                                    .toString(),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          )),
+                                      Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10, left: 20, bottom: 0),
+                                          child: Text(
+                                            "Offer Saved at " +
+                                                _getOffer[index]
+                                                    .offerSavedDate
+                                                    .toString(),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          )),
+                                      Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10, left: 20, bottom: 0),
+                                          child: offerStatus == "Rejected"
+                                              ? Text(
+                                                  "Your offer is Rejected !",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Text("")),
+                                    ]),
+                                Container(
+                                  width: 30,
+                                  height: 30,
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: Icon(Icons.more_horiz),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey, width: 1),
+                                      borderRadius: BorderRadius.circular(100)),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    )
-
-
-
-
-                ),],),
-
+                          ),
+                        )),
+              ],
+            ),
           ]),
         ));
   }
 }
-
-
 
 class Button extends StatelessWidget {
   @override
@@ -309,7 +296,8 @@ class Button extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>  ProViewProfile(currenUserEmailOfferList.toString().toString())));
+                          builder: (context) => ProViewProfile(
+                              currenUserEmailOfferList.toString().toString())));
                     },
                     // ignore: sort_child_properties_last
                     child: Row(children: const <Widget>[
@@ -317,12 +305,12 @@ class Button extends StatelessWidget {
                           padding: EdgeInsets.only(left: 3),
                           child: Center(
                               child: Text(
-                                "Go Back to My Profile",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
-                              ))),
+                            "Go Back to My Profile",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                            ),
+                          ))),
                     ]),
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
