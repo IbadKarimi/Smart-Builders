@@ -1446,7 +1446,7 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                   padding: EdgeInsets.only(left: 0, top: 10),
                   child: Center(
                       child: Text(
-                    "We will notify you When Ibad karimi Responds to your offer ",
+                    "We will notify you When Contractors Responds to your offer ",
                     style: TextStyle(
                       color: Color(0xFFFFA62B),
                       fontSize: 12,

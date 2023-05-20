@@ -8,6 +8,7 @@ import '../../../../models/ProfessionalsProfileModel.dart';
 
 import 'package:intl/intl.dart';
 
+import '../../../models/OfferModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_Offer_List.dart';
@@ -70,10 +71,12 @@ class OwnerViewProOffers extends StatefulWidget {
   String offer;
   String offerStatus;
   String offerSavedDate;
+  String id;
 
   OwnerViewProOffers(
       this.proposalId,
       this.ownerEmail,
+      this.id,
       this.proEmail,
       this.proFirstName,
       this.proLastName,
@@ -138,6 +141,7 @@ class _OwnerViewProOffers extends State<OwnerViewProOffers> {
   Widget build(BuildContext context) {
     proposalId = widget.proposalId;
     ownerEmail = widget.ownerEmail;
+    id=widget.id;
     proEmail = widget.proEmail;
     proFirstName = widget.proFirstName;
     proLastName = widget.proLastName;
@@ -147,7 +151,7 @@ class _OwnerViewProOffers extends State<OwnerViewProOffers> {
     offer = widget.offer;
     offerStatus = widget.offerStatus;
     offerSavedDate = widget.offerSavedDate;
-    debugPrint(id.toString());
+    debugPrint(proProfilePicUrl);
 
     print("project file is" +  proposalId.toString());
 
@@ -561,7 +565,9 @@ class _ProfessionalOffer extends State<ProfessionalOffer> {
 }
 
 class ProAcceptDeclinePropsals extends StatefulWidget {
-  const ProAcceptDeclinePropsals({super.key});
+  const
+
+  ProAcceptDeclinePropsals({super.key});
 
   @override
   State<ProAcceptDeclinePropsals> createState() => _ProAcceptDeclinePropsals();
@@ -569,16 +575,33 @@ class ProAcceptDeclinePropsals extends StatefulWidget {
 
 class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
   //CurrentUser currentUserEmailObject=CurrentUser();
+  ApiService apiService = new ApiService();
+
+
+  List<OfferProposalsModel> _getOfferProposal = [];
+
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+
+    apiService.getOfferProposal().then((value) {
+      setState(() {
+        _getOfferProposal.addAll(value);
+      });
+    });
+
+    super.initState();
+  }
+
 
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     DateTime currentDate = DateTime.now();
-    String _currentDateNow = DateFormat('dd-MM-yyy').format(currentDate);
+    String offerAcceptedDate = DateFormat('dd-MM-yyy').format(currentDate);
     int hour = now.hour;
     int minute = now.minute;
     TimeOfDay time = TimeOfDay(hour: hour, minute: minute);
-    String _currentTimeNow = time.format(context);
-    print(_currentTimeNow);
+    String offerAcceptedTime = time.format(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -602,9 +625,9 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                             padding: const EdgeInsets.only(top: 10, left: 10),
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: profilePhoto != null
+                                child:  proProfilePicUrl != null
                                     ? Image.network(
-                                  profilePhoto.toString(),
+                                  proProfilePicUrl.toString(),
                                   height: 90.0,
                                   width: 90.0,
                                   scale: 2,
@@ -674,12 +697,14 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                                           height: 40,
                                           child: ElevatedButton(
                                               onPressed: () async {
-                                                var response2 = await apiService
-                                                    .updateStatus(
-                                                  id.toString(),
-                                                  "Accepted",
-                                                );
-                                                if (response2 == "200") {
+                                                var response3;
+                                                var response2=await apiService.UpdateOffer(proposalId.toString(), "Accepted", proEmail.toString(), proFirstName.toString(), proLastName.toString(), proCity.toString(), proCountry.toString(), proProfilePicUrl.toString(), offer.toString(), "Accepted", offerSavedDate.toString());
+                                                var response1=await apiService.UpdateOfferStatus(id.toString(), "Accepted",offerAcceptedTime.toString() ,offerAcceptedDate.toString() );
+
+
+
+                                                print("id is-------------"+id.toString());
+                                                if (response2 == "200"&&response1 == "200") {
                                                   setState(() {
                                                     progressBarVisible = false;
                                                     debugPrint(
@@ -755,10 +780,7 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                                           height: 40,
                                           child: ElevatedButton(
                                               onPressed: () async {
-                                                var response =
-                                                await apiService.SetOffer(
-                                                    id.toString(),
-                                                    "Rejected");
+                                                var response=await apiService.UpdateOfferStatus(id.toString(), "Rejected","" ,"" );
                                                 if (response == '200') {
                                                   Navigator.of(context).push(
                                                       MaterialPageRoute(
@@ -1513,41 +1535,20 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
               Container(
                   width: 100,
                   height: 100,
-                  margin: const EdgeInsets.only(top: 60, left: 180),
+                  margin: const EdgeInsets.only(top: 120, left: 200),
                   decoration: const BoxDecoration(
                     image:
                     DecorationImage(image: AssetImage("Logo/accept.png")),
                   )),
+
               Padding(
                   padding: EdgeInsets.only(left: 0, top: 40),
                   child: Center(
                       child: Text(
-                        "Offer sent to" +
-                            " " +
-                            ownerfirstName.toString() +
-                            " " +
-                            ownerlastName.toString() +
-                            "!",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ))),
-              Padding(
-                  padding: EdgeInsets.only(left: 0, top: 10),
-                  child: Center(
-                      child: Text(
-                        "We will notify you When" +
-                            " " +
-                            ownerfirstName.toString() +
-                            " " +
-                            ownerlastName.toString() +
-                            " " +
-                            "Responds to your offer ",
+                       "Congragulations ! This offer is Accepted by You",
                         style: TextStyle(
                           color: Color(0xFFFFA62B),
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ))),
@@ -1594,289 +1595,3 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
   }
 }
 
-class showOfferAlertDialog extends StatefulWidget {
-  const showOfferAlertDialog({super.key});
-
-  @override
-  State<showOfferAlertDialog> createState() => _showOfferAlertDialog();
-}
-
-class _showOfferAlertDialog extends State<showOfferAlertDialog> {
-  final _keyOffer = GlobalKey<FormState>();
-  final _offerController = TextEditingController();
-
-  bool _autoValidate = false;
-  static const checkbox = false;
-  @override
-  Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    DateTime currentDate = DateTime.now();
-    String offerSavedDate = DateFormat('dd-MM-yyy').format(currentDate);
-    int hour = now.hour;
-    int minute = now.minute;
-    TimeOfDay time = TimeOfDay(hour: hour, minute: minute);
-    String offerCreatedTime = time.format(context);
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: StatefulBuilder(builder: (context, setState) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              content: Container(
-                  width: 550,
-                  child: Form(
-                    key: _keyOffer,
-                    autovalidateMode: _autoValidate == true
-                        ? AutovalidateMode.onUserInteraction
-                        : AutovalidateMode.disabled,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          //  Form(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            // ignore: prefer_const_literals_to_create_immutables
-                            children: <Widget>[
-                              Padding(
-                                  padding: EdgeInsets.only(top: 20, left: 10),
-                                  child: Text(
-                                    "Project Proposal",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  )),
-                            ],
-                          ),
-
-                          Padding(
-                              padding:
-                              EdgeInsets.only(top: 20, left: 10, bottom: 0),
-                              child: Text(
-                                "Project Title",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )),
-                          Padding(
-                              padding:
-                              EdgeInsets.only(top: 10, left: 10, bottom: 0),
-                              child: Text(
-                                projectTitle.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )),
-
-                          Padding(
-                              padding:
-                              EdgeInsets.only(top: 20, left: 10, bottom: 0),
-                              child: Text(
-                                "Project Budget",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )),
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10, left: 10, bottom: 20),
-                              child: Text(
-                                projectBudget.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )),
-                          Divider(),
-
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: 20, left: 10, bottom: 10),
-                              child: Text(
-                                "Tell your offer about proposal ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )),
-
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: 20, left: 10, bottom: 10),
-                              child: Text(
-                                "Enter your offer ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )),
-
-                          Padding(
-                              padding: EdgeInsets.only(top: 0, left: 10),
-                              child: SizedBox(
-                                  width: 640,
-                                  child: TextFormField(
-                                    // autovalidateMode:AutovalidateMode.onUserInteraction,
-                                    keyboardType: TextInputType.name,
-                                    controller: _offerController,
-                                    decoration: InputDecoration(
-                                        helperText: "",
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 11),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(10.0),
-                                        )),
-                                    onChanged: (value) {
-                                      final formatter =
-                                      NumberFormat('#,##0', 'en_US');
-                                      final newValue =
-                                      value.replaceAll(',', '');
-                                      final formattedValue =
-                                      formatter.format(int.parse(newValue));
-                                      if (value != formattedValue) {
-                                        _offerController.value =
-                                            _offerController.value.copyWith(
-                                              text: formattedValue,
-                                              selection: TextSelection.collapsed(
-                                                offset: formattedValue.length,
-                                              ),
-                                            );
-                                      }
-                                    },
-                                    validator: (value) {
-                                      if (value!.trim().isEmpty) {
-                                        return "Offer is Required";
-                                      }
-
-                                      return null;
-                                    },
-                                  ))),
-
-                          // ignore: prefer_const_literals_to_create_immutables
-
-                          Stack(
-                            alignment: AlignmentDirectional.topStart,
-                            children: [
-                              Row(
-                                children: <Widget>[
-                                  Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 120, left: 240, bottom: 30),
-                                      child: SizedBox(
-                                          width: 140,
-                                          height: 35,
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              // ignore: sort_child_properties_last
-                                              child: const Text(
-                                                "Back",
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                const Color(0xFFD9D9D9),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      30.0),
-                                                ),
-                                              )))),
-                                  Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 120, left: 20, bottom: 30),
-                                      child: Container(
-                                          width: 140,
-                                          height: 40,
-                                          child: ElevatedButton(
-                                              onPressed: () async {
-                                                if (_keyOffer.currentState!
-                                                    .validate()) {
-                                                  var response =
-                                                  await apiService.ProOffer(
-                                                      id.toString(),
-                                                      "Pending",
-                                                      _currentUserEmailVRP
-                                                          .toString(),
-                                                      proFirstName
-                                                          .toString(),
-                                                      proLastName
-                                                          .toString(),
-                                                      proCity.toString(),
-                                                      proCountry.toString(),
-                                                      "",
-                                                      proProfilePicUrl
-                                                          .toString(),
-                                                      _offerController.text,
-                                                      offerCreatedTime,
-                                                      offerSavedDate);
-                                                  if (response == "200") {
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                OwnerViewProfile(
-                                                                    _currentUserEmailVRP
-                                                                        .toString())));
-                                                  }
-                                                } else {
-                                                  setState(() {
-                                                    _autoValidate = true;
-                                                  });
-                                                }
-                                              },
-                                              // ignore: sort_child_properties_last
-                                              child:
-                                              Row(children: const <Widget>[
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 30),
-                                                    child: Center(
-                                                        child: Text(
-                                                          "Submit",
-                                                          style: TextStyle(
-                                                              color: Colors.white,
-                                                              fontSize: 12),
-                                                        ))),
-                                              ]),
-                                              style: ElevatedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        30.0),
-                                                  ),
-                                                  backgroundColor: const Color(
-                                                      0xFF363B42))))),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          // ignore: prefer_const_literals_to_create_immutables
-
-                          //Back and Next Button--------------------------------------------------------------------------------------------
-                        ]),
-                  ))),
-        );
-      }),
-    );
-  }
-}

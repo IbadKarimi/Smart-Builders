@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'dart:html';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Proposals_Service_Providers.dart';
@@ -12,9 +15,11 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/Pro
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
+import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerViewProfile.dart';
 import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals_List.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Submitted_Proposals.dart';
+import 'models/DataModels.dart';
 
 //import 'mongodb.dart';
 
@@ -44,7 +49,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: Scaffold(body:OwnerViewProfile("hamza10@gmail.com")),
+      home: Scaffold(body:RetailerViewProfile("hamza10@gmail.com")),
     );
   }
 }
@@ -192,3 +197,264 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+
+
+
+
+
+/*class MyFormPage extends StatefulWidget {
+  @override
+  _MyFormPageState createState() => _MyFormPageState();
+}
+
+class _MyFormPageState extends State<MyFormPage> {
+  List<List<TextEditingController>> _textControllers = [[]];
+
+  void _addFormFields() {
+    _textControllers.add([
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+    ]);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    for (var controllerList in _textControllers) {
+      for (var controller in controllerList) {
+        controller.dispose();
+      }
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    for (var row in _textControllers) {
+      for (var controller in row) {
+        print(controller.text);
+      }
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Fields Example'),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: _textControllers.length,
+              itemBuilder: (context, index) {
+                List<TextEditingController> controllerList = _textControllers[index];
+                return Row(
+                  children: [
+                    for (var i = 0; i < controllerList.length; i++)
+                      SizedBox(
+                        width:100,
+                        child: TextFormField(
+                          controller: controllerList[i],
+                          decoration: InputDecoration(
+                            labelText: 'Field ${index * 3 + i + 1}',
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addFormFields,
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}*/
+class MyFormPage extends StatefulWidget {
+  @override
+  _MyFormPageState createState() => _MyFormPageState();
+}
+
+class _MyFormPageState extends State<MyFormPage> {
+  List<DataModel> _dataList = [];
+
+  void _addFormField() {
+    setState(() {
+      _dataList.add(DataModel(material: '', date: DateTime.now(), amount: 0.0));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Fields Example'),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: _dataList.length,
+              itemBuilder: (context, index) {
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+
+                  children: [
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                        padding: EdgeInsets.only(
+                            left: 10,top:40
+                        ),
+                        child: Text(
+                          "Material Name",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )),
+                    const Padding(
+                        padding: EdgeInsets.only(
+                            left: 152,top:40
+                        ),
+                        child: Text(
+                          "Date",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )),
+                    const Padding(
+                        padding: EdgeInsets.only(
+                            left: 260,top:40
+                        ),
+                        child: Text(
+                          "Amount",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )),
+                  ]),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin:EdgeInsets.only(top:10),
+                          width: 250,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+
+
+                                helperText: "",
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            onChanged: (value) {
+                              setState(() {
+                                _dataList[index].material = value;
+                              });
+                            },
+
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(top: 10, left: 30),
+                            child: Container(
+                              width: 250,
+                              height: 32,
+
+
+                              child:   Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 10,top:8
+                                  ),
+                                  child: Text(
+                                   "12-02-2023",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  )),
+                              decoration: BoxDecoration(
+                                  borderRadius:BorderRadius.circular(10),
+                                  border:Border.all(color:Colors.grey,width: 1)
+                              ),
+                            )),
+
+                        Container(
+                          width: 250,
+                          margin:EdgeInsets.only(top:10,left:30),
+                          child: TextFormField(
+                            onChanged: (value) {
+                              setState(() {
+                                _dataList[index].amount = double.parse(value);
+                              });
+                            },
+                            decoration: InputDecoration(
+
+
+                                helperText: "",
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addFormField,
+        child: Icon(Icons.add),
+      ),
+      persistentFooterButtons: [
+        ElevatedButton(
+          onPressed: () {},
+          child: Text('Submit'),
+        ),
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
+
+

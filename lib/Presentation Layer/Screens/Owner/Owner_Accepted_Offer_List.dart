@@ -8,6 +8,7 @@ import '../../../../models/OwnerSubmitProposalsModel.dart';
 import '../../../models/OfferModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
+import 'Owner_Accepted_Offer.dart';
 import 'Owner_Offer.dart';
 import 'Owner_View_Profile.dart';
 import 'Owner_Offer.dart';
@@ -16,7 +17,7 @@ const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
 
-String? currenUserEmailOfferList;
+String? currenUserEmailAcceptedList;
 String? ownerId;
 String? _firstName;
 String? _lastName;
@@ -25,21 +26,21 @@ String? _country;
 String? _profilePhoto;
 String? _ownerEmail;
 
-class OwnerOfferList extends StatefulWidget {
+class OwnerAcceptedOfferList extends StatefulWidget {
   String email;
-  OwnerOfferList(this.email);
+  OwnerAcceptedOfferList(this.email);
 
   @override
-  State<OwnerOfferList> createState() => _OwnerOfferList();
+  State<OwnerAcceptedOfferList> createState() => _OwnerAcceptedOfferList();
 }
 
-class _OwnerOfferList extends State<OwnerOfferList> {
+class _OwnerAcceptedOfferList extends State<OwnerAcceptedOfferList> {
   ApiService apiService = new ApiService();
   //CurrentUser currentUserEmailObject=CurrentUser();
 
   @override
   Widget build(BuildContext context) {
-    currenUserEmailOfferList = widget.email;
+    currenUserEmailAcceptedList = widget.email;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
@@ -104,7 +105,7 @@ class _MyOffersList extends State<MyOffersList> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Row(children: <Widget>[
               const Padding(
                   padding: EdgeInsets.only(top: 20, left: 20, bottom: 0),
@@ -119,7 +120,7 @@ class _MyOffersList extends State<MyOffersList> {
               const Padding(
                   padding: EdgeInsets.only(top: 20, left: 5, bottom: 0),
                   child: Text(
-                    "/Offers",
+                    "/Accepted Offers",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -143,7 +144,7 @@ class _MyOffersList extends State<MyOffersList> {
                             decoration: const BoxDecoration(),
                             child: const TextField(
                               decoration:
-                                  InputDecoration(border: InputBorder.none),
+                              InputDecoration(border: InputBorder.none),
                             ))),
                     Container(
                       margin: const EdgeInsets.only(left: 220),
@@ -165,14 +166,13 @@ class _MyOffersList extends State<MyOffersList> {
             Column(
               children: [
                 for (int index = 0; index < _getOfferProposal.length; index++)
-                 // if( _getOfferProposal[index].offerStatus.toString()=="Pending")
-
+                  if( _getOfferProposal[index].ownerEmail.toString()==currenUserEmailAcceptedList.toString()&&_getOfferProposal[index].offerStatus.toString()=="Accepted")
                   SizedBox(
                       height: 160,
                       child: GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => OwnerViewProOffers(
+                              builder: (context) => OwnerViewAcceptedOffers(
                                   _getOfferProposal[index].proposalId.toString(),
                                   _getOfferProposal[index].ownerEmail.toString(),
                                   _getOfferProposal[index].id.toString(),
@@ -198,12 +198,12 @@ class _MyOffersList extends State<MyOffersList> {
                               )),
                           decoration: const BoxDecoration(
                               border: Border(
-                            top: BorderSide(color: strokeColor),
-                            //bottom: BorderSide(color: strokeColor),
-                          )),
+                                top: BorderSide(color: strokeColor),
+                                //bottom: BorderSide(color: strokeColor),
+                              )),
                           child:
-                              // ignore: prefer_const_literals_to_create_immutables
-                              Row(
+                          // ignore: prefer_const_literals_to_create_immutables
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
@@ -226,9 +226,9 @@ class _MyOffersList extends State<MyOffersList> {
                                         padding: EdgeInsets.only(
                                             top: 10, left: 20, bottom: 0),
                                         child: Text(
-                                          "Offer Created at " +
+                                          "Offer Accepted at " +
                                               _getOfferProposal[index]
-                                                  .offerCreatedTime
+                                                  .offerAcceptedTime
                                                   .toString(),
                                           style: TextStyle(
                                             color: Colors.grey,
@@ -242,7 +242,7 @@ class _MyOffersList extends State<MyOffersList> {
                                         child: Text(
                                           "Offer Saved at " +
                                               _getOfferProposal[index]
-                                                  .offerSavedDate
+                                                  .offerAcceptedDate
                                                   .toString(),
                                           style: TextStyle(
                                             color: Colors.grey,
@@ -286,7 +286,7 @@ class Button extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => OwnerViewProfile(
-                              currenUserEmailOfferList.toString().toString())));
+                              currenUserEmailAcceptedList.toString().toString())));
                     },
                     // ignore: sort_child_properties_last
                     child: Row(children: const <Widget>[
@@ -294,12 +294,12 @@ class Button extends StatelessWidget {
                           padding: EdgeInsets.only(left: 3),
                           child: Center(
                               child: Text(
-                            "Go Back to My Profile",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          ))),
+                                "Go Back to My Profile",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                ),
+                              ))),
                     ]),
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(

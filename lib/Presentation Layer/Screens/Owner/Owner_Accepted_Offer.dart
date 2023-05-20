@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_View_Accepted_Proposal_List.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/ProOffers.dart';
 import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 
 import '../../../../BuisnessLogic Layer/Api.dart';
 import '../../../../models/ProfessionalsProfileModel.dart';
-import '../../HomePage/Chat/ChatScreen.dart';
-import '../../HomePage/footer.dart';
-import '../../HomePage/header.dart';
-import '../../Owner/Owner_Desire_Building.dart';
-import 'Pro_View_Profile.dart';
-import 'Pro_View_Requested_Proposals_List.dart';
+
 import 'package:intl/intl.dart';
+
+import '../HomePage/footer.dart';
+import '../HomePage/header.dart';
+import '../Professionals/ProCommonPages/Pro_Offer_List.dart';
+import '../Professionals/ProCommonPages/Pro_Personal_Info.dart';
+import 'Owner_Accepted_Offer_List.dart';
+import 'Owner_Desire_Building.dart';
+import 'Owner_Offer_List.dart';
+import 'Owner_View_Profile.dart';
 
 bool progressBarVisible = false;
 
@@ -30,7 +36,7 @@ String? city; //ye city pro ke city me insert horahi hai
 String? plotLocation;
 String? describeYourProject;
 String? projectFile;
-String? ownerEmail;
+String? email;
 String? ownerfirstName;
 String? ownerlastName;
 String? ownercity;
@@ -38,94 +44,92 @@ String? ownercountry;
 String? ownerProfilePicture;
 String? floors;
 String? groundFloors;
-String? _currentUserEmailVRP;
+String? _currentUserEmailVAO;
 String? id;
 String? status;
 
+String? proposalId;
+String? ownerEmail;
+String? proEmail;
 String? proFirstName;
 String? proLastName;
 String? proCity;
 String? proCountry;
-String? proProfilePicture;
+String? proProfilePicUrl;
+String? offer;
+String? offerStatus;
+String? offerSavedDate;
 
-class ProViewRequestedProposals extends StatefulWidget {
+class OwnerViewAcceptedOffers extends StatefulWidget {
+  String proposalId;
+  String ownerEmail;
+  String proEmail;
+  String proFirstName;
+  String proLastName;
+  String proCity;
+  String proCountry;
+  String proProfilePicUrl;
+  String offer;
+  String offerStatus;
+  String offerSavedDate;
   String id;
-  String projectTitle;
-  String projectType;
-  String workMonth;
-  String projectBudget;
-  String plotFrontSideWidth;
-  String plotBackSideWidth;
-  String plotLeftSideLength;
-  String plotRightSideLength;
-  String actualPlotSize;
-  String floors;
-  String groundFloors;
-  String city;
-  String plotLocation;
-  String describeYourProject;
-  String projectFile;
-  String email;
-  String OwnerfirstName;
-  String OwnerlastName;
-  String Ownercity;
-  String Ownercountry;
-  String OwnerProfilePicture;
 
-  String _currentUserEmailVRP;
-  String status;
-
-  ProViewRequestedProposals(
-      this._currentUserEmailVRP,
+  OwnerViewAcceptedOffers(
+      this.proposalId,
+      this.ownerEmail,
       this.id,
-      this.email,
-      this.status,
-      this.projectTitle,
-      this.projectType,
-      this.workMonth,
-      this.projectBudget,
-      this.plotFrontSideWidth,
-      this.plotBackSideWidth,
-      this.plotLeftSideLength,
-      this.plotRightSideLength,
-      this.actualPlotSize,
-      this.floors,
-      this.groundFloors,
-      this.city,
-      this.plotLocation,
-      this.describeYourProject,
-      this.OwnerfirstName,
-      this.OwnerlastName,
-      this.Ownercity,
-      this.Ownercountry,
-      this.OwnerProfilePicture,
-      {required this.projectFile});
+      this.proEmail,
+      this.proFirstName,
+      this.proLastName,
+      this.proCity,
+      this.proCountry,
+      this.proProfilePicUrl,
+      this.offer,
+
+      this.offerStatus,
+      this.offerSavedDate,
+      /*  {required this.projectFile}*/
+      );
 
   @override
-  State<ProViewRequestedProposals> createState() =>
-      _ProViewRequestedProposals();
+  State<OwnerViewAcceptedOffers> createState() => _OwnerViewAcceptedOffers();
 }
 
-class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
+class _OwnerViewAcceptedOffers extends State<OwnerViewAcceptedOffers> {
   @override
   ApiService apiService = new ApiService();
-  List<ProfessionalsProfileModel> _getOwnerProfileData = [];
+  List<OwnerSubmitProposalsModel> _getSubmitProposals = [];
+
   void initState() {
     // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
-    apiService.getProProfile().then((value) {
+    apiService.getOwnerSubmitProposal().then((value) {
       setState(() {
-        _getOwnerProfileData.addAll(value);
-        for (int index = 0; index < _getOwnerProfileData.length; index++) {
-          if (_getOwnerProfileData[index].email == _currentUserEmailVRP) {
-            proFirstName = _getOwnerProfileData[index].firstName.toString();
-            proLastName = _getOwnerProfileData[index].lastName.toString();
-            proCity = _getOwnerProfileData[index].city.toString();
-            proCountry = _getOwnerProfileData[index].country.toString();
-            proProfilePicture =
-                _getOwnerProfileData[index].uploadPhoto.toString();
+        _getSubmitProposals.addAll(value);
+        for (int index = 0; index < _getSubmitProposals.length; index++) {
+          if (_getSubmitProposals[index].sId.toString() == proposalId.toString()) {
+            projectTitle = _getSubmitProposals[index].projectTitle.toString();
+            projectType = _getSubmitProposals[index].projectType.toString();
+            workMonth = _getSubmitProposals[index].workMonths.toString();
+            projectBudget = _getSubmitProposals[index].projectBudget.toString();
+            plotFrontSideWidth =
+                _getSubmitProposals[index].plotWidthA.toString();
+            plotBackSideWidth =
+                _getSubmitProposals[index].plotWidthB.toString();
+            plotLeftSideLength =
+                _getSubmitProposals[index].plotLengthA.toString();
 
-            print(
-                "--------------------------------------------------------------");
+            plotRightSideLength =
+                _getSubmitProposals[index].plotLengthB.toString();
+
+            actualPlotSize =
+                _getSubmitProposals[index].actualPlotSize.toString();
+
+            floors = _getSubmitProposals[index].floors.toString();
+            groundFloor = _getSubmitProposals[index].grroundFloor.toString();
+            city = _getSubmitProposals[index].city.toString();
+            plotLocation = _getSubmitProposals[index].plotLocation.toString();
+            describeYourProject =
+                _getSubmitProposals[index].describeYourProject.toString();
           }
         } //set data we get
         //set data we get
@@ -136,34 +140,22 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
   }
 
   Widget build(BuildContext context) {
-    projectTitle = widget.projectTitle;
-    projectType = widget.projectType;
-    workMonth = widget.workMonth;
-    projectBudget = widget.projectBudget;
-    plotFrontSideWidth = widget.plotFrontSideWidth;
-    plotBackSideWidth = widget.plotBackSideWidth;
-    plotLeftSideLength = widget.plotLeftSideLength;
-    plotRightSideLength = widget.plotRightSideLength;
-    actualPlotSize = widget.actualPlotSize;
-    _currentUserEmailVRP = widget._currentUserEmailVRP;
-    city = widget.city;
-    plotLocation = widget.plotLocation;
-    describeYourProject = widget.describeYourProject;
-    projectFile = widget.projectFile;
-    email = widget.email;
-    ownerfirstName = widget.OwnerfirstName;
-    ownerlastName = widget.OwnerlastName;
-    ownercity = widget.Ownercity;
-    ownercountry = widget.Ownercountry;
-    ownerProfilePicture = widget.OwnerProfilePicture;
-    floors = widget.floors;
-    groundFloors = widget.groundFloors;
-    id = widget.id;
-    status = widget.status;
-    ownerEmail = widget.email;
-    debugPrint(id.toString());
+    proposalId = widget.proposalId;
+    ownerEmail = widget.ownerEmail;
+    id=widget.id;
+    proEmail = widget.proEmail;
+    proFirstName = widget.proFirstName;
+    proLastName = widget.proLastName;
+    proCity = widget.proCity;
+    proCountry = widget.proCountry;
+    proProfilePicUrl = widget.proProfilePicUrl;
+    offer = widget.offer;
+    offerStatus = widget.offerStatus;
+    offerSavedDate = widget.offerSavedDate;
+    _currentUserEmailVAO=widget.ownerEmail.toString();
+    debugPrint(proProfilePicUrl);
 
-    print("project file is" + projectFile.toString());
+    print("project file is" +  proposalId.toString());
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -180,13 +172,26 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
                         child: progressBarVisible != true
                             ? Container()
                             : Center(child: CircularProgressIndicator())),
+                    Padding(
+                        padding: EdgeInsets.only(top: 50, left: 0, bottom: 0),
+                        child: Center(
+                          child: Text(
+                            "This offer is Accepted by You !",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          ProposalServiceProviderI(),
+                          ProfessionalOffer(),
                           ProAcceptDeclinePropsals()
                         ]),
+                    ProposalServiceProviderI(),
                     PlotSize(),
                     DescribeYourProject(),
                     Row(
@@ -200,10 +205,9 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
                                 child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              ViewProposalRequestedProposalList(
-                                                  _currentUserEmailVRP
-                                                      .toString()))); //professsioal_view_requested_proposal_list naviagte krna hai
+                                          builder: (context) => OwnerAcceptedOfferList(
+                                              _currentUserEmailVAO
+                                                  .toString()))); //professsioal_view_requested_proposal_list naviagte krna hai
                                     },
                                     // ignore: sort_child_properties_last
                                     child: const Text(
@@ -214,7 +218,7 @@ class _ProViewRequestedProposals extends State<ProViewRequestedProposals> {
                                       backgroundColor: Color(0xFFFFA62B),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(30.0),
+                                        BorderRadius.circular(30.0),
                                       ),
                                     )))),
                       ],
@@ -259,7 +263,7 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
   Widget build(BuildContext context) {
     const checkbox = false;
     return Container(
-        margin: const EdgeInsets.only(top: 60, bottom: 10),
+        margin: const EdgeInsets.only(top: 20, bottom: 10, left: 170),
         width: 900,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -394,8 +398,190 @@ class _ProposalServiceProviderI extends State<ProposalServiceProviderI> {
   }
 }
 
+class ProfessionalOffer extends StatefulWidget {
+  const ProfessionalOffer({super.key});
+
+  @override
+  State<ProfessionalOffer> createState() => _ProfessionalOffer();
+}
+
+class _ProfessionalOffer extends State<ProfessionalOffer> {
+  ApiService apiService = new ApiService();
+  //CurrentUser currentUserEmailObject=CurrentUser();
+  List<OwnerSubmitProposalsModel> _getOwnerProposal = [];
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+    apiService.getOwnerSubmitProposal().then((value) {
+      setState(() {
+        _getOwnerProposal.addAll(value);
+        //set data we get
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  bool isOpenProjectType = false;
+  String selectedOptionProjectType = "Select Option";
+  List<String> optionsProjectTypeList = [
+    "Residential ",
+    'Commercial',
+  ];
+  int _months = 1;
+
+  Widget build(BuildContext context) {
+    const checkbox = false;
+    return Container(
+        margin: const EdgeInsets.only(top: 60, bottom: 0),
+        width: 900,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFF999999))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 50, left: 50, bottom: 0),
+                    child: Text(
+                      "Status          :",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(top: 50, left: 50, bottom: 0),
+                    child: Text(
+                      offerStatus.toString(),
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      "Title              :",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      projectTitle.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      "Offer from   :",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      proFirstName.toString() + " " + proLastName.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      "Offer             :",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      offer.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+              ],
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
+                    child: Text(
+                      "Offer Date    :",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(top: 20, left: 50, bottom: 30),
+                    child: Text(
+                      offerSavedDate.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+              ],
+            ),
+
+            //----------------Review and Submit--------------//
+          ],
+        ));
+  }
+}
+
 class ProAcceptDeclinePropsals extends StatefulWidget {
-  const ProAcceptDeclinePropsals({super.key});
+  const
+
+  ProAcceptDeclinePropsals({super.key});
 
   @override
   State<ProAcceptDeclinePropsals> createState() => _ProAcceptDeclinePropsals();
@@ -419,14 +605,14 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
         //------------------------profile and message
         Container(
           width: 280,
-          margin: EdgeInsets.only(top: 50, left: 10),
+          margin: EdgeInsets.only(top: 55, left: 10),
           decoration: BoxDecoration(
               border: Border.all(color: strokeColor, width: 1),
               borderRadius: BorderRadius.circular(10)),
           child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
-                height: 450, //----------------profile Container Height
+                height: 250, //----------------profile Container Height
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -436,23 +622,23 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                             padding: const EdgeInsets.only(top: 10, left: 10),
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: ownerProfilePicture != null
+                                child:  proProfilePicUrl != null
                                     ? Image.network(
-                                        ownerProfilePicture.toString(),
-                                        height: 90.0,
-                                        width: 90.0,
-                                        scale: 2,
-                                        fit: BoxFit.cover,
-                                      )
+                                  proProfilePicUrl.toString(),
+                                  height: 90.0,
+                                  width: 90.0,
+                                  scale: 2,
+                                  fit: BoxFit.cover,
+                                )
                                     : Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey.shade50,
-                                            borderRadius: BorderRadius.circular(
-                                              (100),
-                                            )),
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade50,
+                                      borderRadius: BorderRadius.circular(
+                                        (100),
                                       )),
+                                )),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,26 +647,27 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                                   padding: EdgeInsets.only(
                                       left: 20, top: 30, right: 0),
                                   child: Text(
-                                      ownerfirstName.toString() +
+                                      proFirstName.toString() +
                                           " " +
-                                          ownerlastName.toString(),
+                                          proLastName.toString(),
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700))),
-                              const Padding(
-                                  padding: EdgeInsets.only(top: 5, left: 20),
-                                  child: Text("Business, employee at",
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 20, top: 5, right: 0),
+                                  child: Text("Contractor",
                                       style: TextStyle(
-                                          color: TextlightGrey,
+                                          color: Colors.grey,
                                           fontSize: 12,
-                                          fontWeight: FontWeight.w400))),
+                                          fontWeight: FontWeight.w600))),
                               Padding(
                                   padding: EdgeInsets.only(top: 5, left: 20),
                                   child: Text(
-                                      ownercity.toString() +
-                                          " " +
-                                          ownercountry.toString(),
+                                      proCity.toString() +
+                                          " , " +
+                                          proCountry.toString(),
                                       style: TextStyle(
                                           color: TextlightGrey,
                                           fontSize: 12,
@@ -489,42 +676,6 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                           )
                         ],
                       ),
-
-                      //---------------------------Message--------------------//
-                      if (status != "Accepted")
-                        Row(
-                          children: <Widget>[
-                            Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 30, left: 90),
-                                child: SizedBox(
-                                    width: 90,
-                                    height: 30,
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const Chat()));
-                                        },
-                                        // ignore: sort_child_properties_last
-                                        child: const Text(
-                                          "Message",
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFFFFA62B),
-                                          ),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                        )))),
-                          ],
-                        ),
-                      //-----------------------Accept Decline Button
-
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -535,236 +686,8 @@ class _ProAcceptDeclinePropsals extends State<ProAcceptDeclinePropsals> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  if (status != "Accepted")
-                                    Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 0, left: 0),
-                                        child: Container(
-                                            width: 210,
-                                            height: 40,
-                                            child: ElevatedButton(
-                                                onPressed: () async {
-                                                  var response2 = await apiService
-                                                      .updateProposalStatus(
-                                                          id.toString(),
-                                                          "Accepted",
-                                                          _currentUserEmailVRP
-                                                              .toString(),
-                                                          proFirstName
-                                                              .toString(),
-                                                          proLastName
-                                                              .toString(),
-                                                          proCity.toString(),
-                                                          proCountry.toString(),
-                                                          proProfilePicture
-                                                              .toString());
-                                                  if (response2 == "200") {
-                                                    setState(() {
-                                                      progressBarVisible =
-                                                          false;
-                                                      debugPrint(
-                                                          "Working Perfectly");
-                                                    });
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                OfferSentShowDialog(
-                                                                  ownerfirstName
-                                                                      .toString(),
-                                                                  ownerlastName
-                                                                      .toString(),
-                                                                )));
-                                                  } else {
-                                                    setState(() {
-                                                      progressBarVisible = true;
-                                                      debugPrint(
-                                                          "Working Perfectly");
-                                                    });
-                                                  }
-                                                },
-                                                // ignore: sort_child_properties_last
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              const Text(
-                                                                "Accept ",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                              const Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        left:
-                                                                            5),
-                                                                child: Text(
-                                                                  "Proposal",
-                                                                  style: TextStyle(
-                                                                      color: Color(
-                                                                          0xFFFFA62B),
-                                                                      fontSize:
-                                                                          12),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ]),
-                                                style: ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30.0),
-                                                    ),
-                                                    backgroundColor:
-                                                        const Color(
-                                                            0xFF363B42))))),
-                                  if (status != "Accepted")
-                                    Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, left: 0),
-                                        child: Container(
-                                            width: 210,
-                                            height: 40,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const DesireBuilding()));
-                                                },
-                                                // ignore: sort_child_properties_last
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              const Text(
-                                                                "Decline",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                              const Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        left:
-                                                                            5),
-                                                                child: Text(
-                                                                  "Proposal",
-                                                                  style: TextStyle(
-                                                                      color: Color(
-                                                                          0xFFFFA62B),
-                                                                      fontSize:
-                                                                          12),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ]),
-                                                style: ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30.0),
-                                                    ),
-                                                    backgroundColor:
-                                                        const Color(
-                                                            0xFF363B42))))),
-                                  if (status != "Accepted")
-                                    Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, left: 0),
-                                        child: Container(
-                                            width: 210,
-                                            height: 40,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return showOfferAlertDialog(); //---------calling the class here
-                                                      });
-                                                },
-                                                // ignore: sort_child_properties_last
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              const Text(
-                                                                "Bid",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                              const Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        left:
-                                                                            5),
-                                                                child: Text(
-                                                                  "Now",
-                                                                  style: TextStyle(
-                                                                      color: Color(
-                                                                          0xFFFFA62B),
-                                                                      fontSize:
-                                                                          12),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ]),
-                                                style: ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30.0),
-                                                    ),
-                                                    backgroundColor:
-                                                        const Color(
-                                                            0xFF363B42))))),
+
+
                                 ],
                               ),
                             ),
@@ -814,7 +737,7 @@ class _PlotSize extends State<PlotSize> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFF999999), width: 1)),
           child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Padding(
                 padding: EdgeInsets.only(top: 40, left: 50, bottom: 0),
                 child: Text(
@@ -894,7 +817,7 @@ class _PlotSize extends State<PlotSize> {
                                   bottomRight: Radius.circular(5))),
                           child: const Padding(
                               padding:
-                                  EdgeInsets.only(top: 5, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 5, left: 10, bottom: 0),
                               child: Text(
                                 "ft",
                                 style: TextStyle(
@@ -952,7 +875,7 @@ class _PlotSize extends State<PlotSize> {
                                   bottomRight: Radius.circular(5))),
                           child: const Padding(
                               padding:
-                                  EdgeInsets.only(top: 5, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 5, left: 10, bottom: 0),
                               child: Text(
                                 "ft",
                                 style: TextStyle(
@@ -1037,7 +960,7 @@ class _PlotSize extends State<PlotSize> {
                                   bottomRight: Radius.circular(5))),
                           child: const Padding(
                               padding:
-                                  EdgeInsets.only(top: 5, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 5, left: 10, bottom: 0),
                               child: Text(
                                 "ft",
                                 style: TextStyle(
@@ -1095,7 +1018,7 @@ class _PlotSize extends State<PlotSize> {
                                   bottomRight: Radius.circular(5))),
                           child: const Padding(
                               padding:
-                                  EdgeInsets.only(top: 5, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 5, left: 10, bottom: 0),
                               child: Text(
                                 "ft",
                                 style: TextStyle(
@@ -1165,7 +1088,7 @@ class _PlotSize extends State<PlotSize> {
                                   bottomRight: Radius.circular(5))),
                           child: const Padding(
                               padding:
-                                  EdgeInsets.only(top: 5, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 5, left: 10, bottom: 0),
                               child: Text(
                                 "ft",
                                 style: TextStyle(
@@ -1235,7 +1158,7 @@ class _PlotSize extends State<PlotSize> {
                                   bottomRight: Radius.circular(5))),
                           child: const Padding(
                               padding:
-                                  EdgeInsets.only(top: 5, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 5, left: 10, bottom: 0),
                               child: Text(
                                 "ft",
                                 style: TextStyle(
@@ -1327,7 +1250,7 @@ class _PlotSize extends State<PlotSize> {
                         )),
                     Padding(
                         padding:
-                            EdgeInsets.only(top: 10, left: 140, bottom: 10),
+                        EdgeInsets.only(top: 10, left: 140, bottom: 10),
                         child: Container(
                           width: 300,
                           height: 35,
@@ -1427,73 +1350,6 @@ relationship, and anything unique about your project, team, or company. ''',
                           ),
                         )),
                   ])),
-          //---------------------Button-----------------//
-          if (projectFile.toString() != "")
-            Padding(
-                padding: const EdgeInsets.only(top: 100, left: 50, bottom: 30),
-                child: Container(
-                    width: 210,
-                    height: 40,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const DesireBuilding()));
-                        },
-                        // ignore: sort_child_properties_last
-                        child: Row(children: <Widget>[
-                          if (status != "Accepted")
-                            Padding(
-                                padding: const EdgeInsets.only(left: 0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        width: 40,
-                                        height: 40,
-                                        margin: const EdgeInsets.only(left: 5),
-                                        child: const Icon(
-                                          Icons.folder,
-                                          color: Color(0xFFFFA62B),
-                                        )),
-                                    const Text(
-                                      "Download",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 5),
-                                      child: Text(
-                                        "File",
-                                        style: TextStyle(
-                                            color: Color(0xFFFFA62B),
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.only(left: 5),
-                                      height: 40,
-                                      width: 1,
-                                      color: Colors.white,
-                                    ),
-                                    Container(
-                                        width: 40,
-                                        height: 40,
-                                        margin: const EdgeInsets.only(left: 0),
-                                        decoration: const BoxDecoration(),
-                                        child: const Icon(
-                                          Icons.file_download_outlined,
-                                          color: Color(0xFFFFA62B),
-                                        )),
-                                  ],
-                                )),
-                        ]),
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            backgroundColor: const Color(0xFF363B42))))),
-
-          //----------------Review and Submit--------------//
         ]));
   }
 }
@@ -1532,44 +1388,23 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
               Container(
                   width: 100,
                   height: 100,
-                  margin: const EdgeInsets.only(top: 60, left: 180),
+                  margin: const EdgeInsets.only(top: 120, left: 200),
                   decoration: const BoxDecoration(
                     image:
-                        DecorationImage(image: AssetImage("Logo/accept.png")),
+                    DecorationImage(image: AssetImage("Logo/accept.png")),
                   )),
+
               Padding(
                   padding: EdgeInsets.only(left: 0, top: 40),
                   child: Center(
                       child: Text(
-                    "Offer sent to" +
-                        " " +
-                        ownerfirstName.toString() +
-                        " " +
-                        ownerlastName.toString() +
-                        "!",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ))),
-              Padding(
-                  padding: EdgeInsets.only(left: 0, top: 10),
-                  child: Center(
-                      child: Text(
-                    "We will notify you When" +
-                        " " +
-                        ownerfirstName.toString() +
-                        " " +
-                        ownerlastName.toString() +
-                        " " +
-                        "Responds to your offer ",
-                    style: TextStyle(
-                      color: Color(0xFFFFA62B),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ))),
+                        "Congragulations ! This offer is Accepted by You",
+                        style: TextStyle(
+                          color: Color(0xFFFFA62B),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ))),
 
               //-------------------------Add mobile no------------------//
 
@@ -1584,8 +1419,8 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ProViewProfile(
-                                        _currentUserEmailVRP.toString())));
+                                    builder: (context) => OwnerViewProfile(
+                                        _currentUserEmailVAO.toString())));
                               },
                               // ignore: sort_child_properties_last
                               child: Row(children: const <Widget>[
@@ -1593,12 +1428,12 @@ class _OfferSentShowDialog extends State<OfferSentShowDialog> {
                                     padding: EdgeInsets.only(left: 3),
                                     child: Center(
                                         child: Text(
-                                      "Go Back to My Profile",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.white,
-                                      ),
-                                    ))),
+                                          "Go Back to My Profile",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.white,
+                                          ),
+                                        ))),
                               ]),
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -1676,7 +1511,7 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
 
                           Padding(
                               padding:
-                                  EdgeInsets.only(top: 20, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 20, left: 10, bottom: 0),
                               child: Text(
                                 "Project Title",
                                 style: TextStyle(
@@ -1687,7 +1522,7 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
                               )),
                           Padding(
                               padding:
-                                  EdgeInsets.only(top: 10, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 10, left: 10, bottom: 0),
                               child: Text(
                                 projectTitle.toString(),
                                 style: TextStyle(
@@ -1699,7 +1534,7 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
 
                           Padding(
                               padding:
-                                  EdgeInsets.only(top: 20, left: 10, bottom: 0),
+                              EdgeInsets.only(top: 20, left: 10, bottom: 0),
                               child: Text(
                                 "Project Budget",
                                 style: TextStyle(
@@ -1760,23 +1595,23 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
                                             vertical: 12.0, horizontal: 11),
                                         border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(10.0),
+                                          BorderRadius.circular(10.0),
                                         )),
                                     onChanged: (value) {
                                       final formatter =
-                                          NumberFormat('#,##0', 'en_US');
+                                      NumberFormat('#,##0', 'en_US');
                                       final newValue =
-                                          value.replaceAll(',', '');
+                                      value.replaceAll(',', '');
                                       final formattedValue =
-                                          formatter.format(int.parse(newValue));
+                                      formatter.format(int.parse(newValue));
                                       if (value != formattedValue) {
                                         _offerController.value =
                                             _offerController.value.copyWith(
-                                          text: formattedValue,
-                                          selection: TextSelection.collapsed(
-                                            offset: formattedValue.length,
-                                          ),
-                                        );
+                                              text: formattedValue,
+                                              selection: TextSelection.collapsed(
+                                                offset: formattedValue.length,
+                                              ),
+                                            );
                                       }
                                     },
                                     validator: (value) {
@@ -1813,11 +1648,11 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
                                               ),
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
-                                                    const Color(0xFFD9D9D9),
+                                                const Color(0xFFD9D9D9),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          30.0),
+                                                  BorderRadius.circular(
+                                                      30.0),
                                                 ),
                                               )))),
                                   Padding(
@@ -1830,34 +1665,8 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
                                               onPressed: () async {
                                                 if (_keyOffer.currentState!
                                                     .validate()) {
-                                                  var response = await apiService
-                                                      .InsertOffer(
-                                                          id.toString(),
-                                                          ownerEmail.toString(),
-                                                          projectTitle
-                                                              .toString(),
-                                                          _currentUserEmailVRP
-                                                              .toString(),
-                                                          proFirstName
-                                                              .toString(),
-                                                          proLastName
-                                                              .toString(),
-                                                          proCity.toString(),
-                                                          proCountry.toString(),
-                                                          proProfilePicture
-                                                              .toString(),
-                                                          _offerController.text,
-                                                          "Pending",
-                                                          offerCreatedTime,
-                                                          offerSavedDate);
-                                                  if (response == "200") {
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ProViewProfile(
-                                                                    _currentUserEmailVRP
-                                                                        .toString())));
-                                                  }
+
+
                                                 } else {
                                                   setState(() {
                                                     _autoValidate = true;
@@ -1866,23 +1675,23 @@ class _showOfferAlertDialog extends State<showOfferAlertDialog> {
                                               },
                                               // ignore: sort_child_properties_last
                                               child:
-                                                  Row(children: const <Widget>[
+                                              Row(children: const <Widget>[
                                                 Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 30),
                                                     child: Center(
                                                         child: Text(
-                                                      "Submit",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12),
-                                                    ))),
+                                                          "Submit",
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12),
+                                                        ))),
                                               ]),
                                               style: ElevatedButton.styleFrom(
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            30.0),
+                                                    BorderRadius.circular(
+                                                        30.0),
                                                   ),
                                                   backgroundColor: const Color(
                                                       0xFF363B42))))),

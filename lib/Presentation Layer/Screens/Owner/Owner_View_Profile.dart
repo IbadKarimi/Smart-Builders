@@ -11,6 +11,7 @@ import '../../../models/OwnerProfileModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_View_Accepted_Propsal_List.dart';
+import 'Owner_Accepted_Offer_List.dart';
 import 'Owner_Desire_Building.dart';
 import 'Owner_Manage_Accepted_Offer.dart';
 import 'Owner_Manage_Applied_Contracts.dart';
@@ -583,9 +584,9 @@ class _OwnerOffers extends State<OwnerOffers> {
                   height: 60,
                   child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                const OwnerManageAcceptedOffers()));
+                   Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => OwnerAcceptedOfferList(currentUserEmail.toString())));
+
                       },
                       // ignore: sort_child_properties_last
                       child: Row(
@@ -594,7 +595,7 @@ class _OwnerOffers extends State<OwnerOffers> {
                             Padding(
                                 padding: EdgeInsets.only(left: 0),
                                 child: Text(
-                                  "Accepter Offers",
+                                  "Accepted Offers",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),
                                 )),
@@ -1710,6 +1711,8 @@ class uploadProfilePhotoAlertDialog extends StatefulWidget {
 class _uploadProfilePhotoAlertDialog extends State<uploadProfilePhotoAlertDialog> {
   //get file and insert in api
   var pickedProfilePhoto;
+
+
   @override
   Future getProfileImage()async{
     final _picker = ImagePicker();

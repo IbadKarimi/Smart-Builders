@@ -144,18 +144,42 @@ class _ProOffers extends State<ProOffers> {
                     Boxes(),
                     Padding(
                         padding: EdgeInsets.only(top: 50, left: 0, bottom: 0),
-                        child: widget.offerStatus == "Rejected"
+                        child: widget.offerStatus == "Accepted"
                             ? Center(
                                 child: Text(
-                                  "Your Offer is Rejected against this proposal !",
+                                  "Congragulations ! Your Offer is Accepted.",
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: Colors.green,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               )
-                            : Text("")),
+                            :  Padding(
+                            padding: EdgeInsets.only(top: 50, left: 0, bottom: 0),
+                            child: widget.offerStatus == "Not Accepted"
+                                ? Center(
+                              child: Text(
+                                "Sorry ! This Offer is Accepted by Another Service Provider.",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ): Padding(
+                                padding: EdgeInsets.only(top: 0, left: 0, bottom: 0),
+                                child: widget.offerStatus == "Rejected"
+                                    ? Center(
+                                  child: Text(
+                                    "This Offer is Rejected.",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ):Container()))),
                     Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: progressBarVisible != true
@@ -423,7 +447,7 @@ class _ProfessionalOffer extends State<ProfessionalOffer> {
                         ? Text(
                             offerStatus.toString(),
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.green,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),

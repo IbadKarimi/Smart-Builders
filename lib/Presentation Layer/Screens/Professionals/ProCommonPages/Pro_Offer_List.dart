@@ -162,8 +162,7 @@ class _MyOffersList extends State<MyOffersList> {
             Column(
               children: [
                 for (int index = 0; index < _getOffer.length; index++)
-                  if (_getOffer[index].proEmail ==
-                      currenUserEmailOfferList.toString())
+                  if (_getOffer[index].proEmail ==currenUserEmailOfferList.toString())
                     SizedBox(
                         height: 160,
                         child: GestureDetector(
@@ -248,7 +247,7 @@ class _MyOffersList extends State<MyOffersList> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                           )),
-                                      Padding(
+                                     /* Padding(
                                           padding: EdgeInsets.only(
                                               top: 10, left: 20, bottom: 0),
                                           child: offerStatus == "Rejected"
@@ -260,7 +259,7 @@ class _MyOffersList extends State<MyOffersList> {
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 )
-                                              : Text("")),
+                                              : Text("")),*/
                                     ]),
                                 Container(
                                   width: 30,

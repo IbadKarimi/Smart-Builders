@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerCreateProfile.dart';
 import 'package:smart_builder_web/models/OwnerProfileModel.dart';
 import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 import 'package:smart_builder_web/models/ProWorkExperience.dart';
@@ -17,6 +18,7 @@ import 'package:http/http.dart' as http;
 import '../models/ProEducationHistory.dart';
 import '../models/ProfessionalsProfileModel.dart';
 import '../models/ProfessionalsSkillsModels.dart';
+import '../models/RetailerProfileModel.dart';
 
 class ApiService {
   Uint8List defaultImageBytes = Uint8List(8);
@@ -1131,7 +1133,7 @@ class ApiService {
     }
   }
 
-  Future<String> ProOffer(
+  Future<String> UpdateOffer(
       String id,
       String status,
       String proEmail,
@@ -1139,10 +1141,9 @@ class ApiService {
       String proLastName,
       String proCity,
       String proCountry,
-      String offerStatus,
       String proProfilePhoto,
       String offer,
-      String offerCreatedTime,
+      String offerStatus,
       String offerSavedDate) async {
     final response = await http.put(
       Uri.parse(
@@ -1159,7 +1160,6 @@ class ApiService {
         'proCountry': proCountry,
         'proProfilePicUrl': proProfilePhoto,
         'offer': offer,
-        'offerCreatedTime': offerCreatedTime,
         'offerSavedDate': offerSavedDate,
         'offerStatus': offerStatus,
       }),
@@ -1297,4 +1297,209 @@ class ApiService {
     }
     return getOfferProposalList;
   }
-}
+
+  Future<String> UpdateOfferStatus(String id, String offerStatus,String offerAcceptedTime,String OfferAcceptedDate) async {
+    final response = await http.put(Uri.parse('http://localhost:3000/smart-builders/OfferProposals/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'offerStatus': offerStatus,
+        'offerAcceptedTime':offerAcceptedTime,
+        "offerAcceptedDate":OfferAcceptedDate,
+
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,r
+      // then parse the JSON.
+      return "200";
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to add pro Offer Status api.');
+    }
+  }
+
+
+  Future<String> createRetailerProfile(
+      String email,
+      String firstName,
+      String lastName,
+      String shopName,
+      String country,
+      String city,
+      String phoneNo,
+      PlatformFile uploadPhoto,
+
+     ) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://localhost:3000/smart-builders/RetailerProfile'),
+    );
+
+    // Add image file to request
+    //  print("Api cover file name : "+coverFile.name);
+    //  debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+    var uploadPhotoFileName = uploadPhoto!.name;
+    var uploadPhotoBytes = uploadPhoto!.bytes;
+    var uploadProfilePhoto = http.MultipartFile.fromBytes(
+      'profilePhoto',
+      uploadPhotoBytes!,
+      filename: uploadPhotoFileName,
+    );
+    request.files.add(uploadProfilePhoto);
+
+
+
+    request.fields['email'] = email;
+    request.fields['firstName'] = firstName;
+    request.fields['lastName'] = lastName;
+
+    request.fields['shopName'] = shopName;
+    request.fields['country'] = country;
+    request.fields['city'] = city;
+
+
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Data inserted Sucessfully !');
+
+      return '200';
+    } else {
+      print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
+    }
+  }
+  Future<String> UpdateRetailerProfilePhoto(
+      String id,
+      PlatformFile proFilePhoto,
+      ) async {
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('http://localhost:3000/smart-builders/RetailerProfile/$id'),
+    );
+
+
+    // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+    var proFilePhotoName = proFilePhoto!.name;
+    var proFilePhotoBytes = proFilePhoto!.bytes;
+    var _proFilePhoto = http.MultipartFile.fromBytes(
+      'profilePhoto',
+      proFilePhotoBytes!,
+      filename: proFilePhotoName,
+    );
+    request.files.add(_proFilePhoto);
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Update Data Sucessfully !');
+
+      return '200';
+    } else {
+      print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
+    }
+  }
+
+
+  Future<List<RetailerProfileModel>> getRetailerProfile() async {
+    //create function in list type becoze we get data and set in _product array
+    var response = await http
+        .get(Uri.parse('http://localhost:3000/smart-builders/RetailerProfile'));
+
+    List<RetailerProfileModel> getRetailerProfileList =
+    []; //the scope of the array is Inside the function
+
+    if (response.statusCode == 200) {
+      debugPrint("Api is Working !");
+      var prJson = json.decode(response.body);
+      final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+      for (var jsonData in jsonArrayData) {
+        getRetailerProfileList.add(RetailerProfileModel.fromJson(
+            jsonData)); //set json data in productlist
+      }
+    } else {
+      debugPrint("Get Api getOffer is not Working !");
+    }
+    return getRetailerProfileList;
+  }
+  Future<String> RetailerProfileDefaultImage(
+      String email,
+      String firstName,
+      String lastName,
+      String shopName,
+      String country,
+      String city,
+      String phoneNo,
+      final ByteData data,
+    ) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://localhost:3000/smart-builders/RetailerProfile'),
+    );
+    //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
+    defaultImageBytes = data.buffer.asUint8List();
+    deFalultImageName = 'avatar.png';
+    //   print('Default Image name : $deFalultImageName');
+    //  print('Default Image bytes: $defaultImageBytes');
+
+    // Add image file to request
+
+    var profileImage = http.MultipartFile.fromBytes(
+      'profilePhoto',
+      defaultImageBytes!,
+      filename: deFalultImageName,
+    );
+    request.files.add(profileImage);
+
+
+    // Add other form data (if any)
+    request.fields['email'] = email;
+    request.fields['firstName'] = firstName;
+    request.fields['lastName'] = lastName;
+
+    request.fields['shopName'] = shopName;
+    request.fields['country'] = country;
+    request.fields['city'] = city;
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Data inserted Sucessfully !');
+
+      return '200';
+    } else {
+      print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
+    }
+  }
+
+  Future<String> UpdateRetailerCoverPhoto(String id, PlatformFile profileFile) async {
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('http://localhost:3000/smart-builders/RetailerProfileCover/$id'),
+    );
+
+    // Add image file to request
+    print("Api cover profile name : " + profileFile.name);
+    // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+    var profileImageFileName = profileFile!.name;
+    var profileImageBytes = profileFile!.bytes;
+    var profileImage = http.MultipartFile.fromBytes(
+      'coverPhoto',
+      profileImageBytes!,
+      filename: profileImageFileName,
+    );
+    request.files.add(profileImage);
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Data inserted Sucessfully !');
+
+      return '200';
+    } else {
+      print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
+    }
+  }}
