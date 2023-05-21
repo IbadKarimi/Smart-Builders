@@ -1,6 +1,8 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hovering/hovering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Preview_Profile.dart';
@@ -36,8 +38,11 @@ String? profilePhoto;
 String? coverPhoto;
 String? shopName;
 String ?currentUserEmail;
+String ?response;
+
 
 bool isEditMode=false;
+bool _autoValidate=false;
 
 
 PlatformFile? coverPhotoObject;
@@ -94,6 +99,7 @@ class _RetailerViewProfile extends State<RetailerViewProfile> {
 
   @override
   Widget build(BuildContext context) {
+
     currentUserEmail=widget.currentUserEmail;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -128,7 +134,10 @@ class RetailerCoverProfile extends StatefulWidget {
 
 class _RetailerCoverProfile extends State<RetailerCoverProfile> {
 
-
+  void dispose() {
+    response='0';
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -751,10 +760,34 @@ class MaterialRates extends StatefulWidget {
 class _MaterialRates extends State<MaterialRates> {
   int counter=0;
   int _tapCount = 0;
+  int form2Counter=0;
+  int form3Counter=0;
+  int form4Counter=0;
+  int form5Counter=0;
+  int onTapcounter=0;
   @override
 
   final _materialNameController=TextEditingController();
   final _amountController=TextEditingController();
+
+  final _materialNameController2=TextEditingController();
+  final _amountController2=TextEditingController();
+
+  final _materialNameController3=TextEditingController();
+  final _amountController3=TextEditingController();
+
+  final _materialNameController4=TextEditingController();
+  final _amountController4=TextEditingController();
+
+  final _materialNameController5=TextEditingController();
+  final _amountController5=TextEditingController();
+
+  final _materialFormKey = GlobalKey<FormState>();
+
+  final _materialFormKey2 = GlobalKey<FormState>();
+  final _materialFormKey3 = GlobalKey<FormState>();
+  final _materialFormKey4 = GlobalKey<FormState>();
+  final _materialFormKey5= GlobalKey<FormState>();
 
 
   final List<String> options = [
@@ -764,6 +797,23 @@ class _MaterialRates extends State<MaterialRates> {
     'Bricks',
     'Steel',
   ];
+
+  bool isOpenUnit1 = false;
+  String selectedOptionUnit1 = "Kg";
+
+  bool isOpenUnit2 = false;
+  String selectedOptionUnit2 = "Kg";
+
+  bool isOpenUnit3 = false;
+  String selectedOptionUnit3 = "Kg";
+
+  bool isOpenUnit4 = false;
+  String selectedOptionUnit4 = "Kg";
+
+  bool isOpenUnit5 = false;
+  String selectedOptionUnit5 = "Kg";
+
+  List<String> optionsUnit = ["Kg.", 'Cubic Ft.','Bag.','Each.'];
 
   String _selectedOption = '';
   List<DataModel> _dataList = [];
@@ -775,6 +825,7 @@ class _MaterialRates extends State<MaterialRates> {
     return matches;
   }
   Widget build(BuildContext context) {
+
     void _addFormField() {
       setState(() {
         _dataList.add(DataModel(material: '', date: DateTime.now(), amount: 0.0));
@@ -848,19 +899,7 @@ class _MaterialRates extends State<MaterialRates> {
                           )),
                       const Padding(
                           padding: EdgeInsets.only(
-                              left: 200,top:40
-                          ),
-                          child: Text(
-                            "Date",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          )),
-                      const Padding(
-                          padding: EdgeInsets.only(
-                              left: 260,top:40
+                              left: 105,top:40
                           ),
                           child: Text(
                             "Amount",
@@ -870,84 +909,1302 @@ class _MaterialRates extends State<MaterialRates> {
                               fontWeight: FontWeight.w700,
                             ),
                           )),
-                    ]),
-                //----------------------Fields-----------------------//
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin:EdgeInsets.only(top:10,left:50),
-                      width: 250,
-                      child: TextFormField(
-                        decoration: InputDecoration(
-
-
-                            helperText: "",
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
-
-
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            )),
-                        onChanged: (value) {
-                          setState(() {
-
-                          });
-                        },
-
-                      ),
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10, left: 30),
-                        child: Container(
-                          width: 250,
-                          height: 32,
-
-
-                          child:   Padding(
-                              padding: EdgeInsets.only(
-                                  left: 10,top:5
-                              ),
-                              child: Text(
-                                "12-02-2023",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              )),
-                          decoration: BoxDecoration(
-                              borderRadius:BorderRadius.circular(10),
-                              border:Border.all(color:Colors.grey,width: 1)
+                      const Padding(
+                          padding: EdgeInsets.only(
+                              left: 125,top:40
                           ),
-                        )),
+                          child: Text(
+                            "Unit",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )),
+                      const Padding(
+                          padding: EdgeInsets.only(
+                              left: 160,top:40
+                          ),
+                          child: Text(
+                            "Date",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )),
+                    ]),
+                //----------------------Form 1------------------------//
+               Stack(
+              alignment: AlignmentDirectional.topStart,
+                 children: [
+                   GestureDetector(
 
-                    Container(
-                      width: 250,
-                      margin:EdgeInsets.only(top:10,left:30),
-                      child: TextFormField(
-                        onChanged: (value) {
-                          setState(() {
-
-                          });
-                        },
-                        decoration: InputDecoration(
+                     onTap: (){
+                       if(_tapCount<5){
+                         setState(() {
+                           _tapCount++;
+                           print(_tapCount.toString());
 
 
-                            helperText: "",
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+                         });
 
 
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            )),
-                      ),
-                    ),
-                  ],
-                ),
+                         if(_tapCount==1){
+                           setState(() {
+                             form2Counter=1;
+
+                           });
+
+                         }
+                         if(_tapCount==2){
+                           setState(() {
+                             form3Counter=1;
+                           });
+
+                         }
+
+
+
+
+                         if(_tapCount==3){
+                           setState(() {
+                             form4Counter=1;
+
+                           });
+
+                         }
+                         if(_tapCount==4){
+                           setState(() {
+                             form5Counter=1;
+                           });
+
+                         }
+                       }
+
+
+
+
+
+
+                     },
+                     child:   Padding(
+                         padding:_tapCount==0 ?EdgeInsets.only(
+                             left: 50,top:60
+                         ): _tapCount==1?EdgeInsets.only(
+                             left: 50,top:110
+                         ):_tapCount==2?EdgeInsets.only(
+                             left: 50,top:160
+                         ):_tapCount==3?EdgeInsets.only(
+                             left: 50,top:210
+                         ):_tapCount==4?EdgeInsets.only(
+                             left: 50,top:260
+                         ):EdgeInsets.only(
+                             left: 50,top:260
+                         ),
+                         child: Text(
+                           "Add More Fields",
+                           style: TextStyle(
+                             color: Colors.black,
+                             fontSize: 14,
+                             fontWeight: FontWeight.w700,
+                           ),
+                         )),
+
+                   ),
+                   //----------------------Submit----------------------//
+                   Padding(
+
+                       padding:_tapCount==0 ?EdgeInsets.only(
+                           left: 580,top:70
+                       ): _tapCount==1?EdgeInsets.only(
+                           left: 580,top:120
+                       ):_tapCount==2?EdgeInsets.only(
+                           left: 580,top:170
+                       ):_tapCount==3?EdgeInsets.only(
+                           left: 580,top:220
+                       ):_tapCount==4?EdgeInsets.only(
+                           left: 580,top:270
+                       ):EdgeInsets.only(
+                           left: 580,top:270
+                       ),child:Container(
+                           width: 150,
+                           height: 35,
+                           child: ElevatedButton(
+                               onPressed: () async {
+
+                                 if( _materialFormKey.currentState!.validate() ||_materialFormKey2.currentState!.validate()
+                                     ||_materialFormKey3.currentState!.validate()||_materialFormKey4.currentState!.validate()||_materialFormKey5.currentState!.validate()
+                                 ){
+
+
+                                 }
+
+                                 else{
+                                   setState(() {
+
+                                     _autoValidate=true;
+                                   });
+
+                                 }
+
+                               },
+
+
+                               // ignore: sort_child_properties_last
+                               child: Row(children: const <Widget>[
+                                 Padding(
+                                     padding: const EdgeInsets.only(left: 35),
+                                     child: Text(
+                                       "Submit",
+                                       style: TextStyle(
+                                           color: Colors.white, fontSize: 12),
+                                     )),
+
+                               ]),
+                               style: ElevatedButton.styleFrom(
+                                   shape: RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(30.0),
+                                   ),
+                                   backgroundColor: const Color(0xFF363B42))))),
+                 if(form5Counter==1)
+                   Padding(
+                     padding: const EdgeInsets.only(top:200),
+                     child: Form(
+                       key:_materialFormKey5,
+                       autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                       child: Stack(
+                         children: [
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.start,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Container(
+                                 margin:EdgeInsets.only(top:10,left:50),
+                                 width: 150,
+                                 child: TextFormField(
+                                   controller: _materialNameController5,
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Name is Required";
+
+                                     }
+                                     final RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
+                                     if (!regex.hasMatch(value)) {
+                                       return 'Invalid material name';
+                                     }
+                                     return null;
+
+                                   },
+
+                                 ),
+                               ),
+                               Container(
+                                 width: 150,
+                                 margin:EdgeInsets.only(top:10,left:30),
+                                 child: TextFormField(
+                                   inputFormatters: <TextInputFormatter>[
+                                     FilteringTextInputFormatter.digitsOnly
+                                   ],
+                                   controller: _amountController5,
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Amount is Required";
+
+                                     }
+                                     return null;
+
+                                   },
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                 ),
+                               ),
+
+                               Stack(
+
+                                 children: [
+
+
+                                   GestureDetector(
+                                       onTap: () {
+                                         isOpenUnit5 = !isOpenUnit5;
+                                         setState(() {});
+                                       },
+                                       child: SingleChildScrollView(
+                                         scrollDirection: Axis.vertical,
+                                         child: Container(
+                                           width: 150,
+                                           height: 32,
+                                           margin: const EdgeInsets.only(
+                                             left: 20, top: 10, ),
+                                           decoration: BoxDecoration(
+                                               border: Border.all(
+                                                   color: Colors.black38,
+                                                   width: 1),
+                                               borderRadius:
+                                               BorderRadius.circular(10)),
+                                           child: Padding(
+                                             padding: const EdgeInsets.symmetric(
+                                                 horizontal: 10),
+                                             child: Row(
+                                               mainAxisAlignment:
+                                               MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Text(selectedOptionUnit5),
+                                                 Icon(
+                                                     isOpenUnit5
+                                                         ? Icons.arrow_drop_up
+                                                         : Icons.arrow_drop_down,
+                                                     color: Colors.black),
+                                               ],
+                                             ),
+                                           ),
+                                         ),
+                                       )),
+                                   if (isOpenUnit5)
+                                     Container(
+                                       width: 150,
+                                       height: 100,
+                                       decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           border: Border.all(
+                                               color: Colors.black38, width: 1),
+                                           borderRadius: BorderRadius.circular(5)),
+                                       margin: const EdgeInsets.only(left: 20,top:40),
+                                       child: ListView(
+                                           scrollDirection: Axis.vertical,
+                                           primary: true,
+                                           shrinkWrap: true,
+                                           children:
+                                           optionsUnit //--------------------list
+                                               .map((e) => Container(
+                                             decoration: BoxDecoration(
+                                                 borderRadius:
+                                                 BorderRadius
+                                                     .circular(5)),
+                                             child: Padding(
+                                               padding:
+                                               const EdgeInsets
+                                                   .all(2.0),
+                                               child: GestureDetector(
+                                                 onTap: () {
+                                                   isOpenUnit5 =
+                                                   false;
+                                                   selectedOptionUnit5 =
+                                                       e;
+                                                   setState(() {});
+                                                 },
+                                                 child: HoverContainer(
+                                                     height: 35,
+                                                     decoration:
+                                                     BoxDecoration(
+                                                       color: Colors
+                                                           .white,
+                                                     ),
+                                                     hoverDecoration:
+                                                     BoxDecoration(
+                                                       borderRadius:
+                                                       BorderRadius
+                                                           .circular(
+                                                           5),
+                                                       border: Border.all(
+                                                           color: const Color(
+                                                               0xFFFFA62B),
+                                                           width: 1),
+                                                     ),
+                                                     child: Padding(
+                                                       padding:
+                                                       const EdgeInsets
+                                                           .all(
+                                                           2.0),
+                                                       child: Row(
+                                                         children: [
+                                                           Text(e),
+                                                         ],
+                                                       ),
+                                                     )),
+                                               ),
+                                             ),
+                                           ))
+                                               .toList()),
+                                     ),
+                                 ],
+                               ),
+                               //amount field
+                               Padding(
+                                   padding: EdgeInsets.only(top: 10, left: 30),
+                                   child: Container(
+                                     width: 150,
+                                     height: 32,
+
+
+                                     child:   Padding(
+                                         padding: EdgeInsets.only(
+                                             left: 14,top:7
+                                         ),
+                                         child: Text(
+                                           _currentDateNow,
+                                           style: TextStyle(
+                                             color: Colors.black,
+                                             fontSize: 14,
+                                             fontWeight: FontWeight.w700,
+                                           ),
+                                         )),
+                                     decoration: BoxDecoration(
+                                         borderRadius:BorderRadius.circular(10),
+                                         border:Border.all(color:Colors.grey,width: 1)
+                                     ),
+                                   )),
+
+                             ],
+                           ),
+                         ],
+                       ),
+                     ),
+                   ),
+                 if(form4Counter==1)
+                   Padding(
+                     padding: const EdgeInsets.only(top:150),
+                     child: Form(
+                       key:_materialFormKey4,
+                       autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                       child: Stack(
+                         children: [
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.start,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Container(
+                                 margin:EdgeInsets.only(top:10,left:50),
+                                 width: 150,
+                                 child: TextFormField(
+                                   controller: _materialNameController4,
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Name is Required";
+
+                                     }
+                                     final RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
+                                     if (!regex.hasMatch(value)) {
+                                       return 'Invalid material name';
+                                     }
+                                     return null;
+
+                                   },
+
+                                 ),
+                               ),
+                               Container(
+                                 width: 150,
+                                 margin:EdgeInsets.only(top:10,left:30),
+                                 child: TextFormField(
+                                   inputFormatters: <TextInputFormatter>[
+                                     FilteringTextInputFormatter.digitsOnly
+                                   ],
+                                   controller: _amountController4,
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Amount is Required";
+
+                                     }
+                                     return null;
+
+                                   },
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                 ),
+                               ),
+
+                               Stack(
+
+                                 children: [
+
+
+                                   GestureDetector(
+                                       onTap: () {
+                                         isOpenUnit4 = !isOpenUnit4;
+                                         setState(() {});
+                                       },
+                                       child: SingleChildScrollView(
+                                         scrollDirection: Axis.vertical,
+                                         child: Container(
+                                           width: 150,
+                                           height: 32,
+                                           margin: const EdgeInsets.only(
+                                             left: 20, top: 10, ),
+                                           decoration: BoxDecoration(
+                                               border: Border.all(
+                                                   color: Colors.black38,
+                                                   width: 1),
+                                               borderRadius:
+                                               BorderRadius.circular(10)),
+                                           child: Padding(
+                                             padding: const EdgeInsets.symmetric(
+                                                 horizontal: 10),
+                                             child: Row(
+                                               mainAxisAlignment:
+                                               MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Text(selectedOptionUnit4),
+                                                 Icon(
+                                                     isOpenUnit4
+                                                         ? Icons.arrow_drop_up
+                                                         : Icons.arrow_drop_down,
+                                                     color: Colors.black),
+                                               ],
+                                             ),
+                                           ),
+                                         ),
+                                       )),
+                                   if (isOpenUnit4)
+                                     Container(
+                                       width: 150,
+                                       height: 100,
+                                       decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           border: Border.all(
+                                               color: Colors.black38, width: 1),
+                                           borderRadius: BorderRadius.circular(5)),
+                                       margin: const EdgeInsets.only(left: 20,top:40),
+                                       child: ListView(
+                                           scrollDirection: Axis.vertical,
+                                           primary: true,
+                                           shrinkWrap: true,
+                                           children:
+                                           optionsUnit //--------------------list
+                                               .map((e) => Container(
+                                             decoration: BoxDecoration(
+                                                 borderRadius:
+                                                 BorderRadius
+                                                     .circular(5)),
+                                             child: Padding(
+                                               padding:
+                                               const EdgeInsets
+                                                   .all(2.0),
+                                               child: GestureDetector(
+                                                 onTap: () {
+                                                   isOpenUnit4 =
+                                                   false;
+                                                   selectedOptionUnit4 =
+                                                       e;
+                                                   setState(() {});
+                                                 },
+                                                 child: HoverContainer(
+                                                     height: 35,
+                                                     decoration:
+                                                     BoxDecoration(
+                                                       color: Colors
+                                                           .white,
+                                                     ),
+                                                     hoverDecoration:
+                                                     BoxDecoration(
+                                                       borderRadius:
+                                                       BorderRadius
+                                                           .circular(
+                                                           5),
+                                                       border: Border.all(
+                                                           color: const Color(
+                                                               0xFFFFA62B),
+                                                           width: 1),
+                                                     ),
+                                                     child: Padding(
+                                                       padding:
+                                                       const EdgeInsets
+                                                           .all(
+                                                           2.0),
+                                                       child: Row(
+                                                         children: [
+                                                           Text(e),
+                                                         ],
+                                                       ),
+                                                     )),
+                                               ),
+                                             ),
+                                           ))
+                                               .toList()),
+                                     ),
+                                 ],
+                               ),
+                               //amount field
+                               Padding(
+                                   padding: EdgeInsets.only(top: 10, left: 30),
+                                   child: Container(
+                                     width: 150,
+                                     height: 32,
+
+
+                                     child:   Padding(
+                                         padding: EdgeInsets.only(
+                                             left: 14,top:7
+                                         ),
+                                         child: Text(
+                                           _currentDateNow,
+                                           style: TextStyle(
+                                             color: Colors.black,
+                                             fontSize: 14,
+                                             fontWeight: FontWeight.w700,
+                                           ),
+                                         )),
+                                     decoration: BoxDecoration(
+                                         borderRadius:BorderRadius.circular(10),
+                                         border:Border.all(color:Colors.grey,width: 1)
+                                     ),
+                                   )),
+
+                             ],
+                           ),
+                         ],
+                       ),
+                     ),
+                   ),
+                 if(form3Counter==1)
+                   Padding(
+                     padding: const EdgeInsets.only(top:100),
+                     child: Form(
+                       key:_materialFormKey3,
+                       autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                       child:form3Counter==1? Stack(
+                         children: [
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.start,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Container(
+                                 margin:EdgeInsets.only(top:10,left:50),
+                                 width: 150,
+                                 child: TextFormField(
+                                   controller: _materialNameController3,
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Name is Required";
+
+                                     }
+                                     final RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
+                                     if (!regex.hasMatch(value)) {
+                                       return 'Invalid material name';
+                                     }
+                                     return null;
+
+                                   },
+
+                                 ),
+                               ),
+                               Container(
+                                 width: 150,
+                                 margin:EdgeInsets.only(top:10,left:30),
+                                 child: TextFormField(
+                                   inputFormatters: <TextInputFormatter>[
+                                     FilteringTextInputFormatter.digitsOnly
+                                   ],
+                                   controller: _amountController3,
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Amount is Required";
+
+                                     }
+                                     return null;
+
+                                   },
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                 ),
+                               ),
+
+                               Stack(
+
+                                 children: [
+
+
+                                   GestureDetector(
+                                       onTap: () {
+                                         isOpenUnit3 = !isOpenUnit3;
+                                         setState(() {});
+                                       },
+                                       child: SingleChildScrollView(
+                                         scrollDirection: Axis.vertical,
+                                         child: Container(
+                                           width: 150,
+                                           height: 32,
+                                           margin: const EdgeInsets.only(
+                                             left: 20, top: 10, ),
+                                           decoration: BoxDecoration(
+                                               border: Border.all(
+                                                   color: Colors.black38,
+                                                   width: 1),
+                                               borderRadius:
+                                               BorderRadius.circular(10)),
+                                           child: Padding(
+                                             padding: const EdgeInsets.symmetric(
+                                                 horizontal: 10),
+                                             child: Row(
+                                               mainAxisAlignment:
+                                               MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Text(selectedOptionUnit3),
+                                                 Icon(
+                                                     isOpenUnit3
+                                                         ? Icons.arrow_drop_up
+                                                         : Icons.arrow_drop_down,
+                                                     color: Colors.black),
+                                               ],
+                                             ),
+                                           ),
+                                         ),
+                                       )),
+                                   if (isOpenUnit3)
+                                     Container(
+                                       width: 150,
+                                       height: 100,
+                                       decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           border: Border.all(
+                                               color: Colors.black38, width: 1),
+                                           borderRadius: BorderRadius.circular(5)),
+                                       margin: const EdgeInsets.only(left: 20,top:40),
+                                       child: ListView(
+                                           scrollDirection: Axis.vertical,
+                                           primary: true,
+                                           shrinkWrap: true,
+                                           children:
+                                           optionsUnit //--------------------list
+                                               .map((e) => Container(
+                                             decoration: BoxDecoration(
+                                                 borderRadius:
+                                                 BorderRadius
+                                                     .circular(5)),
+                                             child: Padding(
+                                               padding:
+                                               const EdgeInsets
+                                                   .all(2.0),
+                                               child: GestureDetector(
+                                                 onTap: () {
+                                                   isOpenUnit3 =
+                                                   false;
+                                                   selectedOptionUnit3 =
+                                                       e;
+                                                   setState(() {});
+                                                 },
+                                                 child: HoverContainer(
+                                                     height: 35,
+                                                     decoration:
+                                                     BoxDecoration(
+                                                       color: Colors
+                                                           .white,
+                                                     ),
+                                                     hoverDecoration:
+                                                     BoxDecoration(
+                                                       borderRadius:
+                                                       BorderRadius
+                                                           .circular(
+                                                           5),
+                                                       border: Border.all(
+                                                           color: const Color(
+                                                               0xFFFFA62B),
+                                                           width: 1),
+                                                     ),
+                                                     child: Padding(
+                                                       padding:
+                                                       const EdgeInsets
+                                                           .all(
+                                                           2.0),
+                                                       child: Row(
+                                                         children: [
+                                                           Text(e),
+                                                         ],
+                                                       ),
+                                                     )),
+                                               ),
+                                             ),
+                                           ))
+                                               .toList()),
+                                     ),
+                                 ],
+                               ),
+                               //amount field
+                               Padding(
+                                   padding: EdgeInsets.only(top: 10, left: 30),
+                                   child: Container(
+                                     width: 150,
+                                     height: 32,
+
+
+                                     child:   Padding(
+                                         padding: EdgeInsets.only(
+                                             left: 14,top:7
+                                         ),
+                                         child: Text(
+                                           _currentDateNow,
+                                           style: TextStyle(
+                                             color: Colors.black,
+                                             fontSize: 14,
+                                             fontWeight: FontWeight.w700,
+                                           ),
+                                         )),
+                                     decoration: BoxDecoration(
+                                         borderRadius:BorderRadius.circular(10),
+                                         border:Border.all(color:Colors.grey,width: 1)
+                                     ),
+                                   )),
+
+                             ],
+                           ),
+                         ],
+                       ):Container(),
+
+    ),
+                   ),
+    //-----------
+                 if(form2Counter==1)
+                   Padding(
+                     padding: const EdgeInsets.only(top:50),
+                     child: Form(
+                       key:_materialFormKey2,
+                       autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                       child: Stack(
+                         children: [
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.start,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Container(
+                                 margin:EdgeInsets.only(top:10,left:50),
+                                 width: 150,
+                                 child: TextFormField(
+                                   controller: _materialNameController2,
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Name is Required";
+
+                                     }
+                                     final RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
+                                     if (!regex.hasMatch(value)) {
+                                       return 'Invalid material name';
+                                     }
+                                     return null;
+
+                                   },
+
+                                 ),
+                               ),
+                               Container(
+                                 width: 150,
+                                 margin:EdgeInsets.only(top:10,left:30),
+                                 child: TextFormField(
+                                   inputFormatters: <TextInputFormatter>[
+                                     FilteringTextInputFormatter.digitsOnly
+                                   ],
+                                   controller: _amountController2,
+                                   validator: (value){
+                                     if(value!.trim().isEmpty){
+                                       return "Amount is Required";
+
+                                     }
+                                     return null;
+
+                                   },
+                                   onChanged: (value) {
+                                     setState(() {
+
+                                     });
+                                   },
+                                   decoration: InputDecoration(
+
+
+                                       helperText: "",
+                                       isDense: true,
+                                       contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                       border: OutlineInputBorder(
+                                         borderRadius: BorderRadius.circular(10.0),
+                                       )),
+                                 ),
+                               ),
+
+                               Stack(
+
+                                 children: [
+
+
+                                   GestureDetector(
+                                       onTap: () {
+                                         isOpenUnit2 = !isOpenUnit2;
+                                         setState(() {});
+                                       },
+                                       child: SingleChildScrollView(
+                                         scrollDirection: Axis.vertical,
+                                         child: Container(
+                                           width: 150,
+                                           height: 32,
+                                           margin: const EdgeInsets.only(
+                                             left: 20, top: 10, ),
+                                           decoration: BoxDecoration(
+                                               border: Border.all(
+                                                   color: Colors.black38,
+                                                   width: 1),
+                                               borderRadius:
+                                               BorderRadius.circular(10)),
+                                           child: Padding(
+                                             padding: const EdgeInsets.symmetric(
+                                                 horizontal: 10),
+                                             child: Row(
+                                               mainAxisAlignment:
+                                               MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Text(selectedOptionUnit2),
+                                                 Icon(
+                                                     isOpenUnit2
+                                                         ? Icons.arrow_drop_up
+                                                         : Icons.arrow_drop_down,
+                                                     color: Colors.black),
+                                               ],
+                                             ),
+                                           ),
+                                         ),
+                                       )),
+                                   if (isOpenUnit2)
+                                     Container(
+                                       width: 150,
+                                       height: 100,
+                                       decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           border: Border.all(
+                                               color: Colors.black38, width: 1),
+                                           borderRadius: BorderRadius.circular(5)),
+                                       margin: const EdgeInsets.only(left: 20,top:40),
+                                       child: ListView(
+                                           scrollDirection: Axis.vertical,
+                                           primary: true,
+                                           shrinkWrap: true,
+                                           children:
+                                           optionsUnit //--------------------list
+                                               .map((e) => Container(
+                                             decoration: BoxDecoration(
+                                                 borderRadius:
+                                                 BorderRadius
+                                                     .circular(5)),
+                                             child: Padding(
+                                               padding:
+                                               const EdgeInsets
+                                                   .all(2.0),
+                                               child: GestureDetector(
+                                                 onTap: () {
+                                                   isOpenUnit2 =
+                                                   false;
+                                                   selectedOptionUnit2 =
+                                                       e;
+                                                   setState(() {});
+                                                 },
+                                                 child: HoverContainer(
+                                                     height: 35,
+                                                     decoration:
+                                                     BoxDecoration(
+                                                       color: Colors
+                                                           .white,
+                                                     ),
+                                                     hoverDecoration:
+                                                     BoxDecoration(
+                                                       borderRadius:
+                                                       BorderRadius
+                                                           .circular(
+                                                           5),
+                                                       border: Border.all(
+                                                           color: const Color(
+                                                               0xFFFFA62B),
+                                                           width: 1),
+                                                     ),
+                                                     child: Padding(
+                                                       padding:
+                                                       const EdgeInsets
+                                                           .all(
+                                                           2.0),
+                                                       child: Row(
+                                                         children: [
+                                                           Text(e),
+                                                         ],
+                                                       ),
+                                                     )),
+                                               ),
+                                             ),
+                                           ))
+                                               .toList()),
+                                     ),
+                                 ],
+                               ),
+                               //amount field
+                               Padding(
+                                   padding: EdgeInsets.only(top: 10, left: 30),
+                                   child: Container(
+                                     width: 150,
+                                     height: 32,
+
+
+                                     child:   Padding(
+                                         padding: EdgeInsets.only(
+                                             left: 14,top:7
+                                         ),
+                                         child: Text(
+                                           _currentDateNow,
+                                           style: TextStyle(
+                                             color: Colors.black,
+                                             fontSize: 14,
+                                             fontWeight: FontWeight.w700,
+                                           ),
+                                         )),
+                                     decoration: BoxDecoration(
+                                         borderRadius:BorderRadius.circular(10),
+                                         border:Border.all(color:Colors.grey,width: 1)
+                                     ),
+                                   )),
+
+                             ],
+                           ),
+                         ],
+                       ),
+                     ),
+                   ),
+                 Form(
+                   key:_materialFormKey,
+                   autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                   child: Stack(
+                     children: [
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Container(
+                             margin:EdgeInsets.only(top:10,left:50),
+                             width: 150,
+                             child: TextFormField(
+                               controller: _materialNameController,
+                               decoration: InputDecoration(
+
+
+                                   helperText: "",
+                                   isDense: true,
+                                   contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                   border: OutlineInputBorder(
+                                     borderRadius: BorderRadius.circular(10.0),
+                                   )),
+                               onChanged: (value) {
+                                 setState(() {
+
+                                 });
+                               },
+                               validator: (value){
+                                 if(value!.trim().isEmpty){
+                                   return "Name is Required";
+
+                                 }
+                                 final RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
+                                 if (!regex.hasMatch(value)) {
+                                   return 'Invalid material name';
+                                 }
+                                 return null;
+
+                               },
+
+                             ),
+                           ),
+                           Container(
+                             width: 150,
+                             margin:EdgeInsets.only(top:10,left:30),
+                             child: TextFormField(
+                               inputFormatters: <TextInputFormatter>[
+                                 FilteringTextInputFormatter.digitsOnly
+                               ],
+                               controller: _amountController,
+                               validator: (value){
+                                 if(value!.trim().isEmpty){
+                                   return "Amount is Required";
+
+                                 }
+                                 return null;
+
+                               },
+                               onChanged: (value) {
+                                 setState(() {
+
+                                 });
+                               },
+                               decoration: InputDecoration(
+
+
+                                   helperText: "",
+                                   isDense: true,
+                                   contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
+
+
+                                   border: OutlineInputBorder(
+                                     borderRadius: BorderRadius.circular(10.0),
+                                   )),
+                             ),
+                           ),
+
+                           Stack(
+
+                             children: [
+
+
+                               GestureDetector(
+                                   onTap: () {
+                                     isOpenUnit1 = !isOpenUnit1;
+                                     setState(() {});
+                                   },
+                                   child: SingleChildScrollView(
+                                     scrollDirection: Axis.vertical,
+                                     child: Container(
+                                       width: 150,
+                                       height: 32,
+                                       margin: const EdgeInsets.only(
+                                         left: 20, top: 10, ),
+                                       decoration: BoxDecoration(
+                                           border: Border.all(
+                                               color: Colors.black38,
+                                               width: 1),
+                                           borderRadius:
+                                           BorderRadius.circular(10)),
+                                       child: Padding(
+                                         padding: const EdgeInsets.symmetric(
+                                             horizontal: 10),
+                                         child: Row(
+                                           mainAxisAlignment:
+                                           MainAxisAlignment.spaceBetween,
+                                           children: [
+                                             Text(selectedOptionUnit1),
+                                             Icon(
+                                                 isOpenUnit1
+                                                     ? Icons.arrow_drop_up
+                                                     : Icons.arrow_drop_down,
+                                                 color: Colors.black),
+                                           ],
+                                         ),
+                                       ),
+                                     ),
+                                   )),
+                               if (isOpenUnit1)
+                                 Container(
+                                   width: 150,
+                                   height: 100,
+                                   decoration: BoxDecoration(
+                                       color: Colors.white,
+                                       border: Border.all(
+                                           color: Colors.black38, width: 1),
+                                       borderRadius: BorderRadius.circular(5)),
+                                   margin: const EdgeInsets.only(left: 20,top:40),
+                                   child: ListView(
+                                       scrollDirection: Axis.vertical,
+                                       primary: true,
+                                       shrinkWrap: true,
+                                       children:
+                                       optionsUnit //--------------------list
+                                           .map((e) => Container(
+                                         decoration: BoxDecoration(
+                                             borderRadius:
+                                             BorderRadius
+                                                 .circular(5)),
+                                         child: Padding(
+                                           padding:
+                                           const EdgeInsets
+                                               .all(2.0),
+                                           child: GestureDetector(
+                                             onTap: () {
+                                               isOpenUnit1 =
+                                               false;
+                                               selectedOptionUnit1 =
+                                                   e;
+                                               setState(() {});
+                                             },
+                                             child: HoverContainer(
+                                                 height: 35,
+                                                 decoration:
+                                                 BoxDecoration(
+                                                   color: Colors
+                                                       .white,
+                                                 ),
+                                                 hoverDecoration:
+                                                 BoxDecoration(
+                                                   borderRadius:
+                                                   BorderRadius
+                                                       .circular(
+                                                       5),
+                                                   border: Border.all(
+                                                       color: const Color(
+                                                           0xFFFFA62B),
+                                                       width: 1),
+                                                 ),
+                                                 child: Padding(
+                                                   padding:
+                                                   const EdgeInsets
+                                                       .all(
+                                                       2.0),
+                                                   child: Row(
+                                                     children: [
+                                                       Text(e),
+                                                     ],
+                                                   ),
+                                                 )),
+                                           ),
+                                         ),
+                                       ))
+                                           .toList()),
+                                 ),
+                             ],
+                           ),
+                           //amount field
+                           Padding(
+                               padding: EdgeInsets.only(top: 10, left: 30),
+                               child: Container(
+                                 width: 150,
+                                 height: 32,
+
+
+                                 child:   Padding(
+                                     padding: EdgeInsets.only(
+                                         left: 14,top:7
+                                     ),
+                                     child: Text(
+                                       _currentDateNow,
+                                       style: TextStyle(
+                                         color: Colors.black,
+                                         fontSize: 14,
+                                         fontWeight: FontWeight.w700,
+                                       ),
+                                     )),
+                                 decoration: BoxDecoration(
+                                     borderRadius:BorderRadius.circular(10),
+                                     border:Border.all(color:Colors.grey,width: 1)
+                                 ),
+                               )),
+
+                         ],
+                       ),
+                     ],
+                   ),
+                 ),
+               ],),
+
+
+
+                //------------------------Form 2-------------------------//
+
+                //------------------------Form 3--------------------------//
+
+
+
+
+
+
+                //-----------------------form 5---------------------------------//
+
 
 
               ],
@@ -955,174 +2212,12 @@ class _MaterialRates extends State<MaterialRates> {
 
 
 
-        Container(
-          padding: EdgeInsets.all(0),
-          child: Column(
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: _dataList.length,
-                itemBuilder: (context, index) {
-
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
 
 
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 50,top:15
-                                ),
-                                child: Text(
-                                  "Material Name",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 200,top:15
-                                ),
-                                child: Text(
-                                  "Date",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 260,top:15
-                                ),
-                                child: Text(
-                                  "Amount",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )),
-                          ]),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin:EdgeInsets.only(top:10,left:50),
-                            width: 250,
-                            child: TextFormField(
-                              decoration: InputDecoration(
-
-
-                                  helperText: "",
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
-
-
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                              onChanged: (value) {
-                                setState(() {
-                                  _dataList[index].material = value;
-                                });
-                              },
-
-                            ),
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(top: 10, left: 30),
-                              child: Container(
-                                width: 250,
-                                height: 32,
-
-
-                                child:   Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 10,top:8
-                                    ),
-                                    child: Text(
-                                      "12-02-2023",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    )),
-                                decoration: BoxDecoration(
-                                    borderRadius:BorderRadius.circular(10),
-                                    border:Border.all(color:Colors.grey,width: 1)
-                                ),
-                              )),
-
-                          Container(
-                            width: 250,
-                            margin:EdgeInsets.only(top:10,left:30),
-                            child: TextFormField(
-                              onChanged: (value) {
-                                setState(() {
-                                  _dataList[index].amount = double.parse(value);
-                                });
-                              },
-                              decoration: InputDecoration(
-
-
-                                  helperText: "",
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
-
-
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  )),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
 
 
       //--------------------------------------------------------------//
-      GestureDetector(
-        onTap: (){
-          setState(() {
-            _tapCount++;
 
-          });
-          if(_tapCount<5){
-            _addFormField();
-          }
-
-    },
-        child:  const Padding(
-            padding: EdgeInsets.only(
-                left: 50,top:20
-            ),
-            child: Text(
-              "Add More Fields",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            )),
-
-      )
       ],
     ),);}}
 
