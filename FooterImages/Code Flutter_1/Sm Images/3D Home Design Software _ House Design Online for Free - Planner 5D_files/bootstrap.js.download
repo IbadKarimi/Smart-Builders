@@ -1,0 +1,582 @@
+
+P5D.boostrap = function() {
+
+	const context = P5D.getContext();
+
+	const configuratorContactForm = document.getElementById('contact');
+
+	if (configuratorContactForm instanceof HTMLFormElement) {
+		context.createConfiguratorContactForm(configuratorContactForm);
+	}
+
+	P5D.Lang.lCode = $('html').attr('lang');
+
+	if (P5D.getContext().state.oldCookieAgreement) {
+		const userAgreement = P5D.getContext().getUserAgreement()
+		if (!P5D.LocalStorage.get('cookiesPolicy')) {
+			$('#modal-cookies-policy').show().find('.button.is-primary').bind('click', function () {
+				$('#modal-cookies-policy').hide();
+				P5D.LocalStorage.set('cookiesPolicy', '1')
+				userAgreement.setAgreementOld(true)
+			});
+			$('#modal-cookies-policy').find('[data-text-blocked="true"]').attr('data-text-blocked', false);
+		}
+		userAgreement.setAgreementOld(false)
+	}
+
+	// bind actions
+	$('*[action]:not(form)').bind('click', function (e) {
+		if (this.id !== 'checkout') {
+			e.preventDefault();
+			e.stopPropagation();
+			P5D.Actions.process($(this).attr('action'), $(this).attr('adata'));
+		}
+	});
+
+	// bind Enter to click on etarget
+	$('input[eaction]').bind('keydown', function (e) {
+		if (e.keyCode == 13) {
+			P5D.Actions.process($(this).attr('eaction'), $(this).attr('eadata'));
+		}
+	});
+
+	// bind keys
+	$(window).bind('keydown', function (e) {
+		switch (e.keyCode) {
+			case 27:
+				P5D.Actions.hideDialog();
+				window.closeModal();
+				window.closeAllDropdowns();
+				break;
+		}
+	});
+
+	$(document).on('mousedown', '.modal.is-active', function (e) {
+		if ($(e.target).is(this)) {
+			closeModal(this)
+		}
+	});
+
+	// modal windows
+	$(document).on('click', '[data-modal="modal"]', function (e) {
+		e.preventDefault();
+		var $el = $(this);
+		var modal = $el.attr('data-target') || $el.attr('href');
+		if ($(modal).modal) {
+			$(modal).modal('show');
+		} else {
+			showModal(modal);
+		}
+	});
+
+	$('.modal__form').on('submit', function (e) {
+		e.preventDefault();
+		return false;
+	});
+
+	// // convert time
+	$('*[is-date-time]').each(function () {
+		var notime = !!$(this)[0].hasAttribute('notime');
+		var nodate = !!$(this)[0].hasAttribute('nodate');
+		$(this).html(P5D.Tools.toLocalTime($(this).attr('is-date-time'), nodate, notime));
+	});
+
+	if ($.timeago) {
+		$('*[datetime]').timeago();
+	}
+
+	// check notices
+	P5D.Actions.checkNotices();
+
+	// support
+	$('#modal-support button[type="submit"]').bind('click', function (e) {
+		P5D.Actions.disableDialog('support');
+		P5D.analytics.sendEvent('support_form_submit', {state: 'submit'});
+		P5D.App.send('feedback', 'post', {
+			version: 8,
+			name: $('#modal-support .name').val(),
+			email: $('#modal-support .email').val(),
+			tag: $('#modal-support .subject').val(),
+			message: $('#modal-support textarea').val(),
+			system: $('#modal-support .platforms').val() + ': ' + window.navigator.userAgent,
+			'g-recaptcha-response': grecaptcha.getResponse()
+		}, function (d) {
+			P5D.Actions.hideDialog('support');
+			P5D.Dialogs.alert('Thanks for your message.<br>We will contact with you in 24 hours.', null, null, false, true);
+			P5D.analytics.sendEvent('support_form_submit', {state: 'success'});
+		}, function (d) {
+			P5D.Actions.enableDialog('support');
+			if (d.error == 501) {
+				grecaptcha.reset();
+			}
+			P5D.Dialogs.alert(d.errorMessage);
+			P5D.analytics.sendEvent('support_form_submit', {state: 'error', error: 'other'});
+		}).fail(function() {
+			P5D.analytics.sendEvent('support_form_submit', {state: 'error', error: 'network'});
+		});
+	});
+
+	var headerFloatOffset = 600;
+	var headerFloatProgressOffset = 50;
+	var Header = {}, SubHeader = {};
+
+	$(function () {
+		Header = {
+			$el: $('#header'),
+			$burger: $('#header-burger'),
+			$menu: $('#header-menu'),
+			data_menu: 'data-menu',
+			data_float: 'data-float',
+			init: function () {
+				Header.hideMenu();
+				Header.unsetFloat();
+				Header.fn();
+				$(document).on('resize', Header.fn);
+				$(document).on('scroll', Header.fn);
+
+				if (Header.exists()) {
+					$('body').addClass('has-header')
+				} else {
+					$('body').removeClass('has-header')
+				}
+
+				// initialize click burger
+				Header.$burger.on('click', function (e) {
+					e.preventDefault();
+					Header.toggleMenu();
+					return false;
+				});
+
+				// initialize href click scroll
+				$('.js-header-link').filter(function (i, link) {
+					var href = $(link).attr('href') || $(link).attr('data-href');
+					return href && href[0] === '#'
+				}).map(function (i, link) {
+
+					$(link).on('click', function (e) {
+						e.preventDefault();
+						e.stopPropagation();
+
+						var target = $(link).attr('href') || $(link).attr('data-href');
+						var $target = $(target);
+
+						if ($target.length) {
+							Header.hideMenu();
+							PageScroll.scroll(link);
+						}
+
+						return false;
+					})
+				});
+			},
+			exists: function () {
+				return Header.$el.length
+			},
+			fn: function () {
+				var scrollTop = $(document).scrollTop();
+
+				if (scrollTop > headerFloatOffset) {
+					Header.setFloat();
+				} else {
+					if (!Header.isMenuVisible()) {
+						if (scrollTop > headerFloatProgressOffset) {
+							Header.setFloatProgress();
+						} else {
+							Header.unsetFloat();
+						}
+					}
+				}
+			},
+			setFloat: function () {
+				if (SubHeader.exists()) {
+					Header.$el.attr(Header.data_float, "hide");
+				} else {
+					Header.$el.attr(Header.data_float, "true");
+				}
+			},
+			setFloatProgress: function () {
+				Header.$el.attr(Header.data_float, "progress");
+			},
+			unsetFloat: function () {
+				Header.$el.attr(Header.data_float, "false");
+			},
+			isMenuVisible: function () {
+				return Header.$el.attr(Header.data_menu) === "true"
+			},
+			toggleMenu: function () {
+				if (Header.isMenuVisible()) {
+					Header.hideMenu();
+				} else {
+					Header.showMenu();
+				}
+			},
+			showMenu: function () {
+				Header.$burger.addClass('is-active');
+				Header.$menu.addClass('is-active');
+				Header.$el.attr(Header.data_menu, "true");
+				$('html').addClass('is-clipped');
+			},
+			hideMenu: function () {
+				Header.$burger.removeClass('is-active');
+				Header.$menu.removeClass('is-active');
+				Header.$el.attr(Header.data_menu, "false");
+				$('html').removeClass('is-clipped');
+			}
+		};
+	})
+
+	var PageScroll = {
+		scroll: function (link) {
+			var target = $(link).attr('href') || $(link).attr('data-href');
+			var $target = $(target);
+			var headerOffset = 60;
+			var subheaderOffset = 44;
+			var targetOffset = $target.length && $target.offset().top;
+
+			var animate = function () {
+				var scrollTop = (targetOffset > headerFloatOffset)
+					? targetOffset - subheaderOffset
+					: targetOffset - headerOffset - subheaderOffset
+				$('html').stop().animate({
+					scrollTop: scrollTop
+				}, 400);
+			}
+
+			if ($target.length) {
+				SubHeader.hideMenu();
+				animate();
+			}
+		},
+	}
+
+	// subheader
+	$(function () {
+		SubHeader = {
+			$el: $('#subheader'),
+			$burger: $('#subheader-burger'),
+			$menu: $('#subheader-menu'),
+			data_menu: 'data-menu',
+			data_float: 'data-float',
+			init: function () {
+				SubHeader.hideMenu();
+				SubHeader.unsetFloat();
+				SubHeader.fn();
+				$(document).on('resize', SubHeader.fn);
+				$(document).on('scroll', SubHeader.fn);
+
+				if (SubHeader.exists()) {
+					$('body').addClass('has-subheader')
+				} else {
+					$('body').removeClass('has-subheader')
+				}
+
+				SubHeader.$burger.on('click', function (e) {
+					e.preventDefault();
+					SubHeader.toggleMenu();
+					return false;
+				});
+
+				$('.js-subheader-link').filter(function (i, link) {
+					var href = $(link).attr('href') || $(link).attr('data-href');
+					return href && href[0] === '#'
+				}).map(function (i, link) {
+
+					$(link).on('click', function (e) {
+						e.preventDefault();
+						e.stopPropagation();
+
+						var target = $(link).attr('href') || $(link).attr('data-href');
+						var $target = $(target);
+
+						if ($target.length) {
+							SubHeader.hideMenu();
+							PageScroll.scroll(link);
+						}
+
+						return false;
+					})
+				});
+			},
+			exists: function () {
+				return SubHeader.$el.length
+			},
+			fn: function () {
+				var scrollTop = $(document).scrollTop();
+
+				if (scrollTop > headerFloatOffset) {
+					SubHeader.setFloat();
+				} else {
+					if (!SubHeader.isMenuVisible()) {
+						if (scrollTop > headerFloatProgressOffset) {
+							SubHeader.setFloatProgress();
+						} else {
+							SubHeader.unsetFloat();
+						}
+					}
+				}
+			},
+			setFloat: function () {
+				SubHeader.$el.attr(SubHeader.data_float, "true");
+			},
+			setFloatProgress: function () {
+				SubHeader.$el.attr(SubHeader.data_float, "progress");
+			},
+			unsetFloat: function () {
+				SubHeader.$el.attr(SubHeader.data_float, "false");
+			},
+			isMenuVisible: function () {
+				return SubHeader.$el.attr(SubHeader.data_menu) === "true"
+			},
+			toggleMenu: function () {
+				if (SubHeader.isMenuVisible()) {
+					SubHeader.hideMenu();
+				} else {
+					SubHeader.showMenu();
+				}
+			},
+			showMenu: function () {
+				SubHeader.$burger.addClass('is-active');
+				SubHeader.$menu.addClass('is-active');
+				SubHeader.$el.attr(SubHeader.data_menu, "true");
+				$('html').addClass('is-clipped');
+			},
+			hideMenu: function () {
+				SubHeader.$burger.removeClass('is-active');
+				SubHeader.$menu.removeClass('is-active');
+				SubHeader.$el.attr(SubHeader.data_menu, "false");
+				$('html').removeClass('is-clipped');
+			}
+		};
+	})
+
+	$(function () {
+		Header.init();
+		SubHeader.init();
+	})
+
+	$('.js-page-scroll').on('click', function (e) {
+		PageScroll.scroll(this);
+		return false;
+	});
+
+	// dropdowns
+	window.closeAllDropdowns = function () {
+		$('.dropdown').removeClass('is-active');
+	};
+
+	$(document)
+		.on('click', closeAllDropdowns)
+		.on('click', '.dropdown-trigger', function (event) {
+			if ($(this).hasClass('is-hovered')) {
+				if ($(window).width() > 769) {
+					event.preventDefault();
+					event.stopPropagation();
+					return false;
+				}
+			} else {
+				event.preventDefault();
+				event.stopPropagation();
+				closeAllDropdowns();
+				$(this).parents('.dropdown').first().toggleClass('is-active');
+				return false;
+			}
+		});
+
+	window.setDocumentClipped = function(clipped) {
+		const classes = document.documentElement.classList;
+		if (clipped) {
+			classes.add('is-clipped');
+		} else {
+			classes.remove('is-clipped');
+		}
+	}
+
+	// modals
+	window.showModal = function (target) {
+		P5D.getContext().getAuthModalsEvents().push(target)
+		closeModals();
+		setDocumentClipped(true);
+		P5D.getContext().getFormRegistry(); // firstly instance all forms -- messy fix, need rethink
+		const $target = $(target);
+		const wasHidden = $target.is(':hidden');
+		$target.addClass('is-active').removeClass('is-disabled');
+
+		if (wasHidden) {
+			$target.find('input[type="text"], input[type="password"], input[type="checkbox"]')
+				.each(function () {
+					this.type === 'checkbox' ? this.checked = false : this.value = '';
+				});
+			$target.find('div.error').removeClass('error');
+			$target.trigger('show.modal');
+		}
+		var forMarket = arguments[1];
+		// set data to render
+		$('*[mode="makeRender"]').each(function (i, el) {
+			var d = JSON.parse($(el).attr('data'));
+			d.forMarket = forMarket;
+			$(el).attr('data', JSON.stringify(d));
+		});
+	};
+
+	window.closeModal = function (modal) {
+		setDocumentClipped(false);
+		if (modal == undefined) {
+			modal = $('.modal.is-active, .b-modal.is-active, *[closable="true"].is-active').last();
+		} else {
+			modal = $(modal);
+		}
+		if (modal[0] == undefined) {
+			return false;
+		}
+
+		if (modal.hasClass('noClose')) {
+			return true;
+		}
+
+		let wasVisible = modal.is(':visible');
+		modal.removeClass('is-active').removeClass('is-disabled');
+
+		if (wasVisible) {
+			modal.trigger('hide.modal');
+		}
+
+	};
+
+	window.closeModals = function () {
+		setDocumentClipped(false);
+		$('.modal, .b-modal').each(function () {
+			closeModal(this);
+		});
+	};
+
+	$('*[data-modal]').click(function (e) {
+		e.preventDefault();
+
+		const data = $(this).data();
+		showModal(data.modal, data.forMarket);
+	});
+
+	/**
+	 * Initialises invoking of actions defined via "data-action" HTML attribute. The additional parameters
+	 * can be passed via optional attribute "data-action-params"
+	 *
+	 * Action types by reference with examples:
+	 * 1. Absolute (with '.' in the name):
+	 *      - <... data-action="P5D.Payments.show" data-action-params="individual">
+	 *        - invokes `P5D.Payments.show('individual')`.
+	 * 2. Relative (no '.' in the name):
+	 *      - <... data-action="showAuthDialog">
+	 *        - tries to invoke `P5D.Actions.showAuthDialog()` first,
+	 *          If the method is undefined than tries to invoke `window.showAuthDialog()`.
+	 *
+	 * Parameters formats with examples:
+	 * 1. Plane string value is used as a first argument of action method:
+	 *      - <... data-action=".Instance.someAction" data-action-params="someParameter">
+	 *        - invokes `Some.Instance.someAction('someParameter')`;
+	 *      - <... data-action="Some.Instance.anotherAction" data-action-params="5">
+	 *        - invokes `Some.Instance.anotherAction('5')`.
+	 * 2. JSON serialised object structure is used as a first argument of action method:
+	 *      - <... data-action="Some.Instance.someAction" data-action-params="{&quot;greeting&quot;: &quot;Hello!&quot;}">
+	 *        - invokes `Some.Instance.someAction({"greeting": "Hello!"})`.
+	 * 3. JSON serialised array is used as a set of arguments of the defined action method:
+	 *      - <... data-action="Some.Instance.someAction" data-action-params="[null, 5]">
+	 *        - invokes `Some.Instance.anotherAction(null, 5)`.
+	 */
+	$(document.body).on('click', '[data-action]', function (e) {
+		e.preventDefault();
+
+		const data = $(this).data();
+		const actionNameSections = data.action.split('.');
+		const methodName = actionNameSections.pop();
+		const context = actionNameSections.length ?
+			actionNameSections.reduce((context, key) => context && context[key] || null, window) :
+			(P5D.Actions.hasOwnProperty(data.action) ? P5D.Actions : window);
+
+		if (context && typeof context[methodName] === 'function') {
+			let parameters = [];
+
+			if (data.hasOwnProperty('actionParams')) {
+				try {
+					parameters = JSON.parse(data.actionParams);
+				} catch (e) {
+					parameters = data.actionParams;
+				}
+			}
+
+			const invoker = Array.isArray(parameters) ? 'apply' : 'call';
+			context[methodName][invoker](context, parameters);
+		}
+	});
+
+	$(document.body).on('click', '.modal-background, .modal-close, .modal-card-close, [data-dismiss="modal"]', function (e) {
+		const $closeButton = $(e.target);
+
+		if (!$closeButton.hasClass('noClose')) {
+			closeModal($closeButton.closest('.modal, .b-modal').get(0));
+		}
+	});
+
+	// tabs
+	$('*[data-toggle="tab"]').on('click', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var container = $(this).closest('.tabs, .js-tabs');
+		container.find('*[data-toggle="tab"]').removeClass('is-active');
+		$(this).addClass('is-active');
+		container.parent().find('.tab-pane').removeClass('is-active');
+		container.parent().find('.tab-pane[aria-labelledby="' + $(this).attr('aria-controls') + '-tab"]').addClass('is-active');
+	});
+
+	// fancybox init
+	if (typeof $.fn.fancybox === 'function') {
+		$('[data-fancybox]').fancybox();
+	}
+
+	// tabs OLD EDITOR
+	$('.dialogContentTabsItem').bind('click', function () {
+		$(this).parent().find('.dialogContentTabsItem').removeClass('selected');
+		$(this).addClass('selected');
+		$(this).parent().parent().find('.dialogContentTabsContent').removeClass('selected');
+		$(this).parent().parent().find('.dialogContentTabsContent[data=' + $(this).attr('data') + ']').addClass('selected');
+	});
+
+	String.prototype.getHash = function () {
+		var hash = 0, i, chr;
+		if (this.length === 0) return hash;
+		for (i = 0; i < this.length; i++) {
+			chr = this.charCodeAt(i);
+			hash = ((hash << 5) - hash) + chr;
+			hash |= 0;
+		}
+		return hash;
+	};
+
+	// popup opener
+	context.uriHashHandler.handle(location.hash);
+	context.initLanguageSwitchMenu();
+
+	window.addEventListener('load', function (ev) {
+		P5D.Texts.init();
+	});
+
+	const authEventParamsJson = P5D.LocalStorage.get('reg_ev');
+
+	if (authEventParamsJson) {
+		P5D.LocalStorage.forget('reg_ev');
+
+		try {
+			P5D.analytics.sendEvent('authentication_sign_up_new', JSON.parse(authEventParamsJson));
+		} catch (e) {}
+	}
+
+	/* @deprecated listener, make sure can be removed listener */
+	$(document.body).on('show.modal', '#modal-signup, #modal-signin', function (e) {
+		P5D.getContext().support.hide()
+	})
+	if (document.getElementById('create-project-modal')) {
+		P5D.getState().observe(state => {
+			const show = state.smartWizard && !P5D.getContext().isB2B()
+			document.getElementById('welcomeSmartWizardBtn').style.display = show ? 'flex' : 'none'
+		})
+	}
+}

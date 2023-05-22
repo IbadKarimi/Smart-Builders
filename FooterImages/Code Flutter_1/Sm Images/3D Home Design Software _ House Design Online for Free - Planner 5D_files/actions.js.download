@@ -1,0 +1,594 @@
+P5D.Actions.forgot = function (formElement) {
+	const form = P5D.getContext().getFormRegistry().get(formElement);
+	
+	const emailInput = form.getEmailInput();
+	
+	P5D.Actions.disableDialog('forgot');
+	P5D.analytics.sendEvent('authentication_forgot_password_submit', {state: 'submit'});
+	
+	P5D.App.send('user', 'put', {
+		from: 'web',
+		action: 'forgot',
+		email: emailInput.value.trim()
+	}, function (d) {
+		P5D.Actions.enableDialog('forgot');
+		P5D.Actions.hideDialog('forgot');
+		P5D.Actions.showDialog('password-sent');
+		P5D.analytics.sendEvent('authentication_forgot_password_submit', {state: 'success'});
+		
+		emailInput.value = '';
+	}, function (d) {
+		P5D.Actions.enableDialog('forgot');
+		P5D.analytics.sendEvent('authentication_forgot_password_submit', {state: 'error', error: 'other'});
+		
+		form.setFieldError('email', d.errorMessage);
+		emailInput.focus();
+	}).fail(function() {
+		P5D.analytics.sendEvent('authentication_forgot_password_submit', {state: 'error', error: 'network'});
+	});
+};
+
+P5D.Actions.signup = function (formElement) {
+	const form = P5D.getContext().getFormRegistry().get(formElement);
+	
+	const params = {};
+	const emailInput = form.getEmailInput();
+	const passwordInput = form.getPasswordInput();
+	const accountTypeInput = form.getAccountTypeInput();
+	const agreementNewslettersCheckbox = form.getAgreementNewslettersCheckbox();
+	const reCaptchaResponse = form.hasCaptcha ? form.getReCaptchaResponse() : null;
+	
+	if (typeof P5D.Actions.beforeAuthorization === 'function') {
+		P5D.Actions.beforeAuthorization(params);
+	} else if (typeof P5D.Actions.beforeSignUp === 'function') {
+		P5D.Actions.beforeSignUp(params);
+	} else if (typeof P5D.Actions.beforeSignIn === 'function') {
+		P5D.Actions.beforeSignIn(params);
+	}
+	
+	P5D.Actions.disableDialog('signup');
+	const defaultAnalyticsParams = {form: 'sign_up', method: 'email', automatic: false};
+	P5D.analytics.sendEvent('authentication_submit', Object.assign({state: 'submit'}, defaultAnalyticsParams));
+	
+	const userData = {
+		from: 'web',
+		email: emailInput.value.trim(), pass: passwordInput.value.trim(),
+		accountType: accountTypeInput.value.trim(),
+		agreementNewsletters: agreementNewslettersCheckbox.checked
+	};
+	
+	if (reCaptchaResponse) {
+		userData.reCaptchaResponse = reCaptchaResponse;
+		userData.reCaptchaVersion = form.getReCaptchaVersion();
+	}
+	
+	P5D.App.send('user', 'post', userData, function (d) {
+		if ('country' in d && ['US', 'GB'].includes(d.country)) {
+			P5D.LocalStorage.setLocalStorageItem('inch', 1);
+		}
+		defaultAnalyticsParams.user_type = d.is_commercial_account ? 'pro_user' : 'ordinary';
+		const userAuthenticationEvent = P5D.getContext().getUserEventFactory()
+			.createProUserAuthenticationEventByIsCommercialFlag(d.is_commercial_account, defaultAnalyticsParams.form);
+		P5D.analytics.sendEvent(userAuthenticationEvent.name, userAuthenticationEvent.getParameters());
+
+		P5D.analytics.sendEvent('authentication_submit', Object.assign({state: 'success'}, defaultAnalyticsParams));
+		P5D.getContext().getUserAgreement().onChangeUser().then(() => {
+			var ev = 0;
+			
+			if (typeof P5D.Actions.afterSignIn === 'function') {
+				P5D.Actions.afterSignIn(d);
+			}
+			
+			if (typeof d === 'object') {
+				if (d.type) {
+					if (d.type === 'web') {
+						ev = 1;
+					} else if (d.type === 'vk') {
+						ev = 3;
+					} else if (d.type === 'fb') {
+						ev = 2;
+					} else if (d.type === 'google') {
+						ev = 4;
+					}
+				}
+			}
+			
+			if (ev) {
+				P5D.LocalStorage.set('reg_ev', JSON.stringify({
+					automatic: true,
+					source: 'sign_up',
+					mailing: agreementNewslettersCheckbox.checked ? 'true_sign_up_screen' : 'false',
+					user_type: defaultAnalyticsParams.user_type,
+					method: defaultAnalyticsParams.method
+				}), true);
+			}
+			
+			P5D.Actions.hideDialog('signup');
+			
+			const singUpComplete = [
+				new Promise(resolve => {
+					if (P5D.getState().disableUserCategorizationModal || P5D.getState().showQuizPaymentForm) {
+						resolve(params.redirect)
+					} else if (userData.accountType === 'pro') {
+						P5D.getContext().getOnboardingProModalManager().enable()
+						resolve(P5D.getContext().uri.profilePro(d.uid));
+					} else {
+						const userCategorization = P5D.getContext().getUserCategorizationModal()
+						userCategorization.onClose(() => {
+							P5D.Dialogs.success(d.text, d.title, () => resolve(params.redirect), true)
+						})
+						userCategorization.show()
+					}
+				}),
+			];
+			
+			if (P5D.getState().signUpAndShowPaymentOnStart && !P5D.LocalStorage.getLocalStorageItem('noAuthProject')) {
+				singUpComplete.push(P5D.App.postEmptyProject().catch(it => Promise.resolve()));
+			} else {
+				singUpComplete.push(P5D.App.postEditorProject().catch(it => Promise.resolve()));
+			}
+			
+			Promise.all(singUpComplete).then(newUris => P5D.getContext().getUserAuthentication().onSingUpComplete(newUris));
+		});
+	}, function(d) {
+		P5D.analytics.sendEvent(
+			'authentication_submit',
+			Object.assign({state: 'error', error: 'other'}, defaultAnalyticsParams)
+		);
+		if(typeof P5D.Actions.afterSignIn === 'function') {
+			P5D.Actions.afterSignIn(d);
+		}
+		
+		P5D.Actions.enableDialog('signup');
+		
+		switch (d.errorName) {
+			case 'invalid_captcha':
+				form.switchReCaptchaVersion(2);
+				break;
+			
+			case 'email_is_invalid':
+			case 'email_already_exists':
+				form.setFieldError('email', d.errorMessage);
+				emailInput.focus();
+				break;
+			
+			case 'user_invalid_password_format':
+				form.setFieldError('password', d.errorMessage);
+				passwordInput.focus();
+				break;
+			
+			default:
+				form.setFieldError('email', d.errorMessage);
+				form.setFieldError('password');
+				emailInput.focus();
+		}
+		
+		form.lockSubmitButton();
+	}).fail(function() {
+		P5D.analytics.sendEvent(
+			'authentication_submit',
+			Object.assign({state: 'error', error: 'network'}, defaultAnalyticsParams)
+		);
+	});
+};
+
+P5D.Actions.signin = function (formElement, agreementLicense, agreementNewsletters) {
+	const form = P5D.getContext().getFormRegistry().get(formElement);
+	
+	const params = {};
+	const emailInput = form.getEmailInput();
+	const passwordInput = form.getPasswordInput();
+	
+	let formData = {from: 'web', email: emailInput.value.trim(), pass: passwordInput.value.trim()};
+	
+	if (agreementLicense) {
+		formData.agreementLicense = true;
+	}
+	
+	if (agreementNewsletters) {
+		formData.agreementNewsletters = true;
+	}
+	
+	if (typeof P5D.Actions.beforeAuthorization === 'function') {
+		P5D.Actions.beforeAuthorization(params);
+	} else if (typeof P5D.Actions.beforeSignIn === 'function') {
+		P5D.Actions.beforeSignIn(params);
+	}
+	
+	P5D.Actions.disableDialog('signin');
+	const defaultAnalyticsParams = {form: 'sign_in', method: 'email', automatic: false};
+	P5D.analytics.sendEvent('authentication_submit', Object.assign({state: 'submit'}, defaultAnalyticsParams));
+	
+	P5D.App.send('user', 'put', formData, function (d) {
+		defaultAnalyticsParams.user_type = d.is_commercial_account ? 'pro_user' : 'ordinary';
+		const userAuthenticationEvent = P5D.getContext().getUserEventFactory()
+			.createProUserAuthenticationEventByIsCommercialFlag(d.is_commercial_account, defaultAnalyticsParams.form)
+		P5D.analytics.sendEvent(userAuthenticationEvent.name, userAuthenticationEvent.getParameters());
+		
+		P5D.analytics.sendEvent('authentication_submit', Object.assign({state: 'success'}, defaultAnalyticsParams));
+		P5D.getContext().getUserAgreement().onChangeUser()
+			.then(() => P5D.getContext().getUserAuthentication().onSingInComplete(d, params.redirect || null));
+	}, function (d) {
+		P5D.analytics.sendEvent(
+			'authentication_submit', Object.assign({state: 'error', error: 'other'}, defaultAnalyticsParams)
+		);
+		
+		if (typeof P5D.Actions.afterSignIn === 'function') {
+			P5D.Actions.afterSignIn(d);
+		}
+		
+		P5D.Actions.enableDialog('signin');
+		
+		switch (d.errorName) {
+			case 'email_not_confirmed_yet':
+				form.setFieldError('email', d.errorMessage);
+				emailInput.focus();
+				break;
+			
+			case 'accept_license_agreement':
+				P5D.Actions.hideDialog('signin');
+				P5D.Actions.showDialog('terms');
+				break;
+			
+			default:
+				form.setFieldError('email', d.errorMessage);
+				form.setFieldError('password', d.errorMessage);
+				emailInput.focus();
+		}
+	}).fail(function () {
+		P5D.analytics.sendEvent(
+			'authentication_submit', Object.assign({state: 'error', error: 'network'}, defaultAnalyticsParams)
+		);
+	});
+};
+
+P5D.Actions.terms = function () {
+	const form = P5D.getContext().getFormRegistry().get(document.querySelector('#modal-terms form'));
+	
+	P5D.Actions.hideDialog('terms');
+	P5D.Actions.showDialog('signin');
+	
+	P5D.Actions.signin(
+		document.querySelector('#modal-signin form'),
+		form.getAgreementLicenseCheckbox().checked, form.getAgreementNewslettersCheckbox().checked
+	);
+}
+
+P5D.Actions.process = function (a, d) {
+	if (a)
+		a = a.split('|');
+	if (d)
+		d = d.split('|');
+	if (a.length) {
+		for (var i = 0; i < a.length; i++) {
+			if (P5D.Actions[a[i]] != undefined) {
+				P5D.Actions[a[i]](d ? d[i] : undefined);
+			}
+		}
+	}
+};
+
+P5D.Actions.clickButton = function (selector) {
+	$(selector).click();
+};
+
+P5D.Actions.checkDialogExistsLegacy = function (name) {
+	return !!$('.dialog.' + name).length;
+};
+
+P5D.Actions.checkDialogExists = function (name) {
+	return !!$('#modal-' + name).length;
+};
+
+P5D.Actions.showDialog = function (name, message = '') {
+	if (P5D.Actions.checkDialogExists(name)) {
+		P5D.getContext().getAuthModalsEvents().push('modal-' + name)
+		const modal = $('#modal-' + name);
+		const wasHidden = modal.is(':hidden');
+		
+		if (message !== '') {
+			const $messageText = modal.find('.message-text');
+			
+			if ($messageText.length) {
+				$messageText.text(message);
+			}
+		}
+		
+		P5D.Actions.enableDialog(name);
+		modal.addClass('is-active');
+		if (wasHidden) {
+			modal.find(':text, :password, :checkbox')
+				.each(input => input.type === 'checkbox' ? input.checked = false : input.value = '');
+			modal.trigger('show.modal');
+		}
+		
+		$('html').addClass('is-clipped');
+	} else {
+		if (P5D.Actions.checkDialogExistsLegacy(name)) {
+			var d = $('.dialog.' + name);
+			if (d.length == 0) {
+			} else {
+				d.show();
+				if (['alert', 'confirm', 'confirm-danger'].indexOf(name) > -1) {
+					d.find('.js-modal-yes.button').focus();
+				} else {
+					d.find('input[type="text"]:first').focus();
+				}
+			}
+		}
+	}
+};
+
+P5D.Actions.hideDialog = function (name) {
+	$('html').removeClass('is-clipped');
+	if (name === undefined) {
+		const $modal = $('.modal:not(.noClose):visible:last');
+		
+		if ($modal.length && !$modal.hasClass('is-not-closable') && !$modal.hasClass('noClose')) {
+			const isVisible = $modal.is(':visible');
+			
+			$modal.removeClass('is-active').removeClass('is-disabled');
+			
+			if (isVisible) {
+				$modal.trigger('hide.modal')
+			}
+			
+		}
+		
+		if (!$('#modal-' + name).length && !$('.dialog.' + name).length) {
+			var d = $('.dialog:visible:last');
+			if (!d.hasClass('notClosed') && !d.hasClass('noClose')) {
+				d.hide();
+			}
+		}
+	} else {
+		if ($('.dialog.' + name).length) {
+			var d = $('.dialog.' + name);
+		}
+		if ($('#modal-' + name).length) {
+			var d = $('#modal-' + name);
+		}
+		
+		if (d && d.attr('id')) {
+			if (d.attr('id').substr(0, 6) == 'modal-') {
+				const wasVisible = d.is(':visible');
+				d.removeClass('is-active').removeClass('is-disabled');
+				
+				if (wasVisible) {
+					d.trigger('hide.modal');
+				}
+				
+			} else {
+				d.hide();
+			}
+		}
+	}
+};
+
+P5D.Actions.showAuthDialog = function (redirect) {
+	if (redirect) {
+		P5D.Actions.beforeSignIn = function (p) {
+			p.redirect = redirect;
+		};
+	}
+	
+	P5D.Actions.showDialog('signup');
+};
+
+P5D.Actions.enableDialog = function (name, enable = true) {
+	let command = null;
+	if (P5D.Actions.checkDialogExistsLegacy(name)) {
+		command = {dialog: $('.dialog.' + name), className: 'disabled'};
+	}
+	if (P5D.Actions.checkDialogExists(name)) {
+		command = {dialog: $('#modal-' + name), className: 'is-disabled'}
+	}
+	if (command) {
+		command.dialog[enable ? 'removeClass' : 'addClass'](command.className);
+		command.dialog.find(P5D.User.formSubmitButtonSelector).prop('disabled', !enable);
+	}
+};
+
+P5D.Actions.disableDialog = function (name) {
+	P5D.Actions.enableDialog(name, false);
+};
+
+P5D.Actions.social = function (provider, isSignUp) {
+	const params = {};
+	const analyticsParams = {form: isSignUp ? 'sign_up' : 'sign_in', state: 'submit', automatic: false};
+	const context = P5D.getContext();
+	const uri = context.uri;
+	const queryParams = {action: 'app', from: 'web'};
+	
+	if (typeof P5D.Actions.beforeAuthorization === 'function') {
+		P5D.Actions.beforeAuthorization(params);
+	}
+	
+	if (params.redirect) {
+		queryParams.redirect = params.redirect
+	}
+	
+	let redirectUri = '';
+	
+	switch (provider) {
+		case 'facebook':
+			redirectUri = uri.authFacebook(queryParams);
+			analyticsParams.method = 'facebook';
+			break;
+		case 'google':
+			redirectUri = uri.authGoogle(queryParams);
+			analyticsParams.method = 'google_plus';
+			break;
+		case 'vk':
+			redirectUri = uri.authVk(queryParams);
+			analyticsParams.method = 'vkontakte';
+			break;
+		case 'appleid':
+			redirectUri = uri.authAppleid(queryParams);
+			analyticsParams.method = 'appleid';
+			break;
+	}
+	
+	if (redirectUri !== '') {
+		const userType = redirectUri.includes('pro/switch') ? 'pro_user' : 'ordinary';
+		const userAuthenticationEvent = context.getUserEventFactory()
+			.createProUserAuthenticationEvent(analyticsParams.form, userType)
+		P5D.analytics.sendEvent(userAuthenticationEvent.name, userAuthenticationEvent.getParameters());
+		
+		analyticsParams.user_type = userType
+		P5D.analytics.sendEvent('authentication_submit', analyticsParams)
+		P5D.analytics.postponeEventParams('authentication_submit', analyticsParams);
+		
+		context.localStorage.set('social_authentication', {
+			automatic: analyticsParams.automatic,
+			source: analyticsParams.form,
+			mailing: 'none',
+			user_type: userType,
+			method: analyticsParams.method
+		});
+		
+		location.href = redirectUri;
+	}
+};
+
+P5D.Actions.checkNotices = function () {
+	$('#navbar-notify-list').html('<div class="page-loader"></div>');
+	P5D.App.send('notices?counter=2', 'get', {}, function (d) {
+		if (d && d.auth == 0) {
+			return false;
+		}
+		
+		$('#navbar-notify-count').hide();
+		if (d.new > 0) {
+			$('#navbar-notify-count').html(d.new > 99 ? '99+' : d.new).show();
+		}
+		if (d.notices.length) {
+			var html = '';
+			var list = {};
+			list._path = $('#navbar-notify-list').attr('path');
+			for (var i = 0; i < d.notices.length; i++) {
+				// type = comment | rate | error | message | render
+				var p = d.notices[i];
+				p.data = JSON.parse(p.data);
+				html += P5D.Actions.buildNotificationItem(p);
+			}
+			$('#navbar-notify-list').html(html);
+		} else {
+			$('#navbar-notify-list').html('');
+		}
+		
+		setTimeout(function () {
+			P5D.Actions.checkNotices();
+		}, 30000);
+	}, function () {
+	});
+};
+
+P5D.Actions.buildNotificationItem = function (p) {
+	p.notRead = p.deleted == 0 ? ' notRead' : '';
+	
+	switch (p.type) {
+		case 'addBadge':
+			p['icon'] = 'medal';
+			p['html'] = p.data.name;
+			break;
+		case 'galleryPost':
+			p['icon'] = 'pen';
+			p['html'] = '<a href="/gallery/floorplans/' + p.data.hash + '/" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'galleryComment':
+			p['icon'] = 'comment';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: <a href="/gallery/floorplans/' + p.data.sid + '/#comments" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'journalComment':
+		case 'blogComment':
+			p['icon'] = 'comment';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: <a href="/blog/' + p.data.sid + '/#comments" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'renderComment':
+			p['icon'] = 'comment';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: <a href="/gallery/ideas/' + p.data.sid + '/#comments" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'photoComment':
+			p['icon'] = 'comment';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: <a href="/photos/' + p.data.sid + '/#comments" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'forumComment':
+			p['icon'] = 'comment';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: <a href="/forum/post/' + p.data.post + '" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'galleryRate':
+			p['icon'] = 'heart';
+			p['html'] = (p.data.userId ? '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: ' : '') + '<a href="/gallery/floorplans/' + p.data.sid + '/" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'blogRate':
+			p['icon'] = 'heart';
+			p['html'] = (p.data.userId ? '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: ' : '') + '<a href="/blog/' + p.data.sid + '/" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'renderRate':
+			p['icon'] = 'heart';
+			p['html'] = (p.data.userId ? '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: ' : '') + '<a href="/gallery/ideas/' + p.data.sid + '/" target="_blank">' + (p.data.name || 'Render') + '</a>';
+			break;
+		case 'photosRate':
+			p['icon'] = 'heart';
+			p['html'] = (p.data.userId ? '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: ' : '') + '<a href="/photos/' + p.data.sid + '/" target="_blank">' + p.data.name + '</a>';
+			break;
+		case 'renderFinished':
+		case 'renderError':
+			p['html'] = (p.data.name != undefined ? '<b>' + p.data.name + '</b>: ' : '') + '<a href="/gallery/ideas/' + p.data.sid + '/" target="_blank">' + p.data.status + '</a>';
+			break;
+		case 'gift':
+			p['icon'] = 'gift';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: ' + p.data.product + ' (' + p.data.amount + ')';
+			break;
+		case 'buy':
+			p['icon'] = 'shopping-cart';
+			p['html'] = p.data.productName;
+			break;
+		case 'academy_user':
+		case 'academy_teacher':
+			p['icon'] = 'university';
+			p['html'] = '<div><div><b>' + p.data.name + '</b></div><div><em>' + p.data.description + '</em></div><div><a href="' + p.data.link + '" target="_blank">open</a></div></div>';
+			break;
+		case 'contestsComment':
+			p['icon'] = 'medal';
+			p['html'] = '<b><a href="/user/id' + p.data.userId + '" target="_blank">' + p.data.userName + '</a></b>: <a href="/contests/detail/' + p.data.sid + '/#comment_' + p.data.cid + '" target="_blank">New comment</a>';
+			break;
+		case 'contestsComplaint':
+			var $langElement = $('#' + p.data.lang_key);
+			var textNot = '(notification text not found)';
+			
+			p['icon'] = 'minus-circle';
+			
+			if ($langElement.length) {
+				textNot = ($langElement.html()).replace('{urlRules}', p.data.url_rules).replace('{urlWork}', p.data.url_work);
+			}
+			
+			p['html'] = textNot;
+			break;
+		case 'stopList':
+			var $langElement = $('#' + p.data.lang_key);
+			var textNot = '(notification text not found)';
+			
+			p['icon'] = 'minus-circle';
+			
+			if ($langElement.length) {
+				textNot = ($langElement.html()).replace('{urlRules}', p.data.url_rules).replace('{date}', p.data.date);
+			}
+			
+			p['html'] = textNot;
+			break;
+		case 'user_message':
+			p['icon'] = 'envelope"';
+			p['html'] = p.data.message;
+			break;
+		default:
+			break;
+	}
+	
+	for (var s in p.data) {
+		p[s] = p.data[s];
+	}
+	
+	return P5D.Tools.tmpl('notice', p);
+};

@@ -1,0 +1,513 @@
+P5D.Dialogs.alert = function (text, title, onOK, large, html) {
+	if (typeof text !== 'string') {
+		return false;
+	}
+	var $modal = $('#modal-alert');
+	$modal.find('.modal-card-title').html(title || P5D.Lang.message || 'Message');
+	const body = $modal.find('.modal-card-body')
+	const content = text || 'Unknown error'
+	if (html) {
+		body.html(content);
+	} else {
+		body.text(content)
+	}
+	$modal.addClass('is-active');
+	if (large) {
+		$modal.removeClass('is-small');
+	}
+	$modal.find('.modal-card-foot .js-modal-ok').focus();
+	$modal.find('.js-modal-ok').unbind('click').bind('click', function (e) {
+		e.preventDefault();
+		setTimeout(function () {
+			onOK && onOK();
+		}, 500);
+		$modal.removeClass('is-active').removeClass('is-disabled');
+		$modal.addClass('is-small');
+		$modal = '';
+		return false;
+	}).focus();
+};
+
+P5D.Dialogs.confirm = function (text, title, onYes, onNo, large) {
+	var $modal = $('#modal-confirm');
+	$modal.find('.modal-card-title').html(title || P5D.Lang.confirm);
+	$modal.find('.modal-card-body').html(text || '');
+	$modal.addClass('is-active');
+	if (large) {
+		$modal.removeClass('is-small');
+	}
+	$modal.find('.js-modal-yes').unbind('click').bind('click', function (e) {
+		setTimeout(function () {
+			onYes && onYes();
+		}, 200);
+		P5D.Actions.hideDialog('confirm');
+		$modal.addClass('is-small');
+	}).focus();
+	$modal.find('.js-modal-no').unbind('click').bind('click', function (e) {
+		if (onNo) {
+			onNo();
+		} else {
+			$modal.removeClass('is-active');
+		}
+		P5D.Actions.hideDialog('confirm');
+		$modal.addClass('is-small');
+	});
+};
+
+P5D.Dialogs.confirm2 = function (text, title, onYes, onNo, large, params) {
+	var $modal = $('#modal-confirm');
+	var $btnY = $modal.find('.js-modal-yes');
+	var $btnN = $modal.find('.js-modal-no');
+	
+	$modal.find('.modal-card-title').html(title || P5D.Lang.confirm);
+	$modal.find('.modal-card-body').html(text || '');
+	$modal.addClass('is-active ' + (params.class || ''));
+	
+	if (large) {
+		$modal.removeClass('is-small');
+	}
+	
+	$btnY.unbind('click').bind('click', function (e) {
+		setTimeout(function () {
+			onYes && onYes();
+		}, 200);
+		
+		P5D.Actions.hideDialog('confirm');
+		
+		$modal.addClass('is-small');
+	}).focus();
+	
+	$btnN.unbind('click').bind('click', function (e) {
+		if (onNo) {
+			onNo();
+		} else {
+			$modal.removeClass('is-active');
+		}
+		
+		P5D.Actions.hideDialog('confirm');
+		
+		$modal.addClass('is-small');
+	});
+	
+	if (typeof params === 'object') {
+		if (typeof params.btnY === 'object') {
+			if (params.btnY.textId && params.btnY.text) {
+				if ($btnY.attr('data-text-id')) {
+					$btnY.attr('data-text-id', params.btnY.textId)
+				}
+				
+				$btnY.text(params.btnY.text)
+			}
+		}
+		
+		if (typeof params.btnN === 'object') {
+			if (params.btnN.textId && params.btnN.text) {
+				if ($btnN.attr('data-text-id')) {
+					$btnN.attr('data-text-id', params.btnN.textId)
+				}
+				
+				$btnN.text(params.btnN.text)
+			}
+		}
+	}
+};
+
+P5D.Dialogs.success = function (text, title, onOk, isExclusive) {
+	var $modal = $('#modal-success');
+	$modal[isExclusive ? 'addClass' : 'removeClass']('noClose');
+	$modal.find('.modal-card-title').html(title || P5D.Lang.success);
+	$modal.find('.modal-card-body').html(text || '');
+	P5D.Actions.showDialog('success');
+	$modal.find('.js-modal-yes').unbind('click').bind('click', function (e) {
+		if (typeof onOk === 'function') {
+			setTimeout(function () {
+				onOk();
+			}, 500);
+		}
+		P5D.Actions.hideDialog('success');
+	}).focus();
+	return $modal;
+};
+
+P5D.Dialogs.error = function (text, title, onOk, isExclusive) {
+	var $modal = $('#modal-error');
+	var modalName = 'error';
+	$modal[isExclusive ? 'addClass' : 'removeClass']('noClose');
+	$modal.find('.modal-card-title').html(title || P5D.Lang.error);
+	$modal.find('.modal-card-body').html(text || '');
+	P5D.Actions.showDialog(modalName);
+	$modal.find('.js-modal-yes').unbind('click').bind('click', function (e) {
+		if (typeof onOk === 'function') {
+			setTimeout(function () {
+				onOk();
+			}, 500);
+		}
+		P5D.Actions.hideDialog(modalName);
+	}).focus();
+};
+
+P5D.Dialogs.prompt = function (text, defaultValue, onOK, onNo, content) {
+	var $modal = $('#modal-prompt');
+	$modal.find('.js-modal-title').html(text || '');
+	$modal.find('.js-modal-field').val(defaultValue || '');
+	
+	P5D.Actions.showDialog('prompt');
+	
+	$modal.find('.js-modal-field').focus().val(defaultValue || '').select();
+	
+	$modal.find('.js-modal-yes').unbind('click').bind('click', function (e) {
+		
+		P5D.Actions.disableDialog('prompt');
+		
+		if (onOK && onOK($modal.find('.js-modal-field').val())) {
+			P5D.Actions.enableDialog('prompt');
+		} else {
+			P5D.Actions.hideDialog('prompt');
+		}
+	});
+	
+	$modal.find('.js-modal-no').unbind('click').bind('click', function (e) {
+		onNo && onNo();
+		P5D.Actions.hideDialog('prompt');
+	});
+	
+	if (content) {
+		$modal.find('.content').show();
+		$modal.find('#content').html(content);
+	} else {
+		$modal.find('.content').hide();
+		$modal.find('#content').empty();
+	}
+};
+
+P5D.Dialogs.prompt2 = function (opts) {
+	var title = opts.title || null;
+	var message = opts.message || null;
+	var defaultValue = opts.defaultValue || null;
+	var onCancel = opts.onCancel || undefined;
+	var onConfirm = opts.onConfirm || undefined;
+	
+	var $modal = $('#modal-prompt2');
+	$modal.find('.js-modal-title').html(title || '');
+	$modal.find('.js-modal-message').html(message || '');
+	$modal.find('.js-modal-field').val(defaultValue || '');
+	
+	P5D.Actions.showDialog('prompt2');
+	
+	$modal.find('.js-modal-field').val(defaultValue || '');
+	$modal.find('.js-modal-field').focus().select();
+	
+	$modal.find('.js-modal-yes').unbind('click').bind('click', function (e) {
+		
+		P5D.Actions.disableDialog('prompt2');
+		
+		onConfirm && onConfirm($modal.find('.js-modal-field').val());
+		
+		P5D.Actions.hideDialog('prompt2');
+	});
+	
+	$modal.find('.js-modal-no').unbind('click').bind('click', function (e) {
+		onCancel && onCancel();
+		P5D.Actions.hideDialog('prompt2');
+	});
+};
+
+P5D.Dialogs.subscribeDesignSchool = function() {
+	const modal = $('#banner-testimonial');
+	const emailInput = modal.find("#subscribe-email");
+	const emailError = modal.find("#error-email");
+	modal.addClass('is-active');
+	modal.find('#btn-subscribe').on('click', () => {
+		$.ajax({
+			type: 'POST',
+			url: "/interior-design-subscribe",
+			data: JSON.stringify({email: emailInput.val()}),
+			dataType: "json",
+			contentType: "application/json",
+			headers: {'Accept-Language': P5D.getContext().getLanguage()},
+			error: errResponse => {
+				if (errResponse.status === 400) {
+					emailError.css("color", "red").text(errResponse.responseJSON.errorMessage + '.')
+				}
+			},
+			success: () => {
+				emailInput.val("");
+				emailError.css("color", "green").text("Thank you for subscription!");
+			}
+		});
+	});
+	modal.find('#banner-testimonial-close').unbind('click').bind('click', () => modal.removeClass('is-active'));
+}
+
+P5D.Dialogs.confirmDanger = function (text, title, onYes, onNo) {
+	var $modal = $('#modal-confirm-danger');
+	var modalName = 'confirm-danger';
+	$modal.find('.modal-card-title').html(title || P5D.Lang.confirm);
+	$modal.find('.modal-card-body').html(text || '');
+	$modal.addClass('is-active');
+	$modal.find('.js-modal-yes').unbind('click').bind('click', function (e) {
+		setTimeout(function () {
+			onYes && onYes();
+		}, 500);
+		P5D.Actions.hideDialog(modalName);
+	});
+	$modal.find('.js-modal-no').unbind('click').bind('click', function (e) {
+		if (onNo) {
+			onNo();
+		} else {
+			$modal.removeClass('is-active');
+		}
+		P5D.Actions.hideDialog(modalName);
+	}).focus();
+};
+
+P5D.Dialogs.MessageBar = function (text, button, onClick, buttonUri) {
+	buttonUri = buttonUri || P5D.getContext().uri.editor(true);
+	const $el = $(`
+		<div class="b-page__header-cta">
+				<div class="sticky-cta-editor container">
+						<div class="sticky-cta-editor__text">${text}</div>
+						<a class="sticky-cta-editor__button button is-primary is-inverted" href="${buttonUri}">${button}</a>
+				</div>
+		</div>`);
+	
+	if (typeof onClick === 'function') {
+		$el.find('.sticky-cta-editor__button').on('click', (e) => {
+			e.preventDefault();
+			onClick();
+		});
+	}
+	
+	$(".b-page__header-cta").remove();
+	
+	$('html').addClass('has-header-cta');
+	$el.insertAfter($('.b-page__header')).removeClass('js-hidden').addClass('is-active');
+	
+	if (!P5D.User.isAuthorized()) {
+		$el.find('.sticky-cta-editor__button').on('click', (e) => {
+			if (P5D.getState().signUpAndShowPaymentOnStart) {
+				e.preventDefault();
+				P5D.Actions.showDialog('signup');
+			}
+		});
+	}
+}
+
+P5D.Dialogs.confirmTerms = {
+	prefix: 'ToS',
+	prefixUser: 'user_list',
+	userList: [],
+	userId: 0,
+	isConfirm: false,
+	initialize: function(userId, showOnInit) {
+		this.userId = userId;
+		
+		if (this.userId) {
+			this.initUserList();
+			
+			if (this.getUserIdByUserList(this.userId) === false) {
+				this.check((isConfirm, isAuth) => {
+					if (isConfirm) {
+						this.addUserIdToUserList(this.userId);
+						this.saveUserList();
+					} else if (this.isConfirmed()) {
+						this.confirm(result => {
+							if (result) {
+								this.addUserIdToUserList(this.userId);
+								this.saveUserList();
+							}
+						});
+					} else {
+						this.modalInit(isConfirm, showOnInit);
+					}
+				});
+			}
+		} else if (!this.isConfirmed() && !P5D.LocalStorage.get(this.prefixUser)) {
+			this.modalInit(false, showOnInit);
+		}
+		if (P5D.getContext().state.oldCookieAgreement) {
+			$('#modal-cookies-policy').is(':hidden') && $('#modal-confirmTerms').addClass('is-bottom');
+		}
+	},
+	isConfirmed() {
+		return Number(P5D.LocalStorage.get(this.prefix)) === 2;
+	},
+	initUserList: function () {
+		var _this = this;
+		var userList = P5D.LocalStorage.get(this.prefixUser);
+		
+		if (userList) {
+			try {
+				this.userList = JSON.parse(userList);
+			} catch (e) {
+				this.userList = [];
+			}
+		}
+		
+		return this;
+	},
+	saveUserList: function () {
+		var _this = this;
+		var userList = this.userList;
+		
+		if (Array.isArray(userList)) {
+			P5D.LocalStorage.set(this.prefixUser, JSON.stringify(userList), true);
+		}
+		
+		return this;
+	},
+	addUserIdToUserList: function (userId) {
+		var _this = this;
+		
+		if (userId) {
+			this.userList.push(userId);
+		}
+		
+		return this;
+	},
+	getUserIdByUserList: function (userId) {
+		var _this = this;
+		var index;
+		var result = false;
+		
+		if (userId) {
+			index = this.userList.indexOf(userId);
+			if (index !== -1) {
+				result = index;
+			}
+		}
+		
+		return result;
+	},
+	check: function (callback) {
+		var _this = this;
+		
+		if (this.userId) {
+			P5D.App.send('tos?action=checkout', 'get', {}, function (d) {
+				if (typeof d === 'object' && d.confirmed === true) {
+					_this.isConfirm = true;
+				}
+				
+				typeof callback === 'function' && callback(_this.isConfirm, 1);
+			}, function (d) {
+				console.info(new Error(d.error + ' ' + d.errorMessage));
+				
+				typeof callback === 'function' && callback(_this.isConfirm, 1);
+			});
+		} else {
+			if (this.isConfirmed()) {
+				this.isConfirm = true;
+			}
+			
+			typeof callback === 'function' && callback(this.isConfirm, 0);
+		}
+	},
+	confirm: function (callback) {
+		var _this = this;
+		
+		if (this.userId) {
+			P5D.App.send('tos', 'post', {
+				action: 'checkout'
+			}, function (d) {
+				if (typeof d === 'object') {
+					if (d.confirmed === true) {
+						typeof callback === 'function' && callback(true);
+					}
+				}
+			}, function (d) {
+				console.info(new Error(d.error + ' ' + d.errorMessage));
+				typeof callback === 'function' && callback(false);
+			});
+		} else {
+			P5D.LocalStorage.set(this.prefix, '2');
+			if (this.isConfirmed()) {
+				typeof callback === 'function' && callback(true);
+			}
+		}
+	},
+	Init: function () {
+		var _this = this;
+		this.$modal = $('#modal-confirmTerms');
+		this.$termsAgreeBtn = this.$modal.find('#termsAgreeBtn');
+		
+		var $modal = this.$modal;
+		var $termsAgreeBtn = this.$termsAgreeBtn;
+		
+		$termsAgreeBtn.bind('click', function () {
+			_this.check(function (isConfirm, isAuth) {
+				if (isAuth) {
+					if (isConfirm) {
+						_this.initUserList();
+						_this.addUserIdToUserList(_this.userId);
+						_this.saveUserList();
+					} else {
+						_this.confirm(function (result) {
+							if (result) {
+								_this.initUserList();
+								_this.addUserIdToUserList(_this.userId);
+								_this.saveUserList();
+							}
+						});
+					}
+				} else {
+					if (!isConfirm) {
+						_this.confirm(function (result) {
+							if (result) {
+							}
+						});
+					}
+				}
+			});
+			
+			$modal.removeClass('is-active');
+		});
+		
+		$modal.find('[data-text-blocked="true"]').attr('data-text-blocked', false);
+		
+		return this;
+	},
+	show: function () {
+		
+		var $modal = this.$modal;
+		
+		if (!$modal) return this;
+		
+		$modal.addClass('is-active');
+		
+		return this;
+	},
+	hide: function () {
+		var $modal = this.$modal;
+		
+		if (!$modal) return this;
+		
+		$modal.removeClass('is-active');
+		
+		return this;
+	},
+	modalInit: function (isCheck, showOnInit) {
+		var _this = this;
+		
+		if (showOnInit) {
+			if (!isCheck) {
+				this.Init();
+				this.show();
+			}
+		} else {
+			if (!isCheck) {
+				this.Init();
+				this.$modal && this.$modal.css({'z-index': 999});
+				
+				$('[data-modal="#modal-signin"]').click(function () {
+					if (!_this.isConfirmed()) {
+						_this.show();
+					}
+				});
+				
+				if (_this.userId) {
+					_this.show();
+				}
+			}
+		}
+	}
+};

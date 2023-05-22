@@ -1,0 +1,47 @@
+ Future<String> InsertOwnerSubmitProposals(String email,String to,String projectTitle,String projectType,String workMonths,String projectBudget,String plotFrontSideWidth,String plotBackSideWidth,String plotLeftSideLength,String plotRightSideLength,
+       String actualPlotSize,String floors,String city,String plotLocation,String describeYourProject,PlatformFile projectFile,String proposalsCreatedTime,String proposalsSavedDate) async {
+
+     final request = http.MultipartRequest(
+       'POST',
+       Uri.parse("http://localhost:3000/smart-builders/OwnerSubmitProposals"),
+     );
+     print("Api cover cnic name : "+projectFile.name);
+     var coverImageFileName=projectFile!.name;
+     var coverImageBytes = projectFile!.bytes;
+     var coverImage = http.MultipartFile.fromBytes(
+       'projectFile',
+       coverImageBytes!,
+       filename: coverImageFileName,
+     );
+     request.files.add(coverImage);
+
+         request.fields['email']= email.toString();
+         request.fields['to']=to.toString();
+         request.fields['projectTitle']=projectTitle.toString();
+         request.fields['projectType']=projectType.toString();
+         request.fields['projectBudget']=projectBudget.toString();
+         request.fields['workMonths']=workMonths.toString();
+         request.fields["plotWidthA"]=plotFrontSideWidth.toString();
+         request.fields["plotWidthB"]=plotBackSideWidth.toString();
+         request.fields["plotLengthA"]=plotLeftSideLength.toString();
+         request.fields["plotLengthB"]=plotRightSideLength.toString();
+      // a left side b right side
+         request.fields["actualPlotSize"]=actualPlotSize.toString();
+         request.fields["floors"]=floors.toString();
+
+         request.fields["city"]=city.toString();
+         request.fields["plotLocation"]=plotLocation.toString();
+         request.fields["proposalCreatedTime"]=proposalsCreatedTime.toString();
+         request.fields["proposalSavedDate"]=proposalsSavedDate.toString();
+         var response = await request.send();
+
+
+     if (response.statusCode ==200) {
+       debugPrint("APi is Working");
+       return '200';
+     } else {
+       // If the server did not return a 201 CREATED response,
+       // then throw an exception.
+       throw Exception("Api is Failed");
+     }
+   }

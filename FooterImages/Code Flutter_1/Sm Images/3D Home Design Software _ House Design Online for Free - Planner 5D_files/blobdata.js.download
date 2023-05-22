@@ -1,0 +1,32 @@
+/* P5D.BlobData */
+
+P5D.BlobData.convertBase64 = function (data, mimeType) {
+	var byteString = atob(data);
+	var byteStringLen = byteString.length;
+	var arrayBuffer = new ArrayBuffer(byteStringLen);
+	var uint8Array = new Uint8Array(arrayBuffer);
+	
+	for (var i = 0; i < byteStringLen; i++) {
+		uint8Array[i] = byteString.charCodeAt(i);
+	}
+	
+	return new Blob([uint8Array], {type: mimeType});
+};
+
+P5D.BlobData.createUrl = function (blobObject) {
+	if (blobObject instanceof Blob) {
+		return URL.createObjectURL(blobObject);
+	}
+	
+	return null;
+};
+
+P5D.BlobData.download = function (url, fileName) {
+	var link = document.createElement('a');
+	var event = document.createEvent('MouseEvents');
+	
+	link.setAttribute('href', url);
+	link.setAttribute('download', fileName);
+	event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+	link.dispatchEvent(event);
+};

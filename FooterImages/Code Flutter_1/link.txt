@@ -1,0 +1,3 @@
+https://sweetcode.io/maintaining-legacy-code-sweetcode/
+https://community.blynk.cc/t/c-blynk-legacy-code-examples-for-basic-tasks/22596
+https://blog.ndepend.com/code-smell-primitive-obsession-and-refactoring-recipes/

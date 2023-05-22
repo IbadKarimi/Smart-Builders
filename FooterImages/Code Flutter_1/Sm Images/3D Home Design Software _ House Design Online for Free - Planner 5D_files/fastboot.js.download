@@ -1,0 +1,35 @@
+const data = window.P5DData;
+window.P5DData = null;
+window.P5D = {
+	agreement: {},
+	setAgreement: (type, agreement, changed) => window.P5D.agreement[type] = [agreement, changed],
+	getContext: () => {
+		return {
+			getUser: () => {
+				return {id: data[0], country: data[1], paidInteriorDesign: data[2], paidHomePlans: data[3], isAuthorized: () => data[4], isPaid: () => data[5]}
+			}
+		}
+	},
+	isInIframe: () => {
+		try {
+			return window.self !== window.top;
+		} catch (error) {
+			return true
+		}
+	}
+};
+
+if (data[6]) {
+	document.writeln('<style>.optimize-hidden {opacity: 0 !important}</style>');
+}
+
+if (data[7] && !P5D.isInIframe()) {
+	window.OptanonWrapper = () => {
+		P5D.setAgreement("cookies", "OptanonConsent", false);
+		OneTrust.OnConsentChanged(() => P5D.setAgreement("cookies", "OptanonConsent", true));
+	}
+	document.write(
+		`<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" type="text/javascript" charSet="UTF-8"
+		data-domain-script="${data[7]}"></script>`
+	);
+}

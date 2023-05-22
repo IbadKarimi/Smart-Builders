@@ -1,0 +1,100 @@
+/* P5D.Texts */
+
+P5D.Texts.init = function () {
+	var keys = [];
+	var params;
+	
+	$('[data-text-key]:not([data-text-blocked="true"])').each(function (index, element) {
+		var keyValue = $(element).data('text-key');
+		
+		if (keyValue) {
+			keys.push(keyValue);
+		}
+	});
+	
+	params = P5D.Texts.prepareData(keys);
+	
+	P5D.Texts.getData(params, keys, function (result) {
+		for (var key in result) {
+			if (result.hasOwnProperty(key)) {
+				$('[data-text-key="' + key + '"]').html(result[key]);
+			}
+		}
+	});
+};
+
+P5D.Texts.prepareData = function (keys) {
+	var requestData;
+	var method;
+	var queryString = '';
+	
+	if (Array.isArray(keys) && keys.length) {
+		if (keys.length > 1) {
+			requestData = {'keys': keys};
+			method = 'post';
+		} else if (keys.length === 1) {
+			requestData = {'key': keys[0]};
+			method = 'get';
+		}
+	} else if (typeof keys === 'string' && keys) {
+		requestData = {'key': keys};
+		method = 'get';
+	}
+	
+	if (requestData) {
+		if (method === 'get') {
+			queryString = '?key=' + requestData['key'];
+		}
+	}
+	
+	return {
+		requestData: requestData,
+		method: method,
+		queryString: queryString
+	}
+};
+
+P5D.Texts.getData = function (params, keys, callback) {
+	if (params.requestData) {
+		P5D.App.send('texts/' + params.queryString, params.method, params.requestData, function (d) {
+			var result = {};
+			var key;
+			var keys;
+			
+			if (typeof d === 'object') {
+				if (typeof d.items === 'object') {
+					for (key in d.items) {
+						if (d.items.hasOwnProperty(key)) {
+							if (d.items[key].errorMessage) {
+								result[key] = d.items[key].errorMessage;
+							} else {
+								result[key] = d.items[key];
+							}
+						}
+					}
+				} else if (typeof d.item === 'object') {
+					keys = Object.keys(d.item);
+					key = keys.length ? keys[0] : null;
+					
+					if (d.item[key]) {
+						result[key] = d.item[key];
+					}
+				}
+				
+				if (typeof callback === 'function') {
+					callback(result);
+				}
+			}
+		}, function (d) {
+			var result = {};
+			
+			if (d.errorMessage) {
+				result[params.requestData['key']] = d.errorMessage;
+				
+				if (typeof callback === 'function') {
+					callback(result);
+				}
+			}
+		});
+	}
+};

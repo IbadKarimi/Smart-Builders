@@ -1,0 +1,26 @@
+Row(
+                          children: const [
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    top: 0, left: 65, bottom: 0),
+                                child: Text(
+                                  "connect everyone and everything on",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                )),
+                            Padding(
+                                padding:
+                                    EdgeInsets.only(top: 0, left: 5, bottom: 0),
+                                child: Text(
+                                  "Smart",
+                                  style: TextStyle(
+                                    color: Color(0xFFFFA62B),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                )),
+                          ],
+                        ),

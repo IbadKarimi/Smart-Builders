@@ -1,0 +1,43 @@
+FormField(
+                    builder: (FormFieldState<bool> state) {
+                      return Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                        state.hasError
+                            ? Padding(
+                              padding: const EdgeInsets.only(left:60,top:4),
+                              child: Text(
+                          state.errorText.toString(),
+                          style: TextStyle(color: Colors.red,fontSize: 12),
+                        ),
+                            )
+                            : Container(),
+                              Padding(
+                                padding: const EdgeInsets.only(left:30),
+                                child: RadioListTile(
+                                  title: Text("Residential"),
+                                  value: "Residential",
+                                  groupValue: _projectType,
+                                  onChanged: (value) {
+                                    state.setValue(true);
+                                    setState(() {
+                                      _projectType = value.toString();
+
+                                    });
+                                  },
+                                ),
+                              ),
+
+                      ],
+                      ));
+                    },
+                    validator: (value) {
+                      if (value != true) {
+                        return 'Project type is required';
+                      }
+                      return null;
+                    },
+                  ),

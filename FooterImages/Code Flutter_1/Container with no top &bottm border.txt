@@ -1,0 +1,7 @@
+Container(
+            height: 150,
+            decoration:const  BoxDecoration(
+                border: Border(
+                    top: BorderSide(color: strokeColor),
+                    bottom:  BorderSide(color: strokeColor))),
+          )

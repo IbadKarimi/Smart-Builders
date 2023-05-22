@@ -1,0 +1,123 @@
+ bool isOpen = false;
+  String selectedOption = "Select Option";
+  List<String> options = [
+    "All activity",
+    'Important activity',
+    'Nothing',
+  ];
+------------------------------------------------------
+
+
+
+Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      GestureDetector(
+                                          onTap: () {
+                                            isOpen = !isOpen;
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            width: 300,
+                                            height: 35,
+                                            margin: const EdgeInsets.only(
+                                                left: 30, top: 0),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black38,
+                                                    width: 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(selectedOption),
+                                                  Icon(
+                                                      isOpen
+                                                          ? Icons.arrow_drop_up
+                                                          : Icons
+                                                              .arrow_drop_down,
+                                                      color: Colors.black),
+                                                ],
+                                              ),
+                                            ),
+                                          )),
+                                      if (isOpen)
+                                        Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black38,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          margin:
+                                              const EdgeInsets.only(left: 30),
+                                          child: ListView(
+                                              primary: true,
+                                              shrinkWrap: true,
+                                              children: options
+                                                  .map((e) => Container(
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              isOpen = false;
+                                                              selectedOption =
+                                                                  e;
+                                                              setState(() {});
+                                                            },
+                                                            child:
+                                                                HoverContainer(
+                                                                    height: 35,
+                                                                    hoverDecoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                      border: Border.all(
+                                                                          color: const Color(
+                                                                              0xFFFFA62B),
+                                                                          width:
+                                                                              1),
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding:
+                                                                          const EdgeInsets.all(
+                                                                              8.0),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Text(
+                                                                              e),
+                                                                        ],
+                                                                      ),
+                                                                    )),
+                                                          ),
+                                                        ),
+                                                      ))
+                                                  .toList()),
+                                        ),
+                                    ],
+                                  ),
+                                ),

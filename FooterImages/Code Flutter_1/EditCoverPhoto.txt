@@ -1,0 +1,239 @@
+class ShowDialog extends StatefulWidget {
+  const ShowDialog({super.key});
+
+  @override
+  State<ShowDialog> createState() => _ShowDialogState();
+}
+
+class _ShowDialogState extends State<ShowDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        content: Container(
+            width: 650,
+            height: 800,
+            child: Column(children: <Widget>[
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, right: 440, bottom: 0),
+                  child: Text(
+                    "Edit Photo Cover",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+              //place image edit
+              Container(
+                  width: 500,
+                  height: 250,
+                  margin: const EdgeInsets.only(top: 60, left: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: strokeColor,
+                      width: 1,
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: Colors.black12.withOpacity(0.1),
+                        offset: Offset(2.0, 4.0),
+                        blurRadius: 6.0,
+                        //blurStyle: BlurStyle.outer
+                      ),
+                    ],
+                  )),
+              //column
+              Padding(
+                  padding: const EdgeInsets.only(top: 20, right: 460),
+                  child: Container(
+                      width: 140,
+                      height: 38,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const DesireBuilding()));
+                          },
+                          // ignore: sort_child_properties_last
+                          child: Row(children: const <Widget>[
+                            Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Center(
+                                    child: Text(
+                                  "Select Image",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 12),
+                                ))),
+                          ]),
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              backgroundColor: Color(0xFFFFA62B))))),
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, right: 460, bottom: 0),
+                  child: Text(
+                    "Your Photo Should",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+              Container(
+                  margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
+                  child: Column(children: [
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(100)),
+                        ),
+                        const Padding(
+                            padding:
+                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            child: Text(
+                              "Be a close-up of your face",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(100)),
+                        ),
+                        const Padding(
+                            padding:
+                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            child: Text(
+                              "Show your face clearly-no sunglasses!",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(100)),
+                        ),
+                        const Padding(
+                            padding:
+                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            child: Text(
+                              "Be clear and crisp",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(100)),
+                        ),
+                        const Padding(
+                            padding:
+                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            child: Text(
+                              "Have a neutral background",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
+                  ])),
+              Padding(
+                  padding: const EdgeInsets.only(top: 60, left: 10),
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 320),
+                          child: SizedBox(
+                              width: 140,
+                              height: 35,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  // ignore: sort_child_properties_last
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFD9D9D9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                  )))),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 0),
+                          child: Container(
+                              width: 140,
+                              height: 40,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const DesireBuilding()));
+                                  },
+                                  // ignore: sort_child_properties_last
+                                  child: Row(children: const <Widget>[
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 40),
+                                        child: Center(
+                                            child: Text(
+                                          "Save",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                        ))),
+                                  ]),
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      backgroundColor:
+                                          const Color(0xFF363B42))))),
+                    ],
+                  )),
+            ])));
+  }
+}

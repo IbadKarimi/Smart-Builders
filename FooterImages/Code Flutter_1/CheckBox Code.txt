@@ -1,0 +1,19 @@
+ bool _checkbox=true;
+Padding(
+            padding: const EdgeInsets.only(top: 40, left: 60),
+            child: Row(
+              children: <Widget>[
+                Checkbox(
+                  value: checkbox,
+                  onChanged: (value) {
+                    setState(() {
+                      // _checkbox = false;
+                    });
+                  },
+                ),
+                const Text(
+                  'If plan is created then click the checkbox and proceed to continue',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ],
+            )),

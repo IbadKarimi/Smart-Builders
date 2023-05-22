@@ -1,0 +1,13 @@
+var P5D = P5D || {};
+P5D.App = P5D.App || {};
+P5D.Lang = P5D.Lang || {};
+P5D.Tools = P5D.Tools || {};
+P5D.Dialogs = P5D.Dialogs || {};
+P5D.Actions = P5D.Actions || {};
+P5D.Texts = P5D.Texts || {};
+P5D.BlobData = P5D.BlobData || {};
+P5D.LocalStorage = P5D.LocalStorage || {};
+P5D.Handlers = P5D.Handlers || {};
+P5D.Export = P5D.Export || {};
+
+$(() => P5D.boostrap());
