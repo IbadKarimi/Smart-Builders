@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:html';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/HiringProfessionals/Contractors.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/JoinOwnerPro.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/MaterialStores.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Proposals_Service_Providers.dart';
 import 'dart:html';
 import 'dart:typed_data';
@@ -15,6 +16,8 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/Pro
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
+import 'Presentation Layer/Screens/Admin/AdminProfile.dart';
+import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerCreateProfile.dart';
 import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerViewProfile.dart';
 import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals_List.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
@@ -49,7 +52,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: Scaffold(body:RetailerViewProfile("hamza10@gmail.com")),
+      home: Scaffold(body:AdminViewProfile('ali@gmail.com')),
     );
   }
 }

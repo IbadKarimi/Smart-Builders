@@ -11,6 +11,7 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profi
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_SignUp.dart';
 import 'package:smart_builder_web/models/OwnerSignUpModel.dart';
 import '../../../BuisnessLogic Layer/Api.dart';
+import '../HomePage/MaterialStores/MaterialStoresImages/RetailerViewProfile.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
@@ -296,6 +297,14 @@ class _LoginInterface extends State<LoginInterface> {
                                                         builder: (context) =>
                                                             OwnerViewProfile(
                                                                 email)));
+                                              }
+                                              if(role=="Retailer"){
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            RetailerViewProfile(
+                                                                email)));
+
                                               }
                                               else{
                                                 Navigator.of(context).push(

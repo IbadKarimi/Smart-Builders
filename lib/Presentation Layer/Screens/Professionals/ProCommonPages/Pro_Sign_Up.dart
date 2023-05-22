@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerCreateProfile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_SignUp.dart';
 import '../../../../BuisnessLogic Layer/Api.dart';
 import '../../../../models/OwnerSignUpModel.dart';
@@ -78,7 +79,7 @@ class _SignUpInterface extends State<SignUpInterface> {
   //------------------------------------------------//
   bool isOpenCountry = false;
   String selectedOptionTitle = "Title";
-  List<String> optionsTitle = ["Contractor", 'Subcontractor', 'Architect', 'CivilEngineer'];
+  List<String> optionsTitle = ["Contractor", 'Subcontractor', 'Architect', 'CivilEngineer','Retailer'];
 
   //------------------------------------------------//
 
@@ -428,12 +429,20 @@ the User Agreement and Privacy Policy
 
                                     if(response=="200")
                                     {
-                                      String currentEmail=_emailController.text;
-                                      debugPrint("Email is"+_emailController.text);
-                                      debugPrint(_emailController.toString());
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProfessionalsProfile(currentEmail,selectedOptionTitle.toString())));}
+                                      if(selectedOptionTitle.toString()=="Retailer"){
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                RetailerProfile(_emailController.text)));
+                                      }
+                                      if(selectedOptionTitle.toString()=="Contractor"){
+                                        String currentEmail=_emailController.text;
+                                        debugPrint("Email is"+_emailController.text);
+                                        debugPrint(_emailController.toString());
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProfessionalsProfile(currentEmail,selectedOptionTitle.toString())));
+                                      }
+                                     ;}
                                   }
 
                                   else {

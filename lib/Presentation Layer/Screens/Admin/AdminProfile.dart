@@ -1,150 +1,192 @@
+import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hovering/hovering.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Preview_Profile.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
+import 'package:smart_builder_web/models/DataModels.dart';
 
+import '../../../../../BuisnessLogic Layer/Api.dart';
+
+import '../../../../../models/MaterialStoresModel.dart';
+import '../../../../../models/RetailerProfileModel.dart';
+
+import 'package:intl/intl.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:geocoding/geocoding.dart';
+import 'dart:typed_data';
+import 'dart:html';
+import 'dart:typed_data';
+
+import '../../../models/AdminModel.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Owner/Owner_Desire_Building.dart';
-import '../Professionals/ProCommonPages/Pro_Accepted_Offers.dart';
-import '../Professionals/ProCommonPages/Pro_Accepted_Proposals.dart';
-import '../Professionals/ProCommonPages/Pro_My_Offers.dart';
-import '../Professionals/ProCommonPages/Pro_Profile_Ready.dart';
-import '../Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart';
+
+
 
 const lightGrey = Color(0xFFEDEDED);
 const strokeColor = Color(0xFF888787);
 const TextlightGrey = Color(0xFF888787);
-Widget EditButton() {
-  return GestureDetector(
-      onTap: () {},
-      child: Container(
-          width: 50,
-          height: 50,
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("PreviewProfilePic/edit.png")))));
-}
+String? id;
 
-class AdminProfile extends StatefulWidget {
-  const AdminProfile({super.key});
+String? firstName;
+String? lastName;
+String? city;
+String? email;
+String? phoneNo;
+
+String? country;
+String? profilePhoto;
+String? coverPhoto;
+String? shopName;
+String ?currentUserEmail;
+String ?response;
+
+String? RatesId;
+String? latitude;
+String? longitude;
+
+bool isEditMode=false;
+bool _autoValidate=false;
+
+
+PlatformFile? coverPhotoObject;
+
+PlatformFile? editProfilePhotoObject;
+PlatformFile?editCoverPhotoObject;
+
+double _zoom=13.0;
+double ?minZoom=0;
+
+class AdminViewProfile extends StatefulWidget {
+  String currentUserEmail;
+  AdminViewProfile(this.currentUserEmail);
+
 
   @override
-  State<AdminProfile> createState() => _AdminProfile();
+  State<AdminViewProfile> createState() => _AdminViewProfile();
 }
 
-class _AdminProfile extends State<AdminProfile> {
+class _AdminViewProfile extends State<AdminViewProfile> {
+  ApiService apiService = new ApiService();
+  //CurrentUser currentUserEmailObject=CurrentUser();
+  List<AdminProfileModel> _getAdminProfileData=[];
+
+
+
+
+
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+    apiService.getAdminProfile().then((value){
+      setState(() {
+        _getAdminProfileData.addAll(value);
+        for(int index=0;index<_getAdminProfileData.length;index++) {
+          if (_getAdminProfileData[index].email.toString()==currentUserEmail) {
+
+            id=_getAdminProfileData[index].sId.toString();
+
+            firstName=_getAdminProfileData[index].firstName.toString();
+            lastName=_getAdminProfileData[index].lastName.toString();
+            city=_getAdminProfileData[index].city.toString();
+            email=_getAdminProfileData[index].email.toString();
+            phoneNo=_getAdminProfileData[index].phoneNo.toString();
+            shopName=_getAdminProfileData[index].shopName.toString();
+            country=_getAdminProfileData[index].country.toString();
+            profilePhoto=_getAdminProfileData[index].profilePhoto.toString();
+            coverPhoto=_getAdminProfileData[index].coverPhoto.toString();
+
+
+          }
+        }//set data we get
+        //set data we get
+      });
+    });
+
+
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    currentUserEmail=widget.currentUserEmail;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: SingleChildScrollView(
+        body:id!=null? SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
                 color: Colors.white,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
+                  children:  <Widget>[
                     Boxes(),
-                    CoverProfile(),
-                    AddProposal(),
+                    AdminCoverProfile(),
+
+
+
                     Footer()
                   ],
-                ))));
+                ))):Center(child: Padding(
+          padding: const EdgeInsets.only(top:50),
+          child: CircularProgressIndicator(),
+        )));
   }
 }
 
-class ViewProfileInterface extends StatefulWidget {
-  const ViewProfileInterface({super.key});
 
+
+
+class  AdminCoverProfile extends StatefulWidget {
+  AdminCoverProfile({super.key});
   @override
-  State<ViewProfileInterface> createState() => _ViewProfileInterface();
+  State< AdminCoverProfile> createState() => _AdminCoverProfile();
 }
 
-class _ViewProfileInterface extends State<ViewProfileInterface> {
-  @override
-  Widget build(BuildContext context) {
-    //final screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-        width: 900,
-        height: 1550,
-        margin: const EdgeInsets.only(top: 80, bottom: 80),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-                color: strokeColor)), // all the boxes are here like skill
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                  padding: const EdgeInsets.only(top: 60, left: 600),
-                  child: Container(
-                      width: 130,
-                      height: 40,
-                      child: ElevatedButton(
-                          onPressed: () {
-                           /* Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const NiceWork()));*/
-                          },
-                          // ignore: sort_child_properties_last
-                          child: Row(children: const <Widget>[
-                            Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  "Submit",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "Profile",
-                                  style: TextStyle(
-                                      color: Color(0xFFFF9900), fontSize: 12),
-                                )),
-                          ]),
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              backgroundColor: const Color(0xFF363B42))))),
-            ]));
+class  _AdminCoverProfile extends State< AdminCoverProfile> {
+
+  void dispose() {
+    response='0';
+    super.dispose();
   }
-}
-
-class CoverProfile extends StatefulWidget {
-  const CoverProfile({super.key});
-
-  @override
-  State<CoverProfile> createState() => _CoverProfile();
-}
-
-class _CoverProfile extends State<CoverProfile> {
   @override
   Widget build(BuildContext context) {
     return Container(
         width: 900,
-        height: 450,
-        margin: const EdgeInsets.only(top: 50, bottom: 0),
+
+        margin: const EdgeInsets.only(top: 50, bottom: 10),
         decoration: BoxDecoration(
+
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
                 color: strokeColor)), // all the boxes are here like skill
         child: Stack(children: <Widget>[
-          Container(
-              width: 900,
-              height: 200,
-              margin: const EdgeInsets.only(top: 0, left: 0),
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      topLeft: Radius.circular(10)),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage("HomeImages/ConstructionHouse.jpg")))),
+
+          ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child:coverPhoto!=""? Image.network(
+                coverPhoto.toString(),
+                height: 300.0,
+                width: 900.0,
+                scale: 2,
+                fit: BoxFit.cover,
+              ):Container(width:900,height: 300,decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular((10),)),)
+          ),
           GestureDetector(
               onTap: () {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return const ShowDialog();
+                      return const uploadCoverPhotoAlertDialog();
                     });
               },
               child: Container(
@@ -162,28 +204,33 @@ class _CoverProfile extends State<CoverProfile> {
                         width: 15,
                         height: 15,
                       )))),
-          Container(
-              width: 100,
-              height: 100,
-              margin: const EdgeInsets.only(top: 140, left: 50),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  image: const DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                          "TestomonialClientsImages/T-Clients.jpg")))),
+          Padding(
+            padding:  EdgeInsets.only(left:50,top:220),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child:profilePhoto!=""? Image.network(
+                  profilePhoto.toString(),
+                  height: 140.0,
+                  width: 140.0,
+                  scale: 2,
+                  fit: BoxFit.cover,
+                ):Container(width:140,height: 140,decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular((10),)),)
+            ),
+          ),
           GestureDetector(
               onTap: () {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return const ShowProfileDialog();
+                      return const uploadProfilePhotoAlertDialog();
                     });
               },
               child: Container(
-                  width: 15,
-                  height: 15,
-                  margin: const EdgeInsets.only(top: 200, left: 140),
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.only(top: 310, left: 173),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(100),
@@ -195,676 +242,50 @@ class _CoverProfile extends State<CoverProfile> {
                           fit: BoxFit.cover,
                           image: AssetImage("Logo/plus.png"))))),
           Container(
-              height: 200,
-              width: 350,
-              margin: EdgeInsets.only(left: 0, top: 230, right: 0),
+
+
+              margin: EdgeInsets.only(left: 0, top: 340, right: 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Padding(
-                      padding: EdgeInsets.only(left: 50, top: 20, right: 80),
-                      child: Text("Muhammad Abdullah Gul",
+                  Padding(
+                      padding: EdgeInsets.only(left: 50, top: 50, right: 80),
+                      child: Text(firstName.toString()+" "+lastName.toString(),
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w700))),
                   const Padding(
-                      padding: EdgeInsets.only(left: 50),
-                      child: Text("Contractor",
+                      padding: EdgeInsets.only(left: 50,top:5),
+                      child: Text("Admin",
                           style: TextStyle(
                               color: TextlightGrey,
                               fontSize: 14,
                               fontWeight: FontWeight.w400))),
-                  const Padding(
-                      padding: EdgeInsets.only(
-                        left: 50,
-                        top: 10,
-                      ),
-                      child: Text("Smart Builders PVT LTD",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400))),
-                  const Padding(
-                      padding: EdgeInsets.only(top: 0, left: 50),
-                      child: Text("Lahore ,Punjab ,Pakistan",
+
+                  Padding(
+                      padding: EdgeInsets.only(top: 5, left: 50,bottom: 10),
+                      child: Text(city.toString()+" , "+"Punjab"+" , "+"Pakistan",
                           style: TextStyle(
                               color: TextlightGrey,
                               fontSize: 14,
                               fontWeight: FontWeight.w400))),
-                  Row(children: <Widget>[
-                    const Padding(
-                        padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
-                        child: Text(
-                          "About",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )),
-                    GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const OverViewDialog();
-                              });
-                        },
-                        child: Container(
-                            margin: const EdgeInsets.only(top: 20, left: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(color: strokeColor, width: 1),
-                            ),
-                            child: Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: Image.asset(
-                                  "PreviewProfilePic/edit.png",
-                                  width: 10,
-                                  height: 10,
-                                )))),
-                  ])
+
+
+
+
+
+
+
+
                 ],
               )),
-          const Padding(
-              padding: EdgeInsets.only(top: 385, left: 50, bottom: 0),
-              child: Text(
-                "To build something requires vision and the willingness to adapt to what is already there.",
-                style: TextStyle(
-                  color: TextlightGrey,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              )),
+
         ]));
   }
 }
 
-class AddPOrtFolio extends StatefulWidget {
-  const AddPOrtFolio({super.key});
 
-  @override
-  State<AddPOrtFolio> createState() => _AddPOrtFolio();
-}
-
-class _AddPOrtFolio extends State<AddPOrtFolio> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        width: 900,
-        height: 500,
-        margin: const EdgeInsets.only(top: 50, bottom: 0),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: strokeColor)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Row(children: <Widget>[
-            const Padding(
-                padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
-                child: Text(
-                  "Portfolio",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                )),
-            GestureDetector(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const PortFolioDialog();
-                      });
-                },
-                child: Container(
-                    width: 20,
-                    height: 20,
-                    margin: const EdgeInsets.only(top: 20, left: 10),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: strokeColor,
-                          width: 1,
-                        ),
-                        image: const DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage("Logo/plus.png"))))),
-          ]),
-          GestureDetector(
-              onTap: () {},
-              child: Container(
-                  width: 80,
-                  height: 100,
-                  margin: const EdgeInsets.only(top: 120, left: 10),
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage("Logo/portfolio.png"))))),
-          const Padding(
-              padding: EdgeInsets.only(top: 20, left: 50, bottom: 0),
-              child: Text(
-                "Service Provider who add portfolio to their profile are more likely to win work",
-                style: TextStyle(
-                  color: TextlightGrey,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              )),
-          const Padding(
-              padding: EdgeInsets.only(top: 10, left: 20, bottom: 0),
-              child: Text(
-                "Add a Portfolio",
-                style: TextStyle(
-                  color: Color(0xFFFFA62B),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              )),
-          // all the boxes are here like skill
-          // all the boxes are here like skill
-        ]));
-  }
-}
-
-class AddProposal extends StatefulWidget {
-  const AddProposal({super.key});
-
-  @override
-  State<AddProposal> createState() => _AddProposal();
-}
-
-class _AddProposal extends State<AddProposal> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 900,
-      margin: const EdgeInsets.only(top: 50, bottom: 50),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: strokeColor)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-          Widget>[
-        const Padding(
-            padding: EdgeInsets.only(left: 50, top: 20),
-            child: Text(
-              "Admin Option",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700),
-            )),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                   /* Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ViewProposalMain()));*/
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Text(
-                              "Material Rate List",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 40,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AcceptedProposalMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(children: const <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 70),
-                        child: Center(
-                          child: Text(
-                            "Escrow Payment Status",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                        )),
-                  ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyOffersMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          "Notification",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyOffersMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          "Payment Transfer",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyOffersMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          "Complaints",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyOffersMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          "Blogs",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyOffersMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          "Feedback",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(top: 60, bottom: 60),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyOffersMain()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          "Rating",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "",
-                              style: TextStyle(
-                                  color: Color(0xFFFF9900), fontSize: 14),
-                            )),
-                      ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-      ]),
-    );
-  }
-}
-
-class Offers extends StatefulWidget {
-  const Offers({super.key});
-
-  @override
-  State<Offers> createState() => _Offers();
-}
-
-class _Offers extends State<Offers> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 900,
-      height: 400,
-      margin: const EdgeInsets.only(top: 50, bottom: 50),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: strokeColor)),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Padding(
-                padding: EdgeInsets.only(left: 50, top: 20),
-                child: Text(
-                  "My Offers",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700),
-                )),
-            Center(
-              child: Container(
-                  margin: const EdgeInsets.only(
-                    top: 60,
-                  ),
-                  width: 300,
-                  height: 60,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const MyOffersMain()));
-                      },
-                      // ignore: sort_child_properties_last
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const <Widget>[
-                            Text(
-                              "My Offers",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "",
-                                  style: TextStyle(
-                                      color: Color(0xFFFF9900), fontSize: 14),
-                                )),
-                          ]),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF363B42)))),
-            ),
-            Center(
-              child: Container(
-                  margin: const EdgeInsets.only(
-                    top: 40,
-                  ),
-                  width: 300,
-                  height: 60,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const AcceptedOffersMain()));
-                      },
-                      // ignore: sort_child_properties_last
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const <Widget>[
-                            Padding(
-                                padding: EdgeInsets.only(left: 0),
-                                child: Text(
-                                  "Accepter Offers",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 14),
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "(0)",
-                                  style: TextStyle(
-                                      color: Color(0xFFFF9900), fontSize: 14),
-                                )),
-                          ]),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF363B42)))),
-            ),
-          ]),
-    );
-  }
-}
-
-class TrackContract extends StatefulWidget {
-  const TrackContract({super.key});
-
-  @override
-  State<TrackContract> createState() => _TrackContract();
-}
-
-class _TrackContract extends State<TrackContract> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 900,
-      height: 470,
-      margin: const EdgeInsets.only(top: 50, bottom: 50),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: strokeColor)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-          Widget>[
-        const Padding(
-            padding: EdgeInsets.only(left: 50, top: 20),
-            child: Text(
-              "Track Contract",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700),
-            )),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 60,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DesireBuilding()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(children: const <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 50),
-                        child: Text(
-                          "Contract in Progress",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          "(0)",
-                          style:
-                              TextStyle(color: Color(0xFFFF9900), fontSize: 14),
-                        )),
-                  ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 40,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DesireBuilding()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(children: const <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 60),
-                        child: Text(
-                          "Contract Applied",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          "(0)",
-                          style:
-                              TextStyle(color: Color(0xFFFF9900), fontSize: 14),
-                        )),
-                  ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-        Center(
-          child: Container(
-              margin: const EdgeInsets.only(
-                top: 40,
-              ),
-              width: 300,
-              height: 60,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DesireBuilding()));
-                  },
-                  // ignore: sort_child_properties_last
-                  child: Row(children: const <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 50),
-                        child: Text(
-                          "Completed Contract",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          "(0)",
-                          style:
-                              TextStyle(color: Color(0xFFFF9900), fontSize: 14),
-                        )),
-                  ]),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF363B42)))),
-        ),
-      ]),
-    );
-  }
-}
 
 class ShowDialog extends StatefulWidget {
   const ShowDialog({super.key});
@@ -930,10 +351,10 @@ class _ShowDialogState extends State<ShowDialog> {
                                 padding: EdgeInsets.only(left: 20),
                                 child: Center(
                                     child: Text(
-                                  "Select Image",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                ))),
+                                      "Select Image",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ))),
                           ]),
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -964,7 +385,7 @@ class _ShowDialogState extends State<ShowDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
                               "Be a close-up of your face",
                               style: TextStyle(
@@ -986,7 +407,7 @@ class _ShowDialogState extends State<ShowDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
                               "Show your face clearly-no sunglasses!",
                               style: TextStyle(
@@ -1008,7 +429,7 @@ class _ShowDialogState extends State<ShowDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
                               "Be clear and crisp",
                               style: TextStyle(
@@ -1030,7 +451,7 @@ class _ShowDialogState extends State<ShowDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
                               "Have a neutral background",
                               style: TextStyle(
@@ -1079,7 +500,7 @@ class _ShowDialogState extends State<ShowDialog> {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const DesireBuilding()));
+                                            const DesireBuilding()));
                                   },
                                   // ignore: sort_child_properties_last
                                   child: Row(children: const <Widget>[
@@ -1087,34 +508,58 @@ class _ShowDialogState extends State<ShowDialog> {
                                         padding: EdgeInsets.only(left: 40),
                                         child: Center(
                                             child: Text(
-                                          "Save",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ))),
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ))),
                                   ]),
                                   style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(30.0),
+                                        BorderRadius.circular(30.0),
                                       ),
                                       backgroundColor:
-                                          const Color(0xFF363B42))))),
+                                      const Color(0xFF363B42))))),
                     ],
                   )),
             ])));
   }
 }
 
-class ShowProfileDialog extends StatefulWidget {
-  const ShowProfileDialog({super.key});
+
+
+
+
+
+
+
+
+
+class uploadProfilePhotoAlertDialog extends StatefulWidget {
+  const uploadProfilePhotoAlertDialog({super.key});
 
   @override
-  State<ShowProfileDialog> createState() => _ShowProfileDialog();
+  State<uploadProfilePhotoAlertDialog> createState() => _uploadProfilePhotoAlertDialog();
 }
 
-class _ShowProfileDialog extends State<ShowProfileDialog> {
+class _uploadProfilePhotoAlertDialog extends State<uploadProfilePhotoAlertDialog> {
+  //get file and insert in api
+  var pickedProfilePhoto;
   @override
+  Future getProfileImage()async{
+    final _picker = ImagePicker();
+    pickedProfilePhoto = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+
+    if (pickedProfilePhoto != null) {
+      setState(() {
+        editprofilePhotoObject= pickedProfilePhoto.files.first;
+
+      });
+    }}
   Widget build(BuildContext context) {
     return AlertDialog(
         shape: RoundedRectangleBorder(
@@ -1126,34 +571,27 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
               const Padding(
                   padding: EdgeInsets.only(top: 20, right: 440, bottom: 0),
                   child: Text(
-                    "Edit Profile Photo",
+                    "Edit Your Profile Picture",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 22,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   )),
               //place image edit
-              Container(
-                  width: 500,
-                  height: 250,
-                  margin: const EdgeInsets.only(top: 60, left: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: strokeColor,
-                      width: 1,
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.black12.withOpacity(0.1),
-                        offset: Offset(2.0, 4.0),
-                        blurRadius: 6.0,
-                        //blurStyle: BlurStyle.outer
-                      ),
-                    ],
-                  )),
-              //column
+              Padding(
+                padding: const EdgeInsets.only(top:40),
+                child: DottedBorder(
+                  color: Colors.black,
+                  dashPattern: [8, 4],
+                  strokeWidth: 0.5,
+                  child:Container(
+                    width:500,height: 250,
+                    child: pickedProfilePhoto!=null?Image.memory(pickedProfilePhoto.files.first.bytes,width: 500,height: 250,): IconButton(icon:Icon(Icons.add_photo_alternate_outlined,size: 50,),onPressed: () async {getProfileImage();},),),
+
+                ),
+              ),
+
               Padding(
                   padding: const EdgeInsets.only(top: 20, right: 460),
                   child: Container(
@@ -1161,8 +599,7 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                       height: 38,
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const DesireBuilding()));
+                            getProfileImage();
                           },
                           // ignore: sort_child_properties_last
                           child: Row(children: const <Widget>[
@@ -1170,10 +607,10 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                                 padding: EdgeInsets.only(left: 20),
                                 child: Center(
                                     child: Text(
-                                  "Select Image",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                ))),
+                                      "Select Image",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ))),
                           ]),
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -1204,9 +641,9 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
-                              "Be a close-up of your face",
+                              "Be a close-up of your Profile picture",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -1226,29 +663,7 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
-                            child: Text(
-                              "Show your face clearly-no sunglasses!",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(100)),
-                        ),
-                        const Padding(
-                            padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
                               "Be clear and crisp",
                               style: TextStyle(
@@ -1259,6 +674,183 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                             )),
                       ],
                     ),
+                  ])),
+              Padding(
+                  padding: const EdgeInsets.only(top: 60, left: 50),
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 300),
+                          child: SizedBox(
+                              width: 140,
+                              height: 35,
+                              child: ElevatedButton(
+                                  onPressed: () async{
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFD9D9D9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                  )))),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 0),
+                          child: Container(
+                              width: 140,
+                              height: 40,
+                              child: ElevatedButton(
+                                  onPressed: () async{
+
+                                    if(editprofilePhotoObject!=null){
+
+                                      editprofilePhotoObject =  pickedProfilePhoto.files.first;
+                                      String response;
+                                      //   if(isEditMode!=true){
+                                      response=await apiService.UpdateAdminProfilePhoto(id.toString(),editprofilePhotoObject!,);
+                                      if(response=="200"){
+
+                                        // Navigator.of(context).pop();
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => AdminViewProfile(currentUserEmail.toString())));
+
+                                      }
+                                    }
+                                    else{
+                                      print("Image is No Picked");
+                                    }
+                                  },
+                                  // ignore: sort_child_properties_last
+                                  child: Row(children: const <Widget>[
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 40),
+                                        child: Center(
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ))),
+                                  ]),
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(30.0),
+                                      ),
+                                      backgroundColor:
+                                      const Color(0xFF363B42))))),
+                    ],
+                  )),
+            ])));
+  }
+}
+
+
+
+
+class uploadCoverPhotoAlertDialog extends StatefulWidget {
+  const uploadCoverPhotoAlertDialog({super.key});
+
+  @override
+  State<uploadCoverPhotoAlertDialog> createState() => _uploadCoverPhotoAlertDialog();
+}
+
+class _uploadCoverPhotoAlertDialog extends State<uploadCoverPhotoAlertDialog> {
+  //get file and insert in api
+  var pickedCoverPhoto;
+
+
+  @override
+  Future getProfileImage()async{
+    final _picker = ImagePicker();
+    pickedCoverPhoto = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+
+    if (pickedCoverPhoto != null) {
+      setState(() {
+        editCoverPhotoObject= pickedCoverPhoto .files.first;
+
+      });
+    }}
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        content: Container(
+            width: 650,
+            height: 800,
+            child: Column(children: <Widget>[
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, right: 440, bottom: 0),
+                  child: Text(
+                    "Edit Your Cover Picture",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+              //place image edit
+              Padding(
+                padding: const EdgeInsets.only(top:40),
+                child: DottedBorder(
+                  color: Colors.black,
+                  dashPattern: [8, 4],
+                  strokeWidth: 0.5,
+                  child:Container(
+                    width:500,height: 250,
+                    child: pickedCoverPhoto!=null?Image.memory(pickedCoverPhoto.files.first.bytes,width: 500,height: 250,): IconButton(icon:Icon(Icons.add_photo_alternate_outlined,size: 50,),onPressed: () async {getProfileImage();},),),
+
+                ),
+              ),
+
+              Padding(
+                  padding: const EdgeInsets.only(top: 20, right: 460),
+                  child: Container(
+                      width: 140,
+                      height: 38,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            getProfileImage();
+                          },
+                          // ignore: sort_child_properties_last
+                          child: Row(children: const <Widget>[
+                            Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Center(
+                                    child: Text(
+                                      "Select Image",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ))),
+                          ]),
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              backgroundColor: Color(0xFFFFA62B))))),
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, right: 460, bottom: 0),
+                  child: Text(
+                    "Your Photo Should",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+              Container(
+                  margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
+                  child: Column(children: [
+
                     Row(
                       children: <Widget>[
                         Container(
@@ -1270,9 +862,9 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                         ),
                         const Padding(
                             padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                            EdgeInsets.only(left: 5, right: 0, bottom: 0),
                             child: Text(
-                              "Have a neutral background",
+                              "Be clear and crisp",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -1283,19 +875,18 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                     ),
                   ])),
               Padding(
-                  padding: const EdgeInsets.only(top: 60, left: 10),
+                  padding: const EdgeInsets.only(top: 60, left: 50),
                   child: Row(
                     children: <Widget>[
                       Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 320),
+                          padding: const EdgeInsets.only(top: 20, left: 300),
                           child: SizedBox(
                               width: 140,
                               height: 35,
                               child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async{
                                     Navigator.of(context).pop();
                                   },
-                                  // ignore: sort_child_properties_last
                                   child: const Text(
                                     "Cancel",
                                     style: TextStyle(color: Colors.black),
@@ -1315,11 +906,28 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                               width: 140,
                               height: 40,
                               child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesireBuilding()));
+                                  onPressed: () async{
+
+                                    if(editCoverPhotoObject!=null){
+
+                                      editCoverPhotoObject = pickedCoverPhoto.files.first;
+                                      String response;
+
+                                      response=await apiService.UpdateAdminCoverPhoto(id.toString(),editCoverPhotoObject!,);
+                                      if(response=="200"){
+
+                                        // Navigator.of(context).pop();
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => AdminViewProfile(currentUserEmail.toString())));
+
+                                      }
+
+
+
+
+                                    }
+                                    else{
+                                      print("Image is No Picked");
+                                    }
                                   },
                                   // ignore: sort_child_properties_last
                                   child: Row(children: const <Widget>[
@@ -1327,488 +935,34 @@ class _ShowProfileDialog extends State<ShowProfileDialog> {
                                         padding: EdgeInsets.only(left: 40),
                                         child: Center(
                                             child: Text(
-                                          "Save",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ))),
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ))),
                                   ]),
                                   style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(30.0),
+                                        BorderRadius.circular(30.0),
                                       ),
                                       backgroundColor:
-                                          const Color(0xFF363B42))))),
+                                      const Color(0xFF363B42))))),
                     ],
                   )),
             ])));
   }
 }
 
-class OverViewDialog extends StatefulWidget {
-  const OverViewDialog({super.key});
 
-  @override
-  State<OverViewDialog> createState() => _OverViewDialog();
-}
 
-class _OverViewDialog extends State<OverViewDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        content: Container(
-            width: 650,
-            height: 600,
-            child: Column(children: <Widget>[
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, right: 540, bottom: 0),
-                  child: Text(
-                    "Overview",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              //place image edit
 
-              //column
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 0, bottom: 0),
-                  child: Text(
-                    "Use this space to show clients you have the skills and experience they're looking for.",
-                    style: TextStyle(
-                      color: TextlightGrey,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  )),
 
-              Container(
-                  margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
-                  child: Column(children: [
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: Color(0xFFD9D9D9),
-                              borderRadius: BorderRadius.circular(100)),
-                        ),
-                        const Padding(
-                            padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
-                            child: Text(
-                              "Describe your strengths and skills",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                      ],
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFD9D9D9),
-                                  borderRadius: BorderRadius.circular(100)),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 0, bottom: 0),
-                                child: Text(
-                                  "Highlight projects, accomplishments and education",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFD9D9D9),
-                                  borderRadius: BorderRadius.circular(100)),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 0, bottom: 0),
-                                child: Text(
-                                  "Keep it short and make sure it's error-free",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                          ],
-                        )),
-                    const Padding(
-                        padding:
-                            EdgeInsets.only(top: 20, right: 550, bottom: 0),
-                        child: Text(
-                          "About",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
-                    //place image edit
-                    Container(
-                        height: 200,
-                        width: 600,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: strokeColor, width: 1)),
-                        margin:
-                            EdgeInsets.only(top: 20, right: 100, bottom: 10),
-                        child: ListView(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              new TextField(
-                                cursorColor: Colors.black,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ])),
-                  ])),
-              Padding(
-                  padding: const EdgeInsets.only(top: 60, left: 10),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 320),
-                          child: SizedBox(
-                              width: 140,
-                              height: 35,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  // ignore: sort_child_properties_last
-                                  child: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFD9D9D9),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                  )))),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 0),
-                          child: Container(
-                              width: 140,
-                              height: 40,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesireBuilding()));
-                                  },
-                                  // ignore: sort_child_properties_last
-                                  child: Row(children: const <Widget>[
-                                    Padding(
-                                        padding: EdgeInsets.only(left: 40),
-                                        child: Center(
-                                            child: Text(
-                                          "Save",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ))),
-                                  ]),
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                      ),
-                                      backgroundColor:
-                                          const Color(0xFF363B42))))),
-                    ],
-                  )),
-            ])));
-  }
-}
 
-class PortFolioDialog extends StatefulWidget {
-  const PortFolioDialog({super.key});
 
-  @override
-  State<PortFolioDialog> createState() => _PortFolioDialog();
-}
 
-class _PortFolioDialog extends State<PortFolioDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        content: Container(
-            width: 650,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-                    Widget>[
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 10, bottom: 0),
-                  child: Text(
-                    "Add Portfolio",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
-                  child: Text(
-                    "Project Title",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(
-                    top: 0,
-                    left: 10,
-                  ),
-                  child: SizedBox(
-                      width: 250,
-                      height: 32,
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        )),
-                      ))),
-              const Padding(
-                  padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                  child: Text(
-                    "Project Description",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )),
-              Container(
-                  height: 100,
-                  width: 400,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: strokeColor, width: 1)),
-                  margin: EdgeInsets.only(top: 0, left: 10, bottom: 10),
-                  child: ListView(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children: <Widget>[
-                        new TextField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ])),
 
-              //column
-              Container(
-                  margin: const EdgeInsets.only(
-                    top: 0,
-                    left: 10,
-                  ),
-                  width: 250,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF363B42),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Stack(children: <Widget>[
-                    Center(
-                        child: Container(
-                            width: 40,
-                            height: 40,
-                            margin: const EdgeInsets.only(top: 0, right: 0),
-                            decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                  image: AssetImage("logo/Plus.png"),
-                                  fit: BoxFit.contain),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(100),
-                            ))),
-                    Padding(
-                        padding: EdgeInsets.only(top: 140, left: 20),
-                        // ignore: prefer_const_literals_to_create_immutables
-                        child: Row(
-                          // ignore: prefer_const_literals_to_create_immutables
-                          children: <Widget>[
-                            const Padding(
-                                padding: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Text(
-                                  "Drag and Drop",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Text(
-                                  "or Browser File",
-                                  style: TextStyle(
-                                    color: Color(0xFFFFA62B),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                          ],
-                        ))
-                  ])),
 
-              Container(
-                  margin: EdgeInsets.only(top: 20, left: 10, bottom: 0),
-                  child: Column(children: [
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: Color(0xFFD9D9D9),
-                              borderRadius: BorderRadius.circular(100)),
-                        ),
-                        const Padding(
-                            padding:
-                                EdgeInsets.only(left: 5, right: 0, bottom: 0),
-                            child: Text(
-                              "Images (.jpg, .gif, .png, up to 10 MB, no more than 4000 px in any dimension",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                      ],
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFD9D9D9),
-                                  borderRadius: BorderRadius.circular(100)),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 0, bottom: 0),
-                                child: Text(
-                                  "Document (.pdf, up to 10 MB)",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                          ],
-                        )),
 
-                    //place image edit
-                  ])),
-              Padding(
-                  padding: const EdgeInsets.only(top: 60, left: 10),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 320),
-                          child: SizedBox(
-                              width: 140,
-                              height: 35,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  // ignore: sort_child_properties_last
-                                  child: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFD9D9D9),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                  )))),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 0),
-                          child: Container(
-                              width: 140,
-                              height: 40,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesireBuilding()));
-                                  },
-                                  // ignore: sort_child_properties_last
-                                  child: Row(children: const <Widget>[
-                                    Padding(
-                                        padding: EdgeInsets.only(left: 40),
-                                        child: Center(
-                                            child: Text(
-                                          "Save",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ))),
-                                  ]),
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                      ),
-                                      backgroundColor:
-                                          const Color(0xFF363B42))))),
-                    ],
-                  )),
-            ])));
-  }
-}
+
+

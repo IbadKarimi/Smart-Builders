@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:hovering/hovering.dart';
+import 'package:smart_builder_web/BuisnessLogic%20Layer/Api.dart';
+import 'package:smart_builder_web/models/RetailerProfileModel.dart';
 
+import '../../../../../models/MaterialStoresModel.dart';
 import '../../../Owner/Owner_Desire_Building.dart';
 import '../../footer.dart';
 import '../../header.dart';
 import '../../home_page.dart';
+import 'package:latlong2/latlong.dart';
+String? ratesId;
+String? id;
+
+double latitude=0.0;
+double longitude=0.0;
 
 
 class MaterialStores extends StatefulWidget {
@@ -16,9 +26,54 @@ class MaterialStores extends StatefulWidget {
 
 class _MaterialStores extends State<MaterialStores> {
   @override
+  ApiService apiService = new ApiService();
+  List<RetailerProfileModel> _getRetailerProfileData=[];
+
+  List<MaterialRateModel> _getMaterialRate=[];
+  //CurrentUser currentUserEmailObject=CurrentUser();
+
+
+
+
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+    apiService.getRetailerProfile().then((value){
+      setState(() {
+        _getRetailerProfileData.addAll(value);
+        for(int index=0;index<_getRetailerProfileData.length;index++) {
+
+            id=_getRetailerProfileData[index].sId.toString();
+
+        }//set data we get
+        //set data we get
+      });
+    });
+    apiService.getMaterialRate().then((value){
+      setState(() {
+        _getMaterialRate.addAll(value);
+        for(int index=0;index<_getMaterialRate.length;index++) {
+
+
+            ratesId=_getMaterialRate[index].sId.toString();
+            print(ratesId);
+
+
+
+
+
+        }//set data we get
+        //set data we get
+      });
+    });
+
+
+    super.initState();
+  }
+
+
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
+        body:id!=null ?SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
               color: Colors.white,
@@ -30,7 +85,7 @@ class _MaterialStores extends State<MaterialStores> {
                   Footer(),
                 ],
               ),
-            )));
+            )):CircularProgressIndicator());
   }
 }
 
@@ -55,7 +110,7 @@ class _MaterialStoresFirstPage extends State<MaterialStoresFirstPage> {
                     BlendMode.modulate,
                   ),
                   image: AssetImage(
-                      "lib/MaterialStores/MaterialStoresImages/MaterialStores.jpg"),
+                      "lib/Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/MaterialStores.jpg"),
                   fit: BoxFit.cover)),
         ),
         Padding(
@@ -146,6 +201,44 @@ class MaterialStoresSecondPage extends StatefulWidget {
 }
 
 class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
+  ApiService apiService = new ApiService();
+  List<RetailerProfileModel> _getRetailerProfileData=[];
+
+  List<MaterialRateModel> _getMaterialRate=[];
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+    apiService.getRetailerProfile().then((value){
+      setState(() {
+        _getRetailerProfileData.addAll(value);
+        for(int index=0;index<_getRetailerProfileData.length;index++) {
+
+          id=_getRetailerProfileData[index].sId.toString();
+
+        }//set data we get
+        //set data we get
+      });
+    });
+    apiService.getMaterialRate().then((value){
+      setState(() {
+        _getMaterialRate.addAll(value);
+        for(int index=0;index<_getMaterialRate.length;index++) {
+
+
+          ratesId=_getMaterialRate[index].sId.toString();
+          print(ratesId);
+
+
+
+
+
+        }//set data we get
+        //set data we get
+      });
+    });
+
+
+    super.initState();
+  }
   @override
   bool isOpenReadMore = false;
   Widget build(BuildContext context) {
@@ -156,7 +249,7 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
           children: [
             Column(children: [
               Padding(
-                padding: const EdgeInsets.only(left: 700, top: 40),
+                padding: const EdgeInsets.only(left: 700, top: 20,bottom: 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -197,18 +290,25 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
 
               //---------------------Grey Box--------------------//
               Container(
-                height: 1000,
-                margin: const EdgeInsets.only(top: 150),
+
+                margin: const EdgeInsets.only(top: 50,),
                 width: MediaQuery.of(context).size.width,
                 color: const Color(0xFFD9D9D9),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+
+                        for(int index=0;index<_getRetailerProfileData.length;index++)
+
                         Container(
                           width: 300,
-                          margin: EdgeInsets.only(left: 50, top: 30),
+                          margin: EdgeInsets.only(left: 20, top: 30,bottom: 20,right: 20),
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
@@ -216,23 +316,26 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
                               )),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                const Padding(
+                                 Padding(
                                     padding: EdgeInsets.only(
                                         top: 30, left: 30, bottom: 0),
                                     child: Text(
-                                      "Mujahid Steel",
+                                      _getRetailerProfileData[index].shopName.toString(),
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     )),
-                                const Padding(
+
+
+                               Padding(
                                     padding: EdgeInsets.only(
                                         top: 10, left: 40, bottom: 0),
                                     child: Text(
-                                      "Umair Malik",
+                                      _getRetailerProfileData[index].firstName.toString()+" "+_getRetailerProfileData[index].lastName.toString(),
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 16,
@@ -259,18 +362,29 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
                                                   fit: BoxFit.contain,
                                                   image: AssetImage(
                                                       "PreviewProfilePic/placeholder.png")))),
-                                      const Padding(
+                                      Padding(
                                           padding:
                                               EdgeInsets.only(top: 5, left: 10),
-                                          child: Text("Lahore, PB",
+                                          child: Text(_getRetailerProfileData[index].city.toString()+" , "+"Punjab"+" , "+_getRetailerProfileData[index].country.toString(),
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 12,
                                                   fontWeight:
-                                                      FontWeight.w600))),
+                                                      FontWeight.w500))),
+
                                     ],
                                   ),
                                 ),
+                                if(_getRetailerProfileData[index].storeAdress.toString()!=null)
+                                Padding(
+                                    padding:
+                                    EdgeInsets.only(top: 2, left: 65),
+                                    child: Text(_getRetailerProfileData[index].storeAdress.toString(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.w500))),
 
                                 //---------------------Contact and Number-------------------//
                                 Row(
@@ -291,133 +405,61 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
                                     ),
                                     GestureDetector(
                                         onTap: () {},
-                                        child: const Padding(
+                                        child:  Padding(
                                             padding: EdgeInsets.only(
                                                 top: 10, left: 10),
-                                            child: Text("03425949630",
+                                            child: Text(_getRetailerProfileData[index].phoneNo.toString(),
                                                 style: TextStyle(
                                                     color: Colors.grey,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 12)))),
                                   ],
                                 ),
+                                for(int _index=0;_index<_getMaterialRate.length;_index++)
+                                if(_getRetailerProfileData[index].email.toString()==_getMaterialRate[_index].email.toString())
+
                                 //----------------Steel Price-----------------//
-                                const Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10, left: 40, bottom: 0),
-                                    child: Text(
-                                      "Steel Price       : Rs 255 per Kg",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                const Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10, left: 40, bottom: 0),
-                                    child: Text(
-                                      "Cement Price  : Rs 1000 per Kg",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                const Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10, left: 40, bottom: 0),
-                                    child: Text(
-                                      "Sand Price       : Rs 500 per Cubic",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                const Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10, left: 40, bottom: 0),
-                                    child: Text(
-                                      "Bricks Price     : Rs 25 per Kg",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                //---------------Read More-----------------//
-                                GestureDetector(
-                                    onTap: () {
-                                      isOpenReadMore = !isOpenReadMore;
-                                      setState(() {});
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 40, top: 10),
-                                      child: Text(
-                                        "Read more:",
-                                        style: TextStyle(
-                                          color: Color(0xFFFFA62B),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    )),
-                                if (isOpenReadMore == true)
-                                  Container(
-                                    margin: EdgeInsets.only(left: 0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 10, left: 40, bottom: 0),
+
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Row(
+
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 10, left: 40, bottom: 0),
                                             child: Text(
-                                              "Steel Price       : Rs 255 per Kg",
+                                              '${_getMaterialRate[_index].materialName} ',
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                               ),
-                                            )),
-                                        const Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 10, left: 40, bottom: 0),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 10, right: 30, bottom: 0),
                                             child: Text(
-                                              "Cement Price  : Rs 1000 per Kg",
+                                              'Rs  ${_getMaterialRate[_index].amount} ${_getMaterialRate[_index].unit}',
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                               ),
-                                            )),
-                                        const Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 10, left: 40, bottom: 0),
-                                            child: Text(
-                                              "Sand Price       : Rs 500 per Cubic",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            )),
-                                        const Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 10, left: 40, bottom: 0),
-                                            child: Text(
-                                              "Bricks Price     : Rs 25 per Kg",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            )),
-                                      ],
-                                    ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
+
+
+
+                                //---------------Read More-----------------//
+
 
                                 //---------------------Button
                                 Padding(
@@ -428,10 +470,12 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
                                         height: 40,
                                         child: ElevatedButton(
                                             onPressed: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const DesireBuilding()));
+                                            setState(() {
+                                              longitude=double.parse(_getRetailerProfileData[index].longitude.toString());
+                                              latitude=double.parse(_getRetailerProfileData[index].latitude.toString());
+                                            });
+
+
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
@@ -465,25 +509,76 @@ class _MaterialStoresSecondPage extends State<MaterialStoresSecondPage> {
                       ],
                     ),
                     //-------------------------------------Map Pic
-                    Container(
-                      width: 1150,
-                      height: 1000,
-                      margin: EdgeInsets.only(top: 30, bottom: 30, left: 10),
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                  "lib/MaterialStores/MaterialStoresImages/Map.jpg"),
-                              fit: BoxFit.cover)),
-                    ),
+                    MapScreen(),
+
                   ],
                 ),
               ),
             ]),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: SearchSelectLocation(),
-            ) // place behind the stack
+
           ],
+        ));
+  }
+}
+
+class MapScreen extends StatefulWidget {
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  LatLng? _tapLocation;
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        width: 1180,
+        height:700,
+        child:FlutterMap(
+
+          options: MapOptions(
+            center:longitude ==0.0? LatLng(33.6844, 73.0479):LatLng(latitude, longitude),
+            zoom:13.0,
+            minZoom:5.0,
+            maxZoom: 18.0,
+
+            // Set the minimum zoom level
+
+
+
+            onTap: (TapPosition tapPosition, LatLng latLng) {
+              setState(() {
+                _tapLocation = latLng;
+
+                print("latitude  :"+_tapLocation!.latitude.toString() );
+                print("longitude  :"+_tapLocation!.longitude.toString() );
+              });
+            },
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.example.app',
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  width: 80,
+                  point: longitude ==0.0? LatLng(33.6844, 73.0479):LatLng(latitude, longitude),
+                  height: 80,
+                  builder: (context) => IconButton(
+                    onPressed: (){},
+                    icon:Icon(Icons.location_on),
+                    color:Colors.red,
+                    iconSize:35,
+                  ),
+                ),
+              ],
+            )
+          ],
+
         ));
   }
 }
@@ -625,153 +720,4 @@ class _CustomSliderState extends State<CustomSlider> {
   }
 }
 
-class SearchSelectLocation extends StatefulWidget {
-  @override
-  State<SearchSelectLocation> createState() => _SearchSelectLocation();
-}
 
-class _SearchSelectLocation extends State<SearchSelectLocation> {
-  bool isOpenCity = false;
-  String selectedOptionCity = "City";
-  List<String> cityArrayList = [
-    "Islamabad",
-    'Rawalpindi',
-    'Karachi',
-    'Lahore',
-  ];
-  //---------------Roles----------------------------//
-  bool isOpenRoles = false;
-  String selectedOptionRoles = "Material";
-  List<String> rolesArrayList = [
-    "Steel",
-    "Sand",
-    'Bricks',
-    'Cement',
-    'Concrete',
-  ];
-  //----------------------------------------------//
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-            padding: const EdgeInsets.only(top: 100, left: 60),
-            child: Container(
-                width: 350,
-                height: 35,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFD9D9D9),
-                    border: Border.all(
-                      color: const Color(0xFFD9D9D9),
-                    ),
-                    borderRadius: BorderRadius.circular(20)),
-                child: const TextField(
-                  textAlign: TextAlign.start,
-                  decoration: InputDecoration(
-                    label: Text(
-                        "Search Location"), //------------------correct this
-                    prefixIcon: Icon(Icons.search),
-                    border: InputBorder.none,
-                  ),
-                ))),
-        const Padding(
-            padding: EdgeInsets.only(top: 105, left: 700),
-            child: Center(
-                child: Text(
-              "Select location :",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700),
-            ))),
-        //-------------------------------------City Drop Down------------------------------//
-
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              GestureDetector(
-                  onTap: () {
-                    isOpenCity = !isOpenCity;
-                    setState(() {});
-                  },
-                  child: Container(
-                    width: 150,
-                    height: 35,
-                    margin: const EdgeInsets.only(left: 30, top: 90),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black38, width: 1),
-                        borderRadius: BorderRadius.circular(0)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(selectedOptionCity),
-                          Icon(
-                              isOpenCity
-                                  ? Icons.arrow_drop_up
-                                  : Icons.arrow_drop_down,
-                              color: Colors.black),
-                        ],
-                      ),
-                    ),
-                  )),
-              if (isOpenCity)
-                Container(
-                  width: 150,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black38, width: 1),
-                      borderRadius: BorderRadius.circular(0)),
-                  margin: const EdgeInsets.only(left: 30),
-                  child: ListView(
-                      primary: true,
-                      shrinkWrap: true,
-                      children: cityArrayList
-                          .map((e) => Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      isOpenCity = false;
-                                      selectedOptionCity = e;
-                                      setState(() {});
-                                    },
-                                    child: HoverContainer(
-                                        height: 35,
-                                        hoverDecoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          border: Border.all(
-                                              color: const Color(0xFFFFA62B),
-                                              width: 1),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Text(e),
-                                            ],
-                                          ),
-                                        )),
-                                  ),
-                                ),
-                              ))
-                          .toList()),
-                ),
-            ],
-          ),
-        ),
-
-        //--------------------------------------------------Roles Drop Down End Here-----------------------//
-      ],
-    );
-  }
-}

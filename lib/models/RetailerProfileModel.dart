@@ -9,6 +9,9 @@ class RetailerProfileModel {
   String? profilePhoto;
   String? coverPhoto;
   String? sId;
+  String? storeAdress;
+  String?latitude;
+  String ?longitude;
 
   RetailerProfileModel(
       {this.firstName,
@@ -19,6 +22,9 @@ class RetailerProfileModel {
         this.phoneNo,
         this.profilePhoto,
         this.coverPhoto,
+        this.storeAdress,
+        this.latitude,
+        this.longitude,
         this.sId});
 
   RetailerProfileModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +37,9 @@ class RetailerProfileModel {
     phoneNo = json['phoneNo'];
     profilePhoto = json['profilePhoto'];
     coverPhoto = json['coverPhoto'];
+    storeAdress = json['storeAddress'];
+    longitude= json['longitude'];
+    latitude=json['latitude'];
     sId = json['_id'];
   }
 

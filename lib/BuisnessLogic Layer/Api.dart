@@ -9,6 +9,8 @@ import 'package:smart_builder_web/models/OwnerProfileModel.dart';
 import 'package:smart_builder_web/models/OwnerSubmitProposalsModel.dart';
 import 'package:smart_builder_web/models/ProWorkExperience.dart';
 
+import '../models/AdminModel.dart';
+import '../models/MaterialStoresModel.dart';
 import '../models/OfferModel.dart';
 import '../models/OwnerAboutModel.dart';
 import '../models/OwnerAcceptedProposalModel.dart';
@@ -1360,6 +1362,7 @@ class ApiService {
     request.fields['shopName'] = shopName;
     request.fields['country'] = country;
     request.fields['city'] = city;
+    request.fields['phoneNo'] = phoneNo;
 
 
 
@@ -1502,4 +1505,179 @@ class ApiService {
       print('Error uploading image: ${response.reasonPhrase}');
       return '100';
     }
-  }}
+  }
+
+  //============================Material rate=========================//
+  Future<List<MaterialRateModel>> getMaterialRate() async {
+    //create function in list type becoze we get data and set in _product array
+    var response = await http
+        .get(Uri.parse('http://localhost:3000/smart-builders/MaterialRate'));
+    List<MaterialRateModel> userlist =
+    []; //the scope of the array is Inside the function
+    if (response.statusCode == 200) {
+      debugPrint("Api is Working !");
+      var prJson = json.decode(response.body);
+      final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+      for (var jsonData in jsonArrayData) {
+        userlist.add(
+            MaterialRateModel.fromJson(jsonData)); //set json data in productlist
+      }
+    } else {
+      debugPrint("Api is not Working !");
+    }
+    return userlist;
+  }
+
+  Future<String> InsertMaterialRate( String email, String materialName, String amount,String unit,String date) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/smart-builders/MaterialRate'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": email.toString(),
+        "materialName": materialName.toString(),
+        "amount": amount.toString(),
+        "unit": unit.toString(),
+        "date": date.toString(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      debugPrint("APi is Working");
+      return '200';
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to USer Sign-Up. Api');
+    }
+  }
+
+
+  Future<String> updateStoreAddress(String id, String storeAddress,String latitude,String longitude) async {
+    final response = await http.put(
+      Uri.parse('http://localhost:3000/smart-builders/RetailerProfileUpdateStoreAdress/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'latitude': latitude,
+        'longitude':longitude,
+        'storeAddress':storeAddress,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return "200";
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to update store Adress.');
+    }
+  }
+
+
+
+  Future<String> deleteMaterialRates(String id) async {
+    var url = Uri.parse('http://localhost:3000/smart-builders/MaterialRate/$id'); // Replace with your API endpoint
+
+    var response = await http.delete(url);
+
+    if (response.statusCode == 200) {
+      return '200';
+      print('Data deleted successfully');
+    } else {
+      print('Failed to delete data. Error: ${response.statusCode}');
+      return '100';
+    }
+  }
+
+
+
+  Future<String> UpdateAdminProfilePhoto(
+      String id,
+      PlatformFile proFilePhoto,
+      ) async {
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('http://localhost:3000/smart-builders/AdminProfile/$id'),
+    );
+
+
+    // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+    var proFilePhotoName = proFilePhoto!.name;
+    var proFilePhotoBytes = proFilePhoto!.bytes;
+    var _proFilePhoto = http.MultipartFile.fromBytes(
+      'profilePhoto',
+      proFilePhotoBytes!,
+      filename: proFilePhotoName,
+    );
+    request.files.add(_proFilePhoto);
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Update Data Sucessfully !');
+
+      return '200';
+    } else {
+      print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
+    }
+  }
+
+
+  Future<List<AdminProfileModel>> getAdminProfile() async {
+    //create function in list type becoze we get data and set in _product array
+    var response = await http
+        .get(Uri.parse('http://localhost:3000/smart-builders/AdminProfile'));
+
+    List<AdminProfileModel> getAdminProfileList =
+    []; //the scope of the array is Inside the function
+
+    if (response.statusCode == 200) {
+      debugPrint("Api is Working !");
+      var prJson = json.decode(response.body);
+      final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+      for (var jsonData in jsonArrayData) {
+        getAdminProfileList.add(AdminProfileModel.fromJson(
+            jsonData)); //set json data in productlist
+      }
+    } else {
+      debugPrint("Get Api  is not Working !");
+    }
+    return getAdminProfileList;
+  }
+
+  Future<String> UpdateAdminCoverPhoto(String id, PlatformFile profileFile) async {
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('http://localhost:3000/smart-builders/RetailerProfileCover/$id'),
+    );
+
+    // Add image file to request
+    print("Api cover profile name : " + profileFile.name);
+    // debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+    var profileImageFileName = profileFile!.name;
+    var profileImageBytes = profileFile!.bytes;
+    var profileImage = http.MultipartFile.fromBytes(
+      'coverPhoto',
+      profileImageBytes!,
+      filename: profileImageFileName,
+    );
+    request.files.add(profileImage);
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Data inserted Sucessfully !');
+
+      return '200';
+    } else {
+      print('Error uploading image: ${response.reasonPhrase}');
+      return '100';
+    }
+  }
+
+
+}

@@ -11,11 +11,16 @@ import 'package:smart_builder_web/models/DataModels.dart';
 
 import '../../../../../BuisnessLogic Layer/Api.dart';
 
+import '../../../../../models/MaterialStoresModel.dart';
 import '../../../../../models/RetailerProfileModel.dart';
 import '../../../Owner/Owner_Desire_Building.dart';
 import '../../footer.dart';
 import '../../header.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:geocoding/geocoding.dart';
 import 'dart:typed_data';
 import 'dart:html';
 import 'dart:typed_data';
@@ -40,6 +45,9 @@ String? shopName;
 String ?currentUserEmail;
 String ?response;
 
+String? RatesId;
+String? latitude;
+String? longitude;
 
 bool isEditMode=false;
 bool _autoValidate=false;
@@ -49,6 +57,9 @@ PlatformFile? coverPhotoObject;
 
 PlatformFile? editProfilePhotoObject;
 PlatformFile?editCoverPhotoObject;
+
+double _zoom=13.0;
+double ?minZoom=0;
 
 class RetailerViewProfile extends StatefulWidget {
   String currentUserEmail;
@@ -63,6 +74,8 @@ class _RetailerViewProfile extends State<RetailerViewProfile> {
   ApiService apiService = new ApiService();
   //CurrentUser currentUserEmailObject=CurrentUser();
   List<RetailerProfileModel> _getRetailerProfileData=[];
+
+  List<MaterialRateModel> _getMaterialRate=[];
 
 
 
@@ -92,6 +105,22 @@ class _RetailerViewProfile extends State<RetailerViewProfile> {
         //set data we get
       });
     });
+    apiService.getMaterialRate().then((value){
+      setState(() {
+        _getMaterialRate.addAll(value);
+        for(int index=0;index<_getMaterialRate.length;index++) {
+          if (_getMaterialRate[index].email.toString()==currentUserEmail) {
+
+            RatesId=_getMaterialRate[index].sId.toString();
+
+
+
+
+          }
+        }//set data we get
+        //set data we get
+      });
+    });
 
 
     super.initState();
@@ -113,6 +142,7 @@ class _RetailerViewProfile extends State<RetailerViewProfile> {
                     Boxes(),
                     RetailerCoverProfile(),
                     MaterialRates(),
+                    MyRates(),
 
                     Footer()
                   ],
@@ -143,7 +173,7 @@ class _RetailerCoverProfile extends State<RetailerCoverProfile> {
     return Container(
         width: 900,
 
-        margin: const EdgeInsets.only(top: 50, bottom: 50),
+        margin: const EdgeInsets.only(top: 50, bottom: 10),
         decoration: BoxDecoration(
 
             borderRadius: BorderRadius.circular(10),
@@ -255,12 +285,29 @@ class _RetailerCoverProfile extends State<RetailerCoverProfile> {
                               fontSize: 16,
                               fontWeight: FontWeight.w700))),
                   Padding(
-                      padding: EdgeInsets.only(top: 5, left: 50,bottom: 40),
+                      padding: EdgeInsets.only(top: 5, left: 50,bottom: 10),
                       child: Text(city.toString()+" , "+"Punjab"+" , "+"Pakistan",
                           style: TextStyle(
                               color: TextlightGrey,
                               fontSize: 14,
                               fontWeight: FontWeight.w400))),
+
+                  GestureDetector(
+                    onTap: (){
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return mapAlertDialog(); //---------calling the class here
+                          });
+                    },
+                    child: const Padding(
+                        padding: EdgeInsets.only(left: 50,top:0,bottom: 20),
+                        child: Text("Add Your Store Location on MAP",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400))),
+                  ),
 
 
 
@@ -517,239 +564,7 @@ class _ShowDialogState extends State<ShowDialog> {
 }
 
 
-class OverViewDialog extends StatefulWidget {
-  const OverViewDialog({super.key});
 
-  @override
-  State<OverViewDialog> createState() => _OverViewDialog();
-}
-
-class _OverViewDialog extends State<OverViewDialog> {
-  @override
-  final _OwnerAboutFormKey = GlobalKey<FormState>();
-  final _aboutController=TextEditingController();
-
-  Widget build(BuildContext context) {
-    return AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        content: Container(
-            width: 650,
-            height: 600,
-            child: Form(
-              key:_OwnerAboutFormKey,
-              child: Column(children: <Widget>[
-                const Padding(
-                    padding: EdgeInsets.only(top: 20, right: 540, bottom: 0),
-                    child: Text(
-                      "Overview",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
-                //place image edit
-
-                //column
-                const Padding(
-                    padding: EdgeInsets.only(top: 20, left: 0, bottom: 0),
-                    child: Text(
-                      "Use this space to show clients you have the skills and experience they're looking for.",
-                      style: TextStyle(
-                        color: TextlightGrey,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )),
-
-                Container(
-                    margin: EdgeInsets.only(top: 10, left: 40, bottom: 0),
-                    child: Column(children: [
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                                color: Color(0xFFD9D9D9),
-                                borderRadius: BorderRadius.circular(100)),
-                          ),
-                          const Padding(
-                              padding:
-                              EdgeInsets.only(left: 5, right: 0, bottom: 0),
-                              child: Text(
-                                "Describe your strengths and skills",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )),
-                        ],
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFD9D9D9),
-                                    borderRadius: BorderRadius.circular(100)),
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5, right: 0, bottom: 0),
-                                  child: Text(
-                                    "Highlight projects, accomplishments and education",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )),
-                            ],
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(top: 10, left: 0, bottom: 0),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFD9D9D9),
-                                    borderRadius: BorderRadius.circular(100)),
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5, right: 0, bottom: 0),
-                                  child: Text(
-                                    "Keep it short and make sure it's error-free",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )),
-                            ],
-                          )),
-                      const Padding(
-                          padding:
-                          EdgeInsets.only(top: 20, right: 550, bottom: 0),
-                          child: Text(
-                            "About",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          )),
-                      //place image edit
-                      Container(
-                          height: 200,
-                          width: 600,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: strokeColor, width: 1)),
-                          margin:
-                          EdgeInsets.only(top: 20, right: 100, bottom: 10),
-                          child: ListView(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              children: <Widget>[
-                                new TextFormField(
-                                  controller:_aboutController,
-                                  cursorColor: Colors.black,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLength: 200,
-                                  maxLines: 10,
-                                  decoration: InputDecoration(
-                                    helperText: "",
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 11),
-                                    border: InputBorder.none,
-                                  ),
-                                  validator: (value){
-                                    if(value!.trim().length>200){
-                                      return "Length should be at least 200 lines ";
-                                    }
-
-                                  },
-                                ),
-                              ])),
-                    ])),
-                Padding(
-                    padding: const EdgeInsets.only(top: 60, left: 10),
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                            padding: const EdgeInsets.only(top: 20, left: 320),
-                            child: SizedBox(
-                                width: 140,
-                                height: 35,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    // ignore: sort_child_properties_last
-                                    child: const Text(
-                                      "Cancel",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFD9D9D9),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30.0),
-                                      ),
-                                    )))),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.only(top: 20, left: 0),
-                            child: Container(
-                                width: 140,
-                                height: 40,
-                                child: ElevatedButton(
-                                    onPressed: () async{
-                                      if(_OwnerAboutFormKey.currentState!.validate()){
-                                        var response=await apiService.InsertAbout(currentUserEmail.toString(),_aboutController.text);
-                                        if(response=="200"){
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RetailerViewProfile(currentUserEmail.toString())));
-                                        }
-                                      }
-                                    },
-                                    // ignore: sort_child_properties_last
-                                    child: Row(children: const <Widget>[
-                                      Padding(
-                                          padding: EdgeInsets.only(left: 40),
-                                          child: Center(
-                                              child: Text(
-                                                "Save",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12),
-                                              ))),
-                                    ]),
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(30.0),
-                                        ),
-                                        backgroundColor:
-                                        const Color(0xFF363B42))))),
-                      ],
-                    )),
-              ]),
-            )
-        ));
-  }
-}
 
 class MaterialRates extends StatefulWidget {
   MaterialRates({super.key});
@@ -839,9 +654,9 @@ class _MaterialRates extends State<MaterialRates> {
 
     return Container(
         width: 900,
-        height: 900,
+        height: 700,
 
-        margin: const EdgeInsets.only(top: 50, bottom: 50),
+        margin: const EdgeInsets.only(top: 20, bottom: 50),
 
     decoration: BoxDecoration(
 
@@ -940,7 +755,7 @@ class _MaterialRates extends State<MaterialRates> {
                  children: [
                    GestureDetector(
 
-                     onTap: (){
+                     onTap:_tapCount<5? (){
                        if(_tapCount<5){
                          setState(() {
                            _tapCount++;
@@ -987,7 +802,7 @@ class _MaterialRates extends State<MaterialRates> {
 
 
 
-                     },
+                     }:(){},
                      child:   Padding(
                          padding:_tapCount==0 ?EdgeInsets.only(
                              left: 50,top:60
@@ -1036,6 +851,69 @@ class _MaterialRates extends State<MaterialRates> {
                                  if( _materialFormKey.currentState!.validate() ||_materialFormKey2.currentState!.validate()
                                      ||_materialFormKey3.currentState!.validate()||_materialFormKey4.currentState!.validate()||_materialFormKey5.currentState!.validate()
                                  ){
+                                   if(_tapCount==0){
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController.text, _amountController.text, selectedOptionUnit1, _currentDateNow);
+                                     showDialog(
+                                         context: context,
+                                         builder: (BuildContext context) {
+                                           return RateListDialog();
+                                         });
+                                   }
+                                   if(_tapCount==1){
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController.text, _amountController.text, selectedOptionUnit1, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController2.text, _amountController2.text, selectedOptionUnit2, _currentDateNow);
+
+                                     showDialog(
+                                         context: context,
+                                         builder: (BuildContext context) {
+                                           return RateListDialog();
+                                         });
+                                   }
+
+                                   if(_tapCount==2){
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController.text, _amountController.text, selectedOptionUnit1, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController2.text, _amountController2.text, selectedOptionUnit2, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController3.text, _amountController3.text, selectedOptionUnit3, _currentDateNow);
+                                     showDialog(
+                                         context: context,
+                                         builder: (BuildContext context) {
+                                           return RateListDialog();
+                                         });
+                                   }
+                                   if(_tapCount==3){
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController.text, _amountController.text, selectedOptionUnit1, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController2.text, _amountController2.text, selectedOptionUnit2, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController3.text, _amountController3.text, selectedOptionUnit3, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController4.text, _amountController4.text, selectedOptionUnit4, _currentDateNow);
+                                     showDialog(
+                                         context: context,
+                                         builder: (BuildContext context) {
+                                           return RateListDialog();
+                                         });
+                                   }
+
+                                   if(_tapCount==4){
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController.text, _amountController.text, selectedOptionUnit1, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController2.text, _amountController2.text, selectedOptionUnit2, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController3.text, _amountController3.text, selectedOptionUnit3, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController4.text, _amountController4.text, selectedOptionUnit4, _currentDateNow);
+
+                                     apiService.InsertMaterialRate(email.toString(), _materialNameController5.text, _amountController5.text, selectedOptionUnit5, _currentDateNow);
+                                     showDialog(
+                                         context: context,
+                                         builder: (BuildContext context) {
+                                           return RateListDialog();
+                                         });
+                                   }
 
 
                                  }
@@ -2602,7 +2480,7 @@ class _uploadCoverPhotoAlertDialog extends State<uploadCoverPhotoAlertDialog> {
                                       editCoverPhotoObject = pickedCoverPhoto.files.first;
                                       String response;
 
-                                      response=await apiService.UpdateRetailerCoverPhoto('64690f901f7c36eef719d817',editCoverPhotoObject!,);
+                                      response=await apiService.UpdateRetailerCoverPhoto(id.toString(),editCoverPhotoObject!,);
                                       if(response=="200"){
 
                                         // Navigator.of(context).pop();
@@ -2642,9 +2520,626 @@ class _uploadCoverPhotoAlertDialog extends State<uploadCoverPhotoAlertDialog> {
             ])));
   }
 }
+class RateListDialog extends StatefulWidget {
+  const RateListDialog({super.key});
+
+  @override
+  State<RateListDialog> createState() => _RateListDialog();
+}
+
+class _RateListDialog extends State<RateListDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+      content: Container(
+          width: 500,
+          height: 400,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  width: 100,
+                  height: 100,
+                  margin: const EdgeInsets.only(top: 60, left: 180),
+                  decoration: const BoxDecoration(
+                    image:
+                    DecorationImage(image: AssetImage("Logo/accept.png")),
+                  )),
+              const Padding(
+                  padding: EdgeInsets.only(left: 0, top: 40),
+                  child: Center(
+                      child: Text(
+                        "Your Material Rates are Added Successfully!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),))),
+
+
+              //-------------------------Add mobile no------------------//
+
+              //--------------------------Buttons-------------------------//
+              Row(
+                children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.only(top: 60, left: 340),
+                      child: Container(
+                          width: 140,
+                          height: 35,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>  RetailerViewProfile(currentUserEmail.toString())));
+                              },
+                              // ignore: sort_child_properties_last
+                              child: Row(children: const <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(left: 3),
+                                    child: Center(
+                                        child: Text(
+                                          "Go Back to My Profile",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.white,
+                                          ),
+                                        ))),
+                              ]),
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                  ),
+                                  backgroundColor: Color(0xFFFFA62B))))),
+                ],
+              ),
+            ],
+          )),
+    );
+  }
+}
+
+
+class mapAlertDialog extends StatefulWidget {
+  const mapAlertDialog({super.key});
+
+  @override
+  State<mapAlertDialog > createState() =>
+      _mapAlertDialog ();
+}
+
+class _mapAlertDialog  extends State<mapAlertDialog > {
+
+  final _keyMap = GlobalKey<FormState>();
+  final _addressController=TextEditingController();
+
+  bool _autoValidate=false;
+  static const checkbox = false;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20,left:10),
+      child: StatefulBuilder(builder: (context, setState) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Container(
+                  width: 550,
+
+                  child: Form(
+                    key: _keyMap,
+                    autovalidateMode:_autoValidate==true?AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+
+                          //  Form(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(top: 20, left:10),
+                                  child: Text(
+                                    "Add Store Location on Map",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )),
+
+                            ],
+                          ),
+
+
+                          Padding(
+                              padding:
+                              EdgeInsets.only(top: 20, left:10, bottom: 10),
+                              child: Text(
+                                "Enter your Store Address",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(top: 0, left:10),
+                              child: SizedBox(
+                                  width: 500,
+
+                                  child: TextFormField(
+                                    // autovalidateMode:AutovalidateMode.onUserInteraction,
+                                    keyboardType: TextInputType.name,
+                                    controller: _addressController,
+                                    decoration: InputDecoration(
+                                        helperText: "",
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(vertical: 12.0,horizontal: 11),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        )),
+                                    validator: (value){
+
+                                      if(value!.trim().isEmpty){
+                                        return "Location is Required";
+                                      }
+
+                                      return null;
+                                    },
+                                  ))),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left:10),
+                                    child: MapScreen(),
+                                  ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding:
+                                const EdgeInsets.only(top: 120, left: 200),
+                                child: Container(
+                                    width: 140,
+                                    height: 40,
+                                    child: ElevatedButton(
+                                        onPressed: () async {
+
+
+                                          Navigator.of(context).pop();
+
+                                        },
+                                        // ignore: sort_child_properties_last
+                                        child: Row(children: const <Widget>[
+                                          Padding(
+                                              padding:
+                                              EdgeInsets.only(left: 30),
+                                              child: Center(
+                                                  child: Text(
+                                                    "Cancel",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12),
+                                                  ))),
+                                        ]),
+                                        style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(30.0),
+                                            ),
+                                            backgroundColor:
+                                            Colors.grey.shade50)))),
+                            Padding(
+                                padding:
+                                const EdgeInsets.only(top: 120, left: 20),
+                                child: Container(
+                                    width: 140,
+                                    height: 40,
+                                    child: ElevatedButton(
+                                        onPressed: () async {
+                                          if( _keyMap.currentState!.validate()){
+                                            var response=await apiService.updateStoreAddress(id.toString(), _addressController.text, latitude.toString(), longitude.toString());
+                                            if(response=="200"){
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          RetailerViewProfile(currentUserEmail.toString())));
+                                            }
+
+                                          }else{
+
+                                            setState(() {
+
+                                              _autoValidate=true;
+                                            });
+
+
+                                          }
+
+                                        },
+                                        // ignore: sort_child_properties_last
+                                        child: Row(children: const <Widget>[
+                                          Padding(
+                                              padding:
+                                              EdgeInsets.only(left: 30),
+                                              child: Center(
+                                                  child: Text(
+                                                    "Submit",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12),
+                                                  ))),
+                                        ]),
+                                        style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(30.0),
+                                            ),
+                                            backgroundColor:
+                                            const Color(0xFF363B42))))),
+                          ],)
 
 
 
+
+                          // ignore: prefer_const_literals_to_create_immutables
+
+
+
+                          // ignore: prefer_const_literals_to_create_immutables
+
+                          //Back and Next Button--------------------------------------------------------------------------------------------
+                        ]),
+                  ))),
+        );
+      }),
+    );
+  }
+}
+
+
+class MapScreen extends StatefulWidget {
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  LatLng? _tapLocation;
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+            width: 500,
+            height:300,
+            child:FlutterMap(
+              options: MapOptions(
+                center: LatLng(33.6844, 73.0479),
+                zoom:_zoom,
+                minZoom:5.0,
+                maxZoom: 18.0,
+
+                // Set the minimum zoom level
+
+
+
+                onTap: (TapPosition tapPosition, LatLng latLng) {
+                  setState(() {
+                    _tapLocation = latLng;
+                    latitude=_tapLocation!.latitude.toString();
+                    longitude=_tapLocation!.longitude.toString();
+                    print("latitude  :"+_tapLocation!.latitude.toString() );
+                    print("longitude  :"+_tapLocation!.longitude.toString() );
+                  });
+                },
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.app',
+                ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 80,
+                      point: _tapLocation ?? LatLng(33.6844, 73.0479),
+                      height: 80,
+                      builder: (context) => IconButton(
+                        onPressed: (){},
+                        icon:Icon(Icons.location_on),
+                        color:Colors.red,
+                        iconSize:35,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+
+            ));
+  }
+}
+
+
+
+class MyRates extends StatefulWidget {
+  MyRates({super.key});
+  @override
+  State<MyRates> createState() => _MyRates();
+}
+
+class _MyRates extends State<MyRates> {
+  List<MaterialRateModel> _getMaterialRate=[];
+  String? _id;
+  ApiService apiService = new ApiService();
+  void initState() {
+  apiService.getMaterialRate().then((value){
+  setState(() {
+  _getMaterialRate.addAll(value);
+  for(int index=0;index<_getMaterialRate.length;index++)
+    if (_getMaterialRate[index].email.toString()==currentUserEmail){
+      _id=_getMaterialRate[index].sId.toString();
+
+    }
+
+  });
+  });
+
+
+  super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+        width: 900,
+
+
+        margin: const EdgeInsets.only(top: 20, bottom: 50),
+
+    decoration: BoxDecoration(
+
+    borderRadius: BorderRadius.circular(10),
+    border: Border.all(
+    color: strokeColor)),
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+          padding: EdgeInsets.only(
+              left: 50,top:40
+          ),
+          child: Text(
+            "My Material Rates",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          )),
+      Padding(
+          padding:_id==null? EdgeInsets.only(
+              left: 50,top:20,bottom: 300,
+          ):EdgeInsets.only(
+            left: 50,top:20,
+          ),
+          child: Text(
+            "Add new items and Also update material Prices amount to the market ",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+
+
+
+            ),
+          )),
+      if(_id!=null)
+      Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+                padding: EdgeInsets.only(
+                    left: 50,top:40
+                ),
+                child: Text(
+                  "Material Name",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
+            const Padding(
+                padding: EdgeInsets.only(
+                    left: 105,top:40
+                ),
+                child: Text(
+                  "Amount",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
+            const Padding(
+                padding: EdgeInsets.only(
+                    left: 135,top:40
+                ),
+                child: Text(
+                  "Unit",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
+            const Padding(
+                padding: EdgeInsets.only(
+                    left: 160,top:40
+                ),
+                child: Text(
+                  "Date",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
+          ]),
+    for(int index=0;index<_getMaterialRate.length;index++)
+    if (_getMaterialRate[index].email.toString()==currentUserEmail)
+      GestureDetector(
+        onTap:(){
+          print(_getMaterialRate[index].sId);
+    },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10, left: 50),
+              child: Container(
+                width: 150,
+                height: 32,
+
+
+                child:   Padding(
+                    padding: EdgeInsets.only(
+                        left: 14,top:7
+                    ),
+                    child: Text(
+                      _getMaterialRate[index].materialName.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )),
+                decoration: BoxDecoration(
+                    borderRadius:BorderRadius.circular(10),
+                    border:Border.all(color:Colors.grey,width: 1)
+                ),
+              )),
+            //-----------AMount
+            Padding(
+                padding: EdgeInsets.only(top: 10, left: 30),
+                child: Container(
+                  width: 150,
+                  height: 32,
+
+
+                  child:   Padding(
+                      padding: EdgeInsets.only(
+                          left: 14,top:7
+                      ),
+                      child: Text(
+                        _getMaterialRate[index].amount.toString(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  decoration: BoxDecoration(
+                      borderRadius:BorderRadius.circular(10),
+                      border:Border.all(color:Colors.grey,width: 1)
+                  ),
+                )),
+            Padding(
+                padding: EdgeInsets.only(top: 10, left: 30),
+                child: Container(
+                  width: 150,
+                  height: 32,
+
+
+                  child:   Padding(
+                      padding: EdgeInsets.only(
+                          left: 14,top:7
+                      ),
+                      child: Text(
+                        _getMaterialRate[index].unit.toString(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  decoration: BoxDecoration(
+                      borderRadius:BorderRadius.circular(10),
+                      border:Border.all(color:Colors.grey,width: 1)
+                  ),
+                )),
+            Padding(
+                padding: EdgeInsets.only(top: 10, left: 30),
+                child: Container(
+                  width: 150,
+                  height: 32,
+
+
+                  child:   Padding(
+                      padding: EdgeInsets.only(
+                          left: 14,top:7
+                      ),
+                      child: Text(
+                        _getMaterialRate[index].date.toString(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                  decoration: BoxDecoration(
+                      borderRadius:BorderRadius.circular(10),
+                      border:Border.all(color:Colors.grey,width: 1)
+                  ),
+                )),
+                Padding(
+                  padding: const EdgeInsets.only(left:10,top:5,bottom: 00),
+                  child: IconButton(onPressed: ()async{
+                    var response=await apiService.deleteMaterialRates(_getMaterialRate[index].sId.toString());
+                    if(response=='200'){
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => RetailerViewProfile(currentUserEmail.toString())));
+                    }
+
+                  }, icon: Container(
+                    width:100,
+                      height:100,
+
+                      child: Icon(Icons.delete,color: Colors.red,),
+                  decoration: BoxDecoration(
+                      color:Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(20)),)
+                  ),
+                ),
+
+
+
+
+
+
+
+
+
+
+          ],),
+      ),
+    SizedBox(height: 30,)
+
+    ]));
+
+  }}
 
 
 

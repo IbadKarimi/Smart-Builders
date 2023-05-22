@@ -1251,11 +1251,7 @@ relationship, and anything unique about your project, team, or company. ''',
                                 border: Border.all(width: 1, color: Colors.grey)),
                             child: ElevatedButton(
                                 onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return uploadAtachFileAlertDialog();
-                                      });
+
                                 },
                                 // ignore: sort_child_properties_last
                                 child: Row(children: <Widget>[
