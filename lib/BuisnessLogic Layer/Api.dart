@@ -20,6 +20,7 @@ import 'package:http/http.dart' as http;
 import '../models/ProEducationHistory.dart';
 import '../models/ProfessionalsProfileModel.dart';
 import '../models/ProfessionalsSkillsModels.dart';
+import '../models/ProjectPortfolioModel.dart';
 import '../models/RetailerProfileModel.dart';
 
 class ApiService {
@@ -1654,7 +1655,7 @@ class ApiService {
   Future<String> UpdateAdminCoverPhoto(String id, PlatformFile profileFile) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/RetailerProfileCover/$id'),
+      Uri.parse('http://localhost:3000/smart-builders/AdminProfileCover/$id'),
     );
 
     // Add image file to request
@@ -1678,6 +1679,85 @@ class ApiService {
       return '100';
     }
   }
+
+
+  Future<String> InsertProjectPortfolio( String email, String firstName, String lastName,String city,String country,String address,String projectTitle,String construct,  PlatformFile houseFile,PlatformFile ownerPic) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://localhost:3000/smart-builders/ProjectPortfolio'),
+    );
+
+    // Add image file to request
+    //  print("Api cover file name : "+coverFile.name);
+    //  debugPrint("Api cover bytes : "+coverFile.bytes.toString());
+    var coverImageFileName = houseFile!.name;
+    var coverImageBytes = houseFile!.bytes;
+    var houseFileImage = http.MultipartFile.fromBytes(
+      'housePhoto',
+      coverImageBytes!,
+      filename: coverImageFileName,
+    );
+    request.files.add(houseFileImage);
+
+    var ownerPicImageFileName = ownerPic!.name;
+    var ownerPicImageBytes = ownerPic!.bytes;
+    var proFileImage = http.MultipartFile.fromBytes(
+      'profilePhoto',
+      ownerPicImageBytes!,
+      filename: ownerPicImageFileName,
+    );
+    request.files.add(proFileImage);
+
+
+
+    // Add other form data (if any)
+    request.fields['firstName'] = firstName;
+    request.fields['lastName'] = lastName;
+    request.fields['email'] = email;
+
+    request.fields['country'] = country;
+    request.fields['city'] = city;
+    request.fields['projectTitle'] = projectTitle;
+    request.fields['construct'] = city;
+    request.fields['address'] =address;
+
+
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      debugPrint("APi is Working");
+      return '200';
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to USer Sign-Up. Api');
+    }
+  }
+
+
+  Future<List<ProjectPortfolioModel>> getProjectPortfolio() async {
+    //create function in list type becoze we get data and set in _product array
+    var response = await http
+        .get(Uri.parse('http://localhost:3000/smart-builders/ProjectPortfolio'));
+
+    List<ProjectPortfolioModel> getProjectPortfolioModelList =
+    []; //the scope of the array is Inside the function
+
+    if (response.statusCode == 200) {
+      debugPrint("Api is Working !");
+      var prJson = json.decode(response.body);
+      final jsonArrayData = prJson['data']; //Mistake Identify Here
+
+      for (var jsonData in jsonArrayData) {
+        getProjectPortfolioModelList.add(ProjectPortfolioModel.fromJson(
+            jsonData)); //set json data in productlist
+      }
+    } else {
+      debugPrint("Get Api  is not Working !");
+    }
+    return getProjectPortfolioModelList;
+  }
+
 
 
 }

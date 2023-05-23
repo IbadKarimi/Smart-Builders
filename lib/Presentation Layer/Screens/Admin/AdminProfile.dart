@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hovering/hovering.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smart_builder_web/Presentation%20Layer/Screens/Admin/AdminProjectPortfolio.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/CurrentUser.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Preview_Profile.dart';
 import 'package:smart_builder_web/Presentation%20Layer/Screens/Owner/Owner_Profile.dart';
@@ -11,22 +12,14 @@ import 'package:smart_builder_web/models/DataModels.dart';
 
 import '../../../../../BuisnessLogic Layer/Api.dart';
 
-import '../../../../../models/MaterialStoresModel.dart';
-import '../../../../../models/RetailerProfileModel.dart';
 
-import 'package:intl/intl.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:flutter_map/plugin_api.dart';
-import 'package:geocoding/geocoding.dart';
-import 'dart:typed_data';
-import 'dart:html';
-import 'dart:typed_data';
 
 import '../../../models/AdminModel.dart';
+import '../HomePage/MaterialRateList/MaterialRateList.dart';
 import '../HomePage/footer.dart';
 import '../HomePage/header.dart';
 import '../Owner/Owner_Desire_Building.dart';
+import 'AddMaterialRateList.dart';
 
 
 
@@ -91,6 +84,7 @@ class _AdminViewProfile extends State<AdminViewProfile> {
           if (_getAdminProfileData[index].email.toString()==currentUserEmail) {
 
             id=_getAdminProfileData[index].sId.toString();
+            print(id.toString());
 
             firstName=_getAdminProfileData[index].firstName.toString();
             lastName=_getAdminProfileData[index].lastName.toString();
@@ -130,7 +124,7 @@ class _AdminViewProfile extends State<AdminViewProfile> {
                     Boxes(),
                     AdminCoverProfile(),
 
-
+                    AdminDashBoard(),
 
                     Footer()
                   ],
@@ -953,6 +947,126 @@ class _uploadCoverPhotoAlertDialog extends State<uploadCoverPhotoAlertDialog> {
             ])));
   }
 }
+
+class AdminDashBoard extends StatefulWidget {
+  AdminDashBoard ({super.key});
+  @override
+  State<AdminDashBoard > createState() => _AdminDashBoard ();
+}
+
+class _AdminDashBoard  extends State<AdminDashBoard > {
+
+
+
+
+  Widget build(BuildContext context) {
+
+
+    return Container(
+        width: 900,
+        height: 700,
+
+        margin: const EdgeInsets.only(top: 20, bottom: 50),
+
+    decoration: BoxDecoration(
+
+    borderRadius: BorderRadius.circular(10),
+    border: Border.all(
+    color: strokeColor)),
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+          padding: EdgeInsets.only(left: 40,top:30),
+          child:  Text(
+              "Admin Panel",
+              style: TextStyle(color: Colors.black, fontSize: 16,fontWeight: FontWeight.bold),
+            ),
+          ),
+      Center(
+        child: Container(
+            margin: const EdgeInsets.only(
+              top: 40,
+            ),
+            width: 300,
+            height: 60,
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>    AdminMaterialRateList('ali@gmail.com')));
+
+                },
+                // ignore: sort_child_properties_last
+                child:
+                  Padding(
+                      padding: EdgeInsets.only(left: 0),
+                      child: Center(
+                        child: Text(
+                          "Add Material List",
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                      )),
+
+
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF363B42)))),),
+      Center(
+        child: Container(
+            margin: const EdgeInsets.only(
+              top: 40,
+            ),
+            width: 300,
+            height: 60,
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const MaterialRateList()));
+                },
+                // ignore: sort_child_properties_last
+                child:
+                Padding(
+                    padding: EdgeInsets.only(left: 0),
+                    child: Center(
+                      child: Text(
+                        "View Material Rate List",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    )),
+
+
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF363B42)))),),
+      Center(
+        child: Container(
+            margin: const EdgeInsets.only(
+              top: 40,
+            ),
+            width: 300,
+            height: 60,
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AdminProjectPortfolio('ali@gmail.com')));
+                },
+                // ignore: sort_child_properties_last
+                child:
+                Padding(
+                    padding: EdgeInsets.only(left: 0),
+                    child: Center(
+                      child: Text(
+                        "Add Project Portfolio",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    )),
+
+
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF363B42)))),),
+
+
+
+    ]));}}
 
 
 
