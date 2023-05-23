@@ -1154,7 +1154,8 @@ class _getAllContractorState extends State<getAllContractor> {
                               ]),
                             );
                           },
-                        )),
+                        )
+                    ),
 
 
                     //-----------------------------2nd Profile-----------------------------------//

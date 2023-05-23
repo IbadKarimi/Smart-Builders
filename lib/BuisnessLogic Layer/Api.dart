@@ -1650,6 +1650,7 @@ class ApiService {
       debugPrint("Get Api  is not Working !");
     }
     return getAdminProfileList;
+
   }
 
   Future<String> UpdateAdminCoverPhoto(String id, PlatformFile profileFile) async {
@@ -1744,6 +1745,7 @@ class ApiService {
     []; //the scope of the array is Inside the function
 
     if (response.statusCode == 200) {
+      print(response.body);
       debugPrint("Api is Working !");
       var prJson = json.decode(response.body);
       final jsonArrayData = prJson['data']; //Mistake Identify Here

@@ -416,9 +416,7 @@ class _AddProjectPortfolio   extends State< AddProjectPortfolio> {
                                                     if(value!.trim().isEmpty){
                                                       return "Name is Required";
                                                     }
-                                                    if (!RegExpFirstName.hasMatch(value)) {
-                                                      return 'Please enter a valid name';
-                                                    }
+
 
                                                     return null;
                                                   },

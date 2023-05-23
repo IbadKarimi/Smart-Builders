@@ -19,6 +19,7 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.da
 import 'Presentation Layer/Screens/Admin/AdminProfile.dart';
 import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerCreateProfile.dart';
 import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerViewProfile.dart';
+import 'Presentation Layer/Screens/HomePage/home_page.dart';
 import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals_List.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Submitted_Proposals.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: Scaffold(body:AdminViewProfile('ali@gmail.com')),
+      home: Scaffold(body:HomePage()),
     );
   }
 }

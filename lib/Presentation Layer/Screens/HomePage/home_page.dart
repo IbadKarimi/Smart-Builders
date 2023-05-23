@@ -1,8 +1,14 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:hovering/hovering.dart';
 
+import '../../../BuisnessLogic Layer/Api.dart';
+import '../../../models/ProWorkExperience.dart';
+import '../../../models/ProfessionalsProfileModel.dart';
+import '../../../models/ProjectPortfolioModel.dart';
 import '../Owner/Owner_Desire_Building.dart';
+import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'Blogs/Blog.dart';
 import 'CostEstimationCalculator.dart';
 import 'HiringProfessionals/Architect.dart';
@@ -34,14 +40,14 @@ class _HomePageState extends State<HomePage> {
                 screenWidth < 1300 ? Axis.horizontal : Axis.vertical,
             child: Container(
                 width: MediaQuery.of(context).size.width,
-                child: Column(children: const <Widget>[
+                child: Column(children:  <Widget>[
                   Boxes(), //header
                   FirstContainer(),
-                  SecondContainer(),
+                 // SecondContainer(),
                   ThirdContainer(),
                   FourthContainer(),
                   FivethContainer(),
-                  SixthContainer(),
+                  getAllContractor(),
                   SevenContainer(),
                   EightContainer(),
                   NineContainer(),
@@ -1291,217 +1297,119 @@ class _FivethContainer extends State<FivethContainer> {
     );
   }
 }
-
-class SixthContainer extends StatefulWidget {
-  const SixthContainer({super.key});
-
+String? profilePhoto;
+class getAllContractor extends StatefulWidget {
   @override
-  State<SixthContainer> createState() => _SixthContainer();
+  State<getAllContractor> createState() => _getAllContractorState();
 }
 
-class _SixthContainer extends State<SixthContainer> {
+class _getAllContractorState extends State<getAllContractor> {
+  ApiService apiService = new ApiService();
+  List<ProjectPortfolioModel> _getProProfileData=[];
+
+  void initState() {
+    // var ownerAbout=getOwnerAbout(currentUserEmail.toString());
+    apiService.getProjectPortfolio().then((value){
+      setState(() {
+        _getProProfileData.addAll(value);
+
+        //set data we get
+      });
+    });
+
+
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-        width: screenWidth,
-        child: Column(children: <Widget>[
-          SizedBox(
-            height: 40,
-          ),
-          Center(
-            child: Text("Portfolio",
-                style: TextStyle(
-                    color: Color(0xFFFF9900),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500)),
-          ),
-          Center(
-              child: Text("Projects",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600))),
-          SizedBox(
-            height: 50,
-          ),
-          Row(children: <Widget>[
-            SizedBox(
-              width: 180,
-            ),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+
+
+          width:MediaQuery.of(context).size.width,
+
+
+          margin: const EdgeInsets.only(top: 60),
+
+
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: const Padding(
+                    padding: EdgeInsets.only(top: 60, left: 0, bottom: 0),
+                    child: Text(
+                      "Project",
+                      style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700),
+                    )),
+              ),
+              Center(
+                child: const Padding(
+                    padding: EdgeInsets.only(top: 10, left: 0, bottom: 30),
+                    child: Text(
+                      "Portfolio",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700),
+                    )),
+              ),
+
+
+              //-----------------------------------Second Row Container------------------------//
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
                 child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/1.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-            SizedBox(
-              width: 60,
-            ),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/2.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-            SizedBox(
-              width: 60,
-            ),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/3.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-            SizedBox(
-              width: 60,
-            ),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/4.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-          ]),
-          SizedBox(height: 40),
-          Row(children: <Widget>[
-            SizedBox(width: 180),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/5.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-            SizedBox(width: 60),
-            Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("ProjectImages/6.jpg"),
-                  fit: BoxFit.contain,
-                ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Color(0xFF888787),
-                  width: 1,
+                    color:Colors.red,
+                    height:MediaQuery.of(context).size.width,
+
+                    margin: const EdgeInsets.only(left: 110),
+
+                    child:GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 40,
+                        mainAxisSpacing: 20,
+                        childAspectRatio: 1.5,
+                      ),
+                      itemCount:_getProProfileData.length,
+                      itemBuilder: (context, index) {
+
+                        return HoverContainer(
+                          width: 300,
+
+                          margin: const EdgeInsets.only(left: 0),
+                          hoverDecoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFFFFEBCC)//Color(0xFFFFA62B),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: const Color(0xFF888787),
+                              width: 1,
+                            ),
+                          ),
+                          child: Image.network( _getProProfileData[index].housePhoto.toString()),
+                        );
+                      },
+                    )
                 ),
               ),
-            ),
-            SizedBox(width: 60),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/7.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-            SizedBox(width: 60),
-            GestureDetector(
-                onTap: (() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ProjectPortfolio()));
-                }),
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("ProjectImages/8.jpg"),
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF888787),
-                      width: 1,
-                    ),
-                  ),
-                )),
-          ]),
-        ]));
+            ],
+          ),
+        ),
+      ],);
+
+
   }
 }
 
