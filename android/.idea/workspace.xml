@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0f5d9a47-75e4-4047-be13-cff54199cd61" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../lib/models/OfferModel.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/BuisnessLogic Layer/Api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/BuisnessLogic Layer/Api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Owner/Owner_Offer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Owner/Owner_Offer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Professionals/ProCommonPages/ProOffers.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Professionals/ProCommonPages/ProOffers.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/Presentation Layer/Screens/Professionals/ProCommonPages/Pro_View_Requested_Proposals_List.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/main.dart" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2PxwMssa7XzW9rQaWEu30fL1HyU" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0f5d9a47-75e4-4047-be13-cff54199cd61" name="Changes" comment="" />
+      <created>1684411996236</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684411996236</updated>
+    </task>
+    <servers />
+  </component>
+</project>

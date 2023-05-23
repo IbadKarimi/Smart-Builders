@@ -30,7 +30,7 @@ class ApiService {
   Future<List<OwnerSignUpModel>> getUserList() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/UserSignUp'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/UserSignUp'));
     List<OwnerSignUpModel> userlist =
         []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -51,7 +51,7 @@ class ApiService {
   Future<String> PostApiUserSignUp(String firstName, String lastName,
       String email, String password, String role) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/UserSignUp'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/UserSignUp'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -76,7 +76,7 @@ class ApiService {
 
   Future<String> updateUser(String id, String password) async {
     final response = await http.put(
-      Uri.parse('http://localhost:3000/smart-builders/UserSignUp/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/UserSignUp/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -113,7 +113,7 @@ class ApiService {
       String timeNow) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/createOwnerProfile'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/createOwnerProfile'),
     );
 
     // Add image file to request
@@ -180,7 +180,7 @@ class ApiService {
       String timeNow) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/createOwnerProfile'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/createOwnerProfile'),
     );
     //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
     defaultImageBytes = data.buffer.asUint8List();
@@ -235,7 +235,7 @@ class ApiService {
   Future<List<OwnerProfileModel>> getOwnerProfile() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/getOwnerProfile'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/getOwnerProfile'));
     List<OwnerProfileModel> getOwnerProfileDataList =
         []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -256,7 +256,7 @@ class ApiService {
   Future<String> InsertCoverPhoto(PlatformFile coverFile, String email) async {
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/OwnerProfileCoverPhoto'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerProfileCoverPhoto'),
     );
     print("Api cover cnic name : " + coverFile.name);
     var coverImageFileName = coverFile!.name;
@@ -283,7 +283,7 @@ class ApiService {
   Future<List<OwnerProfileModel>> getCoverPhotoData() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-      Uri.parse('http://localhost:3000/smart-builders/OwnerProfileCoverPhoto'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerProfileCoverPhoto'),
       headers: {'Cache-Control': 'no-cache'},
     );
 
@@ -313,7 +313,7 @@ class ApiService {
   ) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/CoverEmail/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/CoverEmail/$id'),
     );
 
     // Add image file to request
@@ -341,7 +341,7 @@ class ApiService {
   Future<String> UpdateProfilePhoto(String id, PlatformFile profileFile) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/OwnerProfile/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerProfile/$id'),
     );
 
     // Add image file to request
@@ -371,7 +371,7 @@ class ApiService {
     var request = http.MultipartRequest(
       'PUT',
       Uri.parse(
-          'http://localhost:3000/smart-builders/ProfessionalsProfile/$id'),
+          'https://smartbuilderserver.vercel.app/smart-builders/ProfessionalsProfile/$id'),
     );
 
     // Add image file to request
@@ -398,7 +398,7 @@ class ApiService {
 
   Future<String> InsertAbout(String email, String about) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/OwnerProfileAbout'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerProfileAbout'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -421,7 +421,7 @@ class ApiService {
   Future<String> OwnerAboutFindByEmail(String email) async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(Uri.parse(
-        'http://localhost:3000/smart-builders/OwnerProfileAbout/$email'));
+        'https://smartbuilderserver.vercel.app/smart-builders/OwnerProfileAbout/$email'));
     //the scope of the array is Inside the function
     if (response.statusCode == 200) {
       debugPrint("Api is Working !");
@@ -439,7 +439,7 @@ class ApiService {
   Future<List<OwnerAboutModel>> getAbout() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-        Uri.parse('http://localhost:3000/smart-builders/OwnerProfileAbout'));
+        Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerProfileAbout'));
     List<OwnerAboutModel> ownerAbout =
         []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -486,7 +486,7 @@ class ApiService {
     if (projectFile != null) {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse("http://localhost:3000/smart-builders/OwnerSubmitProposals"),
+        Uri.parse("https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals"),
       );
       print("Api cover cnic name : " + projectFile.name);
       var coverImageFileName = projectFile!.name;
@@ -565,7 +565,7 @@ class ApiService {
       String proposalsCreatedTime,
       String proposalsSavedDate) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -610,7 +610,7 @@ class ApiService {
   Future<List<OwnerSubmitProposalsModel>> getOwnerSubmitProposal() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-        Uri.parse('http://localhost:3000/smart-builders/OwnerSubmitProposals'));
+        Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals'));
 
     List<OwnerSubmitProposalsModel> getOwnerProposalList =
         []; //the scope of the array is Inside the function
@@ -650,7 +650,7 @@ class ApiService {
       String timeNow) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProfessionalsProfile'),
     );
 
     // Add image file to request
@@ -723,7 +723,7 @@ class ApiService {
       String timeNow) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProfessionalsProfile'),
     );
     //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
     defaultImageBytes = data.buffer.asUint8List();
@@ -781,7 +781,7 @@ class ApiService {
   Future<List<ProfessionalsProfileModel>> getProProfile() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-        Uri.parse('http://localhost:3000/smart-builders/ProfessionalsProfile'));
+        Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProfessionalsProfile'));
 
     List<ProfessionalsProfileModel> getProProfileDataList =
         []; //the scope of the array is Inside the function
@@ -805,7 +805,7 @@ class ApiService {
       PlatformFile coverFile, String email) async {
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/ProCoverPhoto'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProCoverPhoto'),
     );
     print("Api cover cnic name : " + coverFile.name);
     var coverImageFileName = coverFile!.name;
@@ -832,7 +832,7 @@ class ApiService {
   Future<List<ProfessionalsProfileModel>> getProCoverPhotoData() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-      Uri.parse('http://localhost:3000/smart-builders/ProCoverPhoto'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProCoverPhoto'),
       headers: {'Cache-Control': 'no-cache'},
     );
 
@@ -858,7 +858,7 @@ class ApiService {
   Future<List<ProWorkExperienceModel>> getProWorkExperience() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/WorkExperinece'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/WorkExperinece'));
     List<ProWorkExperienceModel> userlist =
         []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -880,7 +880,7 @@ class ApiService {
   Future<String> InsertProWorkExperience(
       String email, String title, String companyName, String experience) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/WorkExperinece'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/WorkExperinece'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -906,7 +906,7 @@ class ApiService {
   Future<List<ProEducationHistoryModel>> getProEducationHistory() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-        Uri.parse('http://localhost:3000/smart-builders/EducationHistory'));
+        Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/EducationHistory'));
     List<ProEducationHistoryModel> userlist =
         []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -928,7 +928,7 @@ class ApiService {
   Future<String> InsertProEducationHistory(String email, String school,
       String qualification, String startYear, String endYear) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/EducationHistory'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/EducationHistory'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -953,7 +953,7 @@ class ApiService {
 
   Future<String> InsertProSkills(String email, String skills) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/ProfessionalsSkills'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProfessionalsSkills'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -976,7 +976,7 @@ class ApiService {
   Future<List<ProSkillsModel>> getProSkills() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-        Uri.parse('http://localhost:3000/smart-builders/ProfessionalsSkills'));
+        Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProfessionalsSkills'));
     List<ProSkillsModel> userlist =
         []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -1027,7 +1027,7 @@ class ApiService {
       String proposalsAcceptedTime,
       String proposalsAcceptedDate) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/AcceptedProposal'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/AcceptedProposal'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1079,7 +1079,7 @@ class ApiService {
   Future<List<ProAcceptedProposalsModel>> getAcceptedProposal() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http.get(
-        Uri.parse('http://localhost:3000/smart-builders/AcceptedProposal'));
+        Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/AcceptedProposal'));
 
     List<ProAcceptedProposalsModel> getAceptedProposalList =
         []; //the scope of the array is Inside the function
@@ -1110,7 +1110,7 @@ class ApiService {
       String proProfilePhoto) async {
     final response = await http.put(
       Uri.parse(
-          'http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+          'https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1150,7 +1150,7 @@ class ApiService {
       String offerSavedDate) async {
     final response = await http.put(
       Uri.parse(
-          'http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+          'https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1185,7 +1185,7 @@ class ApiService {
   ) async {
     final response = await http.put(
       Uri.parse(
-          'http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+          'https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1211,7 +1211,7 @@ class ApiService {
   ) async {
     final response = await http.put(
       Uri.parse(
-          'http://localhost:3000/smart-builders/OwnerSubmitProposals/$id'),
+          'https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1246,7 +1246,7 @@ class ApiService {
       String offerCreatedTime,
       String offerSavedDate) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/OfferProposals'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OfferProposals'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1281,7 +1281,7 @@ class ApiService {
   Future<List<OfferProposalsModel>> getOfferProposal() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/OfferProposals'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OfferProposals'));
 
     List<OfferProposalsModel> getOfferProposalList =
         []; //the scope of the array is Inside the function
@@ -1302,7 +1302,7 @@ class ApiService {
   }
 
   Future<String> UpdateOfferStatus(String id, String offerStatus,String offerAcceptedTime,String OfferAcceptedDate) async {
-    final response = await http.put(Uri.parse('http://localhost:3000/smart-builders/OfferProposals/$id'),
+    final response = await http.put(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/OfferProposals/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1339,7 +1339,7 @@ class ApiService {
      ) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/RetailerProfile'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/RetailerProfile'),
     );
 
     // Add image file to request
@@ -1383,7 +1383,7 @@ class ApiService {
       ) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/RetailerProfile/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/RetailerProfile/$id'),
     );
 
 
@@ -1411,7 +1411,7 @@ class ApiService {
   Future<List<RetailerProfileModel>> getRetailerProfile() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/RetailerProfile'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/RetailerProfile'));
 
     List<RetailerProfileModel> getRetailerProfileList =
     []; //the scope of the array is Inside the function
@@ -1442,7 +1442,7 @@ class ApiService {
     ) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/RetailerProfile'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/RetailerProfile'),
     );
     //  final ByteData data = await rootBundle.load('Logo/Avatar.png');
     defaultImageBytes = data.buffer.asUint8List();
@@ -1483,7 +1483,7 @@ class ApiService {
   Future<String> UpdateRetailerCoverPhoto(String id, PlatformFile profileFile) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/RetailerProfileCover/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/RetailerProfileCover/$id'),
     );
 
     // Add image file to request
@@ -1512,7 +1512,7 @@ class ApiService {
   Future<List<MaterialRateModel>> getMaterialRate() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/MaterialRate'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/MaterialRate'));
     List<MaterialRateModel> userlist =
     []; //the scope of the array is Inside the function
     if (response.statusCode == 200) {
@@ -1532,7 +1532,7 @@ class ApiService {
 
   Future<String> InsertMaterialRate( String email, String materialName, String amount,String unit,String date) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/smart-builders/MaterialRate'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/MaterialRate'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1558,7 +1558,7 @@ class ApiService {
 
   Future<String> updateStoreAddress(String id, String storeAddress,String latitude,String longitude) async {
     final response = await http.put(
-      Uri.parse('http://localhost:3000/smart-builders/RetailerProfileUpdateStoreAdress/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/RetailerProfileUpdateStoreAdress/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -1583,7 +1583,7 @@ class ApiService {
 
 
   Future<String> deleteMaterialRates(String id) async {
-    var url = Uri.parse('http://localhost:3000/smart-builders/MaterialRate/$id'); // Replace with your API endpoint
+    var url = Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/MaterialRate/$id'); // Replace with your API endpoint
 
     var response = await http.delete(url);
 
@@ -1604,7 +1604,7 @@ class ApiService {
       ) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/AdminProfile/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/AdminProfile/$id'),
     );
 
 
@@ -1632,7 +1632,7 @@ class ApiService {
   Future<List<AdminProfileModel>> getAdminProfile() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/AdminProfile'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/AdminProfile'));
 
     List<AdminProfileModel> getAdminProfileList =
     []; //the scope of the array is Inside the function
@@ -1656,7 +1656,7 @@ class ApiService {
   Future<String> UpdateAdminCoverPhoto(String id, PlatformFile profileFile) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse('http://localhost:3000/smart-builders/AdminProfileCover/$id'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/AdminProfileCover/$id'),
     );
 
     // Add image file to request
@@ -1685,7 +1685,7 @@ class ApiService {
   Future<String> InsertProjectPortfolio( String email, String firstName, String lastName,String city,String country,String address,String projectTitle,String construct,  PlatformFile houseFile,PlatformFile ownerPic) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/smart-builders/ProjectPortfolio'),
+      Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProjectPortfolio'),
     );
 
     // Add image file to request
@@ -1739,7 +1739,7 @@ class ApiService {
   Future<List<ProjectPortfolioModel>> getProjectPortfolio() async {
     //create function in list type becoze we get data and set in _product array
     var response = await http
-        .get(Uri.parse('http://localhost:3000/smart-builders/ProjectPortfolio'));
+        .get(Uri.parse('https://smartbuilderserver.vercel.app/smart-builders/ProjectPortfolio'));
 
     List<ProjectPortfolioModel> getProjectPortfolioModelList =
     []; //the scope of the array is Inside the function

@@ -1,5 +1,0 @@
- opacity: 50,
-          colorFilter: const ColorFilter.mode(
-            Color(0xFF888787),
-            BlendMode.modulate,
-          ),
