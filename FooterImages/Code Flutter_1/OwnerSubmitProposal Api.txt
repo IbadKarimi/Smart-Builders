@@ -3,7 +3,7 @@
 
      final request = http.MultipartRequest(
        'POST',
-       Uri.parse("http://localhost:3000/smart-builders/OwnerSubmitProposals"),
+       Uri.parse("https://smartbuilderserver.vercel.app/smart-builders/OwnerSubmitProposals"),
      );
      print("Api cover cnic name : "+projectFile.name);
      var coverImageFileName=projectFile!.name;
