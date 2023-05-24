@@ -10,7 +10,8 @@ import '../../../models/ProjectPortfolioModel.dart';
 import '../Owner/Owner_Desire_Building.dart';
 import '../Professionals/ProCommonPages/Pro_View_Profile.dart';
 import 'Blogs/Blog.dart';
-import 'CostEstimationCalculator.dart';
+
+import 'CostEsitmationCalculator/calculator.dart';
 import 'HiringProfessionals/Architect.dart';
 import 'HiringProfessionals/CivilEngineer.dart';
 import 'HiringProfessionals/Contractors.dart';
@@ -47,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                   ThirdContainer(),
                   FourthContainer(),
                   FivethContainer(),
-                  getAllContractor(),
+                  ProjctPortFolioView(),
                   SevenContainer(),
                   EightContainer(),
                   NineContainer(),
@@ -1298,12 +1299,12 @@ class _FivethContainer extends State<FivethContainer> {
   }
 }
 String? profilePhoto;
-class getAllContractor extends StatefulWidget {
+class ProjctPortFolioView extends StatefulWidget {
   @override
-  State<getAllContractor> createState() => _getAllContractorState();
+  State<ProjctPortFolioView> createState() => _ProjctPortFolioView();
 }
 
-class _getAllContractorState extends State<getAllContractor> {
+class _ProjctPortFolioView extends State<ProjctPortFolioView> {
   ApiService apiService = new ApiService();
   List<ProjectPortfolioModel> _getProProfileData=[];
 
@@ -1367,38 +1368,46 @@ class _getAllContractorState extends State<getAllContractor> {
               Padding(
                 padding: const EdgeInsets.only(top: 40),
                 child: Container(
-                    color:Colors.red,
-                    height:MediaQuery.of(context).size.width,
 
-                    margin: const EdgeInsets.only(left: 110),
+                    height:500,
+
+                    margin: const EdgeInsets.only(left: 90,right:90),
 
                     child:GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 4,
                         crossAxisSpacing: 40,
                         mainAxisSpacing: 20,
-                        childAspectRatio: 1.5,
+
                       ),
                       itemCount:_getProProfileData.length,
                       itemBuilder: (context, index) {
 
-                        return HoverContainer(
-                          width: 300,
+                        return GestureDetector(
 
-                          margin: const EdgeInsets.only(left: 0),
-                          hoverDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color(0xFFFFEBCC)//Color(0xFFFFA62B),
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: const Color(0xFF888787),
-                              width: 1,
+                          onTap: (){
+                        Navigator.of(context).push(
+                         MaterialPageRoute(builder: (context) => ProjectPortfolio()));
+
+                          },
+                          child: HoverContainer(
+                            width: 250,
+
+                            margin: const EdgeInsets.only(left: 0),
+                            hoverDecoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color(0xFFFFEBCC)//Color(0xFFFFA62B),
                             ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: const Color(0xFF888787),
+                                width: 1,
+                              ),
+                            ),
+                            child: Image.network( _getProProfileData[index].housePhoto.toString()),
                           ),
-                          child: Image.network( _getProProfileData[index].housePhoto.toString()),
                         );
                       },
                     )

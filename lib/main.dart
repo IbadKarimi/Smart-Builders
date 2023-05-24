@@ -17,8 +17,10 @@ import 'package:smart_builder_web/Presentation%20Layer/Screens/Professionals/Pro
 import 'package:smart_builder_web/Presentation%20Layer/Screens/WorkExperience.dart';
 
 import 'Presentation Layer/Screens/Admin/AdminProfile.dart';
+import 'Presentation Layer/Screens/HomePage/CostEsitmationCalculator/calculator.dart';
 import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerCreateProfile.dart';
 import 'Presentation Layer/Screens/HomePage/MaterialStores/MaterialStoresImages/RetailerViewProfile.dart';
+import 'Presentation Layer/Screens/HomePage/SBProjectPortfolio/Projects.dart';
 import 'Presentation Layer/Screens/HomePage/home_page.dart';
 import 'Presentation Layer/Screens/Owner/Owner_Submitted_Proposals_List.dart';
 import 'Presentation Layer/Screens/Owner/Owner_View_Profile.dart';
@@ -28,6 +30,7 @@ import 'models/DataModels.dart';
 //import 'mongodb.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -53,7 +56,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: "Smart Builder",
-      home: Scaffold(body:HomePage()),
+      home: Scaffold(body:CostEstimationCalculator()),
     );
   }
 }

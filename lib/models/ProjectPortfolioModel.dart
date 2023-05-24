@@ -8,6 +8,8 @@ class ProjectPortfolioModel {
   String? housePhoto;
   String? sId;
   String? construct;
+  String ?address;
+  String ?profilePhoto;
   ProjectPortfolioModel(
       {this.email,
         this.firstName,
@@ -16,8 +18,10 @@ class ProjectPortfolioModel {
         this.city,
         this.projectTitle,
         this.housePhoto,
+        this.address,
         this.sId,
         this.construct,
+        this.profilePhoto
        });
 
   ProjectPortfolioModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +34,8 @@ class ProjectPortfolioModel {
     housePhoto = json['housePhoto'];
     sId = json['_id'];
     construct = json['construct'];
+    address = json[' address '];
+    profilePhoto  = json['profilePhoto'];
 
   }
 
@@ -45,6 +51,8 @@ class ProjectPortfolioModel {
     data['_id'] = this.sId;
 
     data['construct'] = this.construct;
+    data['address'] = this.address;
+    data['profilePhoto'] = this.profilePhoto;
     return data;
   }
 }

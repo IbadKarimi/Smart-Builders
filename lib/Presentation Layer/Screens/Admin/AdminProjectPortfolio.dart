@@ -542,7 +542,8 @@ class _AddProjectPortfolio   extends State< AddProjectPortfolio> {
                                         houseFile = picked.files.first;
                                         profileFile=pickedProfile.files.first;
                                         print( houseFile?.name.toString());
-                                        var response=await apiService.InsertProjectPortfolio('ali@gmail.com', _firstNameController.text, _lastNameController.text, _cityController.text, "Pakistan", _streetAddressController.text, _projectTitleController.text, _constructedByController.text, houseFile!,profileFile!);
+
+                                        var response=await apiService.InsertProjectPortfolio('ali@gmail.com', _firstNameController.text, _lastNameController.text, _cityController.text, "Pakistan", _plotLocationController.text, _projectTitleController.text, _constructedByController.text, houseFile!,profileFile!);
                                         if(response=='200'){
                                           setState(() {
                                             progressBarVisible=false;

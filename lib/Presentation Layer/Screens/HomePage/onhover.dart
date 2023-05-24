@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'Blogs/Blog.dart';
-import 'CostEstimationCalculator.dart';
+
+import 'CostEsitmationCalculator/calculator.dart';
 import 'HiringProfessionals/Architect.dart';
 import 'HiringProfessionals/CivilEngineer.dart';
 import 'HiringProfessionals/Contractors.dart';
